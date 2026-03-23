@@ -14,9 +14,17 @@
             --bg-color: #f0f0f2;
             --paper-color: #fdfbf7;
             --ink-color: #1a1a1a;
-            --accent-color: #375a7f;
+            --accent-color: #375a7f; /* Il tuo blu elegante */
             --font-title: 'Abril Fatface', cursive;
             --font-body: 'Inter', sans-serif;
+            
+            /* Colori stile "Light Spotify Mode" */
+            --card-bg: linear-gradient(145deg, #ffffff, #f0f0f3);
+            --card-hover: linear-gradient(145deg, #fdfbf7, #e4e4e9);
+            --img-bg: linear-gradient(135deg, #ffffff, #e9ecef);
+            --text-main: var(--ink-color);
+            --text-sub: #666666;
+            --border-color: #dcdcdc; /* Colore della cornicina di base */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,10 +36,10 @@
             color: var(--ink-color);
             line-height: 1.6;
             position: relative;
-            padding-bottom: 40px;
+            padding-bottom: 60px;
         }
 
-        /* --- BACKGROUND (Dall'immagine richiesta) --- */
+        /* --- BACKGROUND --- */
         .giants-background {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1; pointer-events: none; overflow: hidden;
@@ -48,60 +56,136 @@
         h1 { font-family: var(--font-title); font-size: clamp(2.5rem, 6vw, 5rem); margin: 0; line-height: 1; }
         .subtitle { font-family: var(--font-body); font-size: 1.2rem; color: var(--accent-color); font-weight: 700; text-transform: uppercase; letter-spacing: 3px; margin-top: 15px; }
 
-        /* --- MENU CONTAINER (Già aperto) --- */
-       /* --- MENU CONTAINER --- */
+        /* --- STILE SPOTIFY: GRIGLIA --- */
         #main-menu {
             width: 90%; 
-            max-width: 600px; /* IL SEGRETO È QUI: sceso da 900px a 600px */
+            max-width: 1100px;
             margin: 0 auto;
-            display: flex; 
-            flex-direction: column; 
-            gap: 1.2rem; /* Spazio leggermente ridotto per maggiore compattezza */
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+            gap: 1.5rem;
             padding-bottom: 5rem;
             animation: fadeIn 0.6s ease-out forwards;
         }
 
-        /* --- CARDS CON LOGO --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- LE CARD DEGLI ARTISTI (LIGHT MODE CON CORNICINA) --- */
         .lesson-card {
-            background: var(--paper-color); 
-            border-radius: 12px; 
-            box-shadow: 0 8px 16px rgba(0,0,0,0.06); /* Ombra leggermente più elegante */
+            background: var(--card-bg); 
+            border-radius: 8px; 
+            padding: 1.2rem;
             text-decoration: none; 
-            color: var(--ink-color); 
-            display: grid;
-            grid-template-columns: 120px 1fr auto; /* Box logo ridotto da 140px a 120px */
-            overflow: hidden; 
-            transition: 0.2s; 
-            border: 1px solid transparent;
-            align-items: center; /* Allinea tutto perfettamente al centro in verticale */
-        }
-        .lesson-card:hover { transform: translateY(-3px); border-color: var(--accent-color); box-shadow: 0 15px 25px rgba(0,0,0,0.1); }
-
-        .brand-logo { 
-            background: #ffffff; 
-            display: flex; justify-content: center; align-items: center; 
-            padding: 1rem; border-right: 1px solid #eaeaea; 
-            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease; 
+            box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+            position: relative;
+            /* La Cornicina di base */
+            border: 1px solid var(--border-color); 
         }
         
-        .brand-logo img {
-            max-width: 100%; 
-            max-height: 45px; /* Loghi un po' più proporzionati alla nuova larghezza */
+        .lesson-card:hover { 
+            background: var(--card-hover);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+            /* La Cornicina si evidenzia col tuo blu all'hover */
+            border: 1.5px solid var(--accent-color); 
+            transform: translateY(-2px);
+        }
+
+        /* Il contenitore dell'immagine */
+        .image-wrapper {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: var(--img-bg);
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            margin-bottom: 1.2rem;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.03), 0 4px 12px rgba(0,0,0,0.06);
+            position: relative;
+            overflow: hidden;
+            /* Cornice interna opzionale per l'immagine */
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .image-wrapper img {
+            max-width: 90%; 
+            max-height: 90%;
             object-fit: contain;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.08));
         }
 
-        .lesson-content { padding: 1rem 1.5rem; display: flex; align-items: center; }
-        .lesson-content h3 { font-family: var(--font-body); font-size: 1.2rem; font-weight: 700; margin: 0; color: #333; }
-        .lesson-arrow { padding-right: 2rem; font-size: 2rem; color: var(--accent-color); opacity: 0.5; display: flex; align-items: center; transition: 0.2s; }
-        
-        .lesson-card:hover .lesson-arrow { opacity: 1; transform: translateX(5px); }
+        /* --- IL PULSANTE PLAY --- */
+        .play-btn {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            width: 48px;
+            height: 48px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff; 
+            font-size: 1.4rem;
+            opacity: 0; 
+            transform: translateY(15px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 6px 12px rgba(55, 90, 127, 0.3);
+            padding-left: 4px; 
+            z-index: 2;
+        }
+
+        .lesson-card:hover .play-btn {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .lesson-card:hover .play-btn:hover {
+            transform: scale(1.05); 
+            background-color: #2b4766; 
+        }
+
+        .lesson-card:hover .image-wrapper img {
+            transform: scale(1.05);
+        }
+
+        /* --- TESTI SOTTO LA COPERTINA --- */
+        .card-title {
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 0.4rem;
+            white-space: nowrap; 
+            overflow: hidden;
+            text-overflow: ellipsis; 
+        }
+
+        .card-subtitle {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            font-weight: 400;
+            text-transform: capitalize;
+        }
 
         @media (max-width: 600px) {
-            .lesson-card { grid-template-columns: 100px 1fr; }
-            .brand-logo { padding: 0.8rem; }
-            .lesson-arrow { display: none; }
-            .lesson-content { padding: 1rem 1.5rem; }
-            .lesson-content h3 { font-size: 1.1rem; }
+            #main-menu {
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 1rem;
+                padding: 0 0.5rem;
+            }
+            .lesson-card { padding: 0.8rem; }
+            .image-wrapper { padding: 1rem; margin-bottom: 0.8rem; }
+            .play-btn { display: none; } 
+            .card-title { font-size: 0.95rem; margin-bottom: 0.2rem; }
+            .card-subtitle { font-size: 0.75rem; }
         }
     </style>
 </head>
@@ -116,67 +200,97 @@
         <div class="subtitle">Repertorio</div>
     </header>
 
-<div id="main-menu">
-        <a href="the-beatles.html" class="lesson-card">
-            <div class="brand-logo"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122394/beatles_uksvw7.png" alt="The Beatles Logo"></div>
-            <div class="lesson-content"><h3>The Beatles</h3></div>
-            <div class="lesson-arrow">→</div>
-        </a>
-        
-        <a href="bob-dylan.html" class="lesson-card">
-            <div class="brand-logo"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122393/bob_dylan_ikb7ey.svg" alt="Bob Dylan Logo"></div>
-            <div class="lesson-content"><h3>Bob Dylan</h3></div>
-            <div class="lesson-arrow">→</div>
-        </a>
-        
-        <a href="led-zeppelin.html" class="lesson-card">
-            <div class="brand-logo"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122393/led_zeppelin_r9eyr6.png" alt="Led Zeppelin Logo"></div>
-            <div class="lesson-content"><h3>Led Zeppelin</h3></div>
-            <div class="lesson-arrow">→</div>
-        </a>
-        
-        <a href="king-crimson.html" class="lesson-card">
-            <div class="brand-logo"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122393/king_crimson_nhocgw.gif" alt="King Crimson Logo"></div>
-            <div class="lesson-content"><h3>King Crimson</h3></div>
-            <div class="lesson-arrow">→</div>
-        </a>
-        
-        <a href="black-sabbath.html" class="lesson-card">
-            <div class="brand-logo"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122393/black_sabbath_lyab7r.png" alt="Black Sabbath Logo"></div>
-            <div class="lesson-content"><h3>Black Sabbath</h3></div>
-            <div class="lesson-arrow">→</div>
-        </a>
-        
-        <a href="cannonball-adderley-quartet.html" class="lesson-card">
-            <div class="brand-logo"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122393/Cannonball-Adderley_wyjybe.jpg" alt="Cannonball Adderley Quartet Logo"></div>
-            <div class="lesson-content"><h3>Cannonball Adderley Quartet</h3></div>
-            <div class="lesson-arrow">→</div>
-        </a>
-        
-        <a href="aretha-franklin.html" class="lesson-card">
-            <div class="brand-logo"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122392/Aretha_g7tzbm.webp" alt="Aretha Franklin Logo"></div>
-            <div class="lesson-content"><h3>Aretha Franklin</h3></div>
-            <div class="lesson-arrow">→</div>
-        </a>
-        
-        <a href="radiohead.html" class="lesson-card">
-            <div class="brand-logo"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122392/radiohead_bwfsx3.png" alt="Radiohead Logo"></div>
-            <div class="lesson-content"><h3>Radiohead</h3></div>
-            <div class="lesson-arrow">→</div>
-        </a>
-        
-        <a href="sfera-ebbasta.html" class="lesson-card">
-            <div class="brand-logo"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122393/sferaebbasta_lmehdn.webp" alt="Sfera Ebbasta Logo"></div>
-            <div class="lesson-content"><h3>Sfera Ebbasta</h3></div>
-            <div class="lesson-arrow">→</div>
-        </a>
-        
-        <a href="aphex-twin.html" class="lesson-card">
-            <div class="brand-logo"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122393/aphex_twin_tkk476.png" alt="Aphex Twin Logo"></div>
-            <div class="lesson-content"><h3>Aphex Twin</h3></div>
-            <div class="lesson-arrow">→</div>
-        </a>
-    </div>
+    <div id="main-menu">
+        <a href="the-beatles.html" class="lesson-card">
+            <div class="image-wrapper">
+                <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122394/beatles_uksvw7.png" alt="The Beatles">
+                <div class="play-btn">▶</div>
+            </div>
+            <div class="card-title">The Beatles</div>
+            <div class="card-subtitle">Rock / Pop</div>
+        </a>
+        
+        <a href="bob-dylan.html" class="lesson-card">
+            <div class="image-wrapper">
+                <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122393/bob_dylan_ikb7ey.svg" alt="Bob Dylan">
+                <div class="play-btn">▶</div>
+            </div>
+            <div class="card-title">Bob Dylan</div>
+            <div class="card-subtitle">Folk Rock</div>
+        </a>
+        
+        <a href="led-zeppelin.html" class="lesson-card">
+            <div class="image-wrapper">
+                <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122393/led_zeppelin_r9eyr6.png" alt="Led Zeppelin">
+                <div class="play-btn">▶</div>
+            </div>
+            <div class="card-title">Led Zeppelin</div>
+            <div class="card-subtitle">Hard Rock</div>
+        </a>
+        
+        <a href="king-crimson.html" class="lesson-card">
+            <div class="image-wrapper">
+                <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122393/king_crimson_nhocgw.gif" alt="King Crimson">
+                <div class="play-btn">▶</div>
+            </div>
+            <div class="card-title">King Crimson</div>
+            <div class="card-subtitle">Progressive Rock</div>
+        </a>
+        
+        <a href="black-sabbath.html" class="lesson-card">
+            <div class="image-wrapper">
+                <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122393/black_sabbath_lyab7r.png" alt="Black Sabbath">
+                <div class="play-btn">▶</div>
+            </div>
+            <div class="card-title">Black Sabbath</div>
+            <div class="card-subtitle">Heavy Metal</div>
+        </a>
+        
+        <a href="cannonball-adderley-quartet.html" class="lesson-card">
+            <div class="image-wrapper">
+                <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122393/Cannonball-Adderley_wyjybe.jpg" alt="Cannonball Adderley">
+                <div class="play-btn">▶</div>
+            </div>
+            <div class="card-title">Cannonball Adderley</div>
+            <div class="card-subtitle">Hard Bop</div>
+        </a>
+        
+        <a href="aretha-franklin.html" class="lesson-card">
+            <div class="image-wrapper">
+                <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122392/Aretha_g7tzbm.webp" alt="Aretha Franklin">
+                <div class="play-btn">▶</div>
+            </div>
+            <div class="card-title">Aretha Franklin</div>
+            <div class="card-subtitle">Soul / R&B</div>
+        </a>
+        
+        <a href="radiohead.html" class="lesson-card">
+            <div class="image-wrapper">
+                <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122392/radiohead_bwfsx3.png" alt="Radiohead">
+                <div class="play-btn">▶</div>
+            </div>
+            <div class="card-title">Radiohead</div>
+            <div class="card-subtitle">Alternative Rock</div>
+        </a>
+        
+        <a href="sfera-ebbasta.html" class="lesson-card">
+            <div class="image-wrapper">
+                <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122393/sferaebbasta_lmehdn.webp" alt="Sfera Ebbasta">
+                <div class="play-btn">▶</div>
+            </div>
+            <div class="card-title">Sfera Ebbasta</div>
+            <div class="card-subtitle">Trap</div>
+        </a>
+        
+        <a href="aphex-twin.html" class="lesson-card">
+            <div class="image-wrapper">
+                <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774122393/aphex_twin_tkk476.png" alt="Aphex Twin">
+                <div class="play-btn">▶</div>
+            </div>
+            <div class="card-title">Aphex Twin</div>
+            <div class="card-subtitle">IDM / Ambient</div>
+        </a>
+    </div>
 
 </body>
 </html>

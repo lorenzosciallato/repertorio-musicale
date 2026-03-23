@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>King Crimson | Audio Repertoire</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- VARIABILI & RESET --- */
+        :root {
+            --bg-color: #f0f0f2;
+            --paper-color: #fdfbf7;
+            --ink-color: #1a1a1a;
+            --accent-color: #375a7f;
+            --pop-yellow: #ffee00;
+            --font-title: 'Abril Fatface', cursive;
+            --font-body: 'Inter', sans-serif;
+            --hover-row: rgba(55, 90, 127, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: var(--font-body);
+            color: var(--ink-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px;
+            width: 100%;
+            overflow-x: hidden; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- MULTILINGUA CSS LOGIC --- */
+        html[lang="it"] .lang-en { display: none !important; }
+        html[lang="en"] .lang-it { display: none !important; }
+
+        /* --- BACKGROUND --- */
+        .video-background-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden;
+            background: #e0e0e5; 
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .video-foreground {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; transition: opacity 0.8s ease; opacity: 1;
+        }
+
+        .video-foreground img.bg-image {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.1; 
+            filter: grayscale(100%) sepia(1) hue-rotate(190deg) contrast(1.2);
+            mix-blend-mode: multiply;
+        }
+
+        .video-hidden { opacity: 0; }
+
+        /* --- HEADER --- */
+        header { text-align: center; margin-top: 3rem; margin-bottom: 1rem; padding: 0 1rem; position: relative; z-index: 4; }
+        
+        .main-logo {
+            max-width: 90%; width: 350px; height: auto;
+            display: block; margin: 0 auto;
+        }
+
+        .subtitle-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .subtitle {
+            font-family: var(--font-body); font-size: 1.5rem; color: var(--accent-color); font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 4px;
+        }
+
+        .global-lang-switch {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .global-lang-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 4px;
+            color: #888;
+            transition: all 0.3s;
+        }
+        
+        .global-lang-btn.active {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        /* --- CONTENITORE PRINCIPALE --- */
+        .content-card {
+            background: var(--paper-color); padding: 3rem; margin: 0 auto;
+            width: 90%; max-width: 1200px; position: relative;
+            border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); z-index: 4;
+            margin-bottom: 2rem; margin-top: 2rem;
+        }
+        @media (max-width: 600px) { 
+            .content-card { padding: 1.5rem; width: 95%; margin-top: 1rem; } 
+            .main-logo { width: 280px; }
+            .subtitle { font-size: 1.2rem; letter-spacing: 2px; }
+            .global-lang-btn { padding: 5px 10px; font-size: 0.8rem; }
+        }
+
+        /* --- ACCORDION GENERALE --- */
+        .accordion-item { margin-bottom: 1rem; border-bottom: none; }
+        
+        .master-header {
+            background: transparent; border: 2px solid var(--accent-color); border-radius: 8px;
+            padding: 15px 20px; justify-content: center; font-size: 1.5rem; 
+            color: var(--accent-color); width: 100%; margin-bottom: 1rem;
+            cursor: pointer; display: flex; align-items: center; font-family: var(--font-title);
+            transition: all 0.3s ease;
+        }
+        .master-header:hover { background: rgba(55, 90, 127, 0.1); }
+        .master-header .icon-plus { margin-left: 15px; font-family: var(--font-body); font-weight: 300; transition: transform 0.3s; }
+
+        .accordion-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, opacity 0.5s;
+            padding: 0; opacity: 0;
+        }
+        .accordion-content.active { max-height: 20000px; opacity: 1; padding-top: 2rem; }
+        .master-header.active .icon-plus { transform: rotate(90deg); }
+
+        /* --- LAYOUT PLAYER --- */
+        .playlist-layout {
+            display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; align-items: start; margin-bottom: 2rem;
+        }
+        @media (max-width: 900px) { .playlist-layout { grid-template-columns: 1fr; } }
+
+        /* --- AUDIO PLAYER CONTAINER --- */
+        .player-wrapper {
+            position: sticky; top: 20px; background: #fff; border-radius: 12px;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 10; border: 1px solid #eee;
+        }
+
+        .youtube-container { 
+            position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #000; 
+        }
+        .youtube-container iframe { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; 
+        }
+
+        /* --- TRACKLIST E MESSAGGI --- */
+        .tracklist-column { display: flex; flex-direction: column; }
+
+        .scroll-disclaimer {
+            font-size: 0.85rem; color: #665500; margin-bottom: 12px; font-style: italic; text-align: center; 
+            background-color: rgba(255, 238, 0, 0.2); border: 2px dashed #e6c200; padding: 10px; border-radius: 8px; width: 100%;
+        }
+        .msg-desktop { display: block; }
+        .msg-mobile { display: none; }
+        
+        .mobile-track-trigger {
+            display: none; width: 100%; background: #fff; border: 2px dashed #ddd; border-radius: 8px;
+            padding: 12px 20px; font-family: var(--font-title); font-size: 1.2rem; color: var(--accent-color);
+            justify-content: space-between; align-items: center; cursor: pointer; margin-top: 10px; margin-bottom: 10px; transition: all 0.3s;
+        }
+        .mobile-track-trigger:hover { background: #fdfdfd; border-color: var(--accent-color); }
+        .mobile-track-trigger.active { background: #f0f4f8; border-style: solid; border-color: var(--accent-color); }
+        .trigger-arrow { transition: transform 0.3s; font-size: 1rem; }
+        .mobile-track-trigger.active .trigger-arrow { transform: rotate(180deg); }
+
+        .tracklist-container { 
+            width: 100%; max-height: 500px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #ccc #f0f0f2;
+            padding-right: 5px; transition: max-height 0.5s ease-out, opacity 0.5s;
+        }
+        .tracklist-container::-webkit-scrollbar { width: 6px; }
+        .tracklist-container::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+
+        .track-row {
+            display: grid; grid-template-columns: 40px 1fr 40px; padding: 12px 10px; border-bottom: 1px solid rgba(0,0,0,0.05);
+            cursor: pointer; transition: background 0.2s, padding-left 0.2s; border-radius: 6px; align-items: center;
+        }
+        .track-row:hover { background-color: var(--hover-row); padding-left: 15px; }
+        .track-row.active { background-color: var(--hover-row); border-left: 4px solid var(--accent-color); }
+
+        .track-num { font-size: 0.9rem; color: #888; font-weight: 700; }
+        .track-row.active .track-num { display: none; }
+        .track-row.active .playing-icon { display: inline-block; }
+        
+        .playing-icon { display: none; width: 14px; height: 14px; position: relative; }
+        .bar { background: var(--accent-color); bottom: 0; position: absolute; width: 3px; animation: sound 0ms -800ms linear infinite alternate; }
+        .bar:nth-child(1) { left: 0px; height: 10px; animation-duration: 474ms; }
+        .bar:nth-child(2) { left: 5px; height: 6px; animation-duration: 433ms; }
+        .bar:nth-child(3) { left: 10px; height: 12px; animation-duration: 407ms; }
+        @keyframes sound { 0% { opacity: .35; height: 3px; } 100% { opacity: 1; height: 14px; } }
+
+        .track-info { display: flex; flex-direction: column; }
+        .track-title { font-weight: 700; font-size: 1rem; color: var(--ink-color); }
+        .track-row.active .track-title { color: var(--accent-color); }
+        .track-artist { font-size: 0.85rem; color: #666; }
+
+        /* --- STILI TESTI (LYRICS) TOGGLE E PULSANTI --- */
+        .btn-back-tracks {
+            display: none; width: 100%; padding: 8px; margin-bottom: 10px; background: var(--pop-yellow); border: none;
+            color: var(--ink-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; font-weight: 900; transition: background 0.3s; text-align: center;
+        }
+        .btn-back-tracks:hover { background: #e6d600; }
+
+        .desktop-lyrics-view { display: none; }
+        
+        .lyrics-wrapper { background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .lyrics-toggle { display: flex; gap: 10px; margin-bottom: 15px; justify-content: center; }
+        
+        .flag-btn { 
+            background: #f0f0f2; border: 2px solid #ddd; border-radius: 6px; padding: 8px 15px; 
+            font-size: 1rem; cursor: pointer; transition: all 0.3s; color: var(--ink-color); 
+        }
+        .flag-btn:hover { background: #e8e8e8; }
+        .flag-btn.active { 
+            background: #fff; border-color: var(--accent-color); font-weight: bold; 
+            color: var(--accent-color); box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+        }
+
+        .lyrics-content-area { max-height: 350px; overflow-y: auto; scrollbar-width: thin; padding-right: 5px; }
+        .lyrics-content-area::-webkit-scrollbar { width: 6px; }
+        .lyrics-content-area::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+        
+        .lyrics-col { display: none; white-space: pre-wrap; color: #333; font-size: 0.9rem; }
+        .lyrics-col.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        .lyrics-col h4 { color: var(--accent-color); margin-bottom: 10px; font-family: var(--font-title); font-size: 1.1rem; }
+        .lyrics-col.ita { font-style: italic; color: #555; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* GESTIONE LOGICA DESKTOP (Mostra Lyrics, Nascondi Lista) */
+        @media (min-width: 901px) {
+            .tracklist-wrapper.lyrics-active #tracklist { display: none; }
+            .tracklist-wrapper.lyrics-active #desktop-lyrics-view { display: block; }
+            .tracklist-wrapper.lyrics-active #btn-back-tracks { display: block; }
+            .tracklist-wrapper.lyrics-active .msg-desktop { display: none; }
+            .mobile-lyrics-accordion { display: none; } 
+        }
+
+        /* GESTIONE LOGICA MOBILE */
+        @media (max-width: 900px) {
+            .tracklist-wrapper.lyrics-active #desktop-lyrics-view { display: none !important; }
+            .tracklist-wrapper.lyrics-active #btn-back-tracks { display: none !important; }
+            
+            /* Su mobile l'accordion dei testi è visibile */
+            .mobile-lyrics-accordion { display: block; margin-top: 1rem; border-top: 1px solid #eee; }
+        }
+
+        /* --- ACCORDIONS COMUNI (Guida, Storia, Mobile Lyrics) --- */
+        .guide-accordion-wrapper { margin-top: 1rem; border-top: 1px solid #eee; }
+        .guide-trigger {
+            background: #fff; border: 2px dashed #ddd; border-radius: 8px; width: 100%; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s; margin-top: 1rem;
+        }
+        .guide-trigger:hover { border-color: var(--accent-color); background: #fdfdfd; }
+        .guide-trigger.active { border-color: var(--accent-color); background: #f0f4f8; border-style: solid; }
+        .guide-trigger span { font-family: var(--font-title); font-size: 1.4rem; color: var(--accent-color); }
+        .guide-arrow { font-size: 1.2rem; transition: transform 0.3s; color: var(--accent-color); }
+        .guide-trigger.active .guide-arrow { transform: rotate(180deg); }
+
+        .guide-panel { max-height: 0; overflow: hidden; transition: max-height 0.6s ease-out, opacity 0.5s; opacity: 0; background: #fff; border-radius: 0 0 8px 8px; }
+        .guide-panel.open { max-height: 80000px; opacity: 1; padding: 20px 0; }
+
+        .guide-grid { display: grid; grid-template-columns: 2fr 1.5fr; gap: 2rem; align-items: start; }
+        .guide-box { background: #fff; padding: 1rem 0; max-height: 600px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--accent-color) #f0f0f2; padding-right: 15px; }
+        .guide-box::-webkit-scrollbar { width: 8px; }
+        .guide-box::-webkit-scrollbar-thumb { background-color: var(--accent-color); border-radius: 10px; }
+        
+        .guide-content p { margin-bottom: 1rem; font-size: 1rem; color: #333; }
+        .guide-content strong { color: var(--accent-color); font-weight: 900; }
+
+        .curiosity-box { background: #fffcf0; border-left: 4px solid var(--pop-yellow); padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0; font-size: 0.95rem; font-style: italic; color: #554; }
+        .curiosity-label { font-weight: bold; font-style: normal; color: #d4a000; text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 5px; }
+
+        /* --- FLIP CARDS CHIRURGICHE --- */
+        .flip-card {
+            perspective: 1000px;
+            cursor: pointer;
+            width: 100%;
+            display: block;
+            margin-bottom: 15px;
+        }
+        .wiki-figure .flip-card { margin-bottom: 0; } /* Reset dentro al testo */
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-card-front, .flip-card-back {
+            width: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        
+        /* Il front detta l'altezza del blocco in modo naturale */
+        .flip-card-front {
+            position: relative;
+            height: auto;
+            z-index: 2;
+        }
+        
+        /* Il back si sovrappone esattamente e si adatta all'altezza */
+        .flip-card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: var(--accent-color);
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .flip-card-back strong { color: var(--pop-yellow); font-family: var(--font-title); font-size: 1.1rem; margin-bottom: 5px; line-height: 1.2; }
+        .flip-card-back small { font-size: 0.85rem; opacity: 0.9; }
+
+        /* Applica i bordi arrotondati alle facce, l'immagine li erediterà */
+        .flip-card-front img, .flip-card-back { border-radius: inherit; }
+        
+        .band-gallery .flip-card-front, .band-gallery .flip-card-back {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .wiki-figure .flip-card-front, .wiki-figure .flip-card-back {
+            border-radius: 4px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #ccc;
+        }
+        .wiki-figure .flip-card-back { border: none; }
+
+        /* Immagini base */
+        .gallery-img, .wiki-img { display: block; width: 100%; height: auto; object-fit: cover; }
+        .wiki-img { filter: sepia(0.1) contrast(1.05); transition: all 0.3s; border: none; box-shadow: none; border-radius: 0; }
+        .gallery-img { border: none; box-shadow: none; border-radius: 0; }
+        .flip-card-front:hover .wiki-img { filter: none; }
+
+        /* --- STILE GALLERIA IMMAGINI --- */
+        .band-gallery { display: flex; flex-direction: column; gap: 20px; max-height: 650px; overflow-y: auto; padding-right: 10px; }
+        .band-gallery::-webkit-scrollbar { width: 4px; }
+        .band-gallery::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
+        .band-gallery .flip-card { height: auto; margin-bottom: 0; }
+
+        /* --- STILE WIKI / STORIA --- */
+        .wiki-content { font-family: 'Inter', sans-serif; color: #333; line-height: 1.7; padding: 0 10px; text-align: justify; }
+        .wiki-title { font-family: var(--font-title); color: var(--accent-color); font-size: 1.4rem; margin-top: 10px; margin-bottom: 5px; letter-spacing: 1px; }
+        .wiki-subtitle { font-weight: 900; color: #d4a000; text-transform: uppercase; font-size: 0.85rem; margin-top: 40px; margin-bottom: 10px; clear: both; }
+        .wiki-divider { border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); margin: 30px 0; clear: both; }
+        .wiki-figure { margin: 15px 0; width: 100%; }
+        .wiki-figure figcaption { font-size: 0.75rem; color: #666; font-style: italic; text-align: center; margin-top: 5px; display: block; }
+        .wiki-gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 30px 0 40px 0; }
+        .wiki-gallery-grid .wiki-figure { height: 100%; margin: 0; }
+        .wiki-gallery-grid .wiki-img { height: 100%; object-fit: cover; }
+
+        .btn-close-bottom { width: 100%; padding: 12px; margin-top: 15px; background: #fff; border: 1px solid #ddd; color: var(--accent-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; font-weight: 700; transition: background 0.3s; text-align: center; }
+        .btn-close-bottom:hover { background: #f0f4f8; border-color: var(--accent-color); }
+        .track-close-desktop-hidden { display: none; }
+
+        @media (min-width: 901px) {
+            .wiki-figure.right { float: right; width: 40%; margin-left: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.left { float: left; width: 40%; margin-right: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.full { clear: both; width: 100%; margin: 30px 0; }
+            .wiki-chapter::after { content: ""; display: table; clear: both; }
+        }
+
+        @media (max-width: 900px) {
+            .msg-desktop { display: none !important; }
+            .msg-mobile { display: block !important; text-align: center; }
+            .guide-grid { grid-template-columns: 1fr; }
+            .band-gallery { display: block; order: -1; max-height: none; overflow: hidden; padding-right: 0; margin-bottom: 10px; }
+            
+            /* Gestione Flip Card Slider su mobile */
+            .band-gallery .flip-card { display: none; animation: fadeInSlide 0.5s ease-in-out; margin-bottom: 0; }
+            .band-gallery .flip-card.mobile-active { display: block; }
+            
+            @keyframes fadeInSlide { from { opacity: 0; } to { opacity: 1; } }
+            .wiki-gallery-grid { grid-template-columns: 1fr; gap: 20px; }
+            .mobile-track-trigger { display: flex; } 
+            .tracklist-wrapper.opened .track-close-desktop-hidden { display: block; }
+            .tracklist-container { max-height: 0; overflow: hidden; opacity: 0; }
+            .tracklist-container.mobile-open { max-height: 5000px; overflow-y: visible; opacity: 1; margin-bottom: 1rem; }
+            .tracklist-wrapper.closed .scroll-disclaimer { display: none; }
+            .tracklist-wrapper.opened .scroll-disclaimer { display: block; }
+            .guide-box { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+            /* INTERVENTO CHIRURGICO: rimuovo lo scroll annidato dei lyrics su mobile */
+            .lyrics-content-area { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-background-wrapper" id="bg-wrapper">
+        <div class="video-foreground" id="video-layer">
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774199135/sfondo_m2wdrd.jpg" alt="King Crimson Background" class="bg-image">
+        </div>
+        <div class="video-filter-overlay"></div>
+    </div>
+
+    <header>
+        <h1>
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774198565/logo_veajri.gif" alt="King Crimson Logo" class="main-logo">
+        </h1>
+        <div class="subtitle-wrapper">
+            <div class="subtitle">
+                <span class="lang-it">Repertorio</span>
+                <span class="lang-en">Full Repertoire</span>
+            </div>
+            <div class="global-lang-switch">
+                <button id="btn-lang-it" class="global-lang-btn active" onclick="setGlobalLang('it')">ITA</button>
+                <button id="btn-lang-en" class="global-lang-btn" onclick="setGlobalLang('en')">ENG</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-card">
+        
+        <div class="accordion-item">
+            <button class="master-header" id="btn-inizia" onclick="toggleLesson()">
+                <span id="btn-text">
+                    <span class="lang-it" id="btn-txt-it">Inizia Esperienza</span>
+                    <span class="lang-en" id="btn-txt-en">Start Experience</span>
+                </span> 
+                <span class="icon-plus">→</span>
+            </button>
+            
+            <div class="accordion-content" id="main-content">
+                
+                <div class="playlist-layout">
+                    <div class="player-wrapper" id="player-wrapper-ui">
+                        <div class="youtube-container">
+                            <iframe id="youtube-player" src="about:blank" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+                    </div>
+
+                    <div class="tracklist-column tracklist-wrapper closed" id="tracklist-wrapper">
+                        
+                        <button class="mobile-track-trigger" onclick="toggleMobileTracks()">
+                            <span>
+                                <span class="lang-it">Brani</span>
+                                <span class="lang-en">Tracks</span>
+                            </span>
+                            <span class="trigger-arrow">▼</span>
+                        </button>
+
+                        <div class="scroll-disclaimer msg-desktop">
+                            <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere l'intera lista di brani</span>
+                            <span class="lang-en">Use your keyboard or mouse wheel to scroll through the full tracklist</span>
+                        </div>
+                        <div class="scroll-disclaimer msg-mobile">
+                            <span class="lang-it">Clicca e scorri per vedere l'intera lista di brani</span>
+                            <span class="lang-en">Tap and scroll to see the full tracklist</span>
+                        </div>
+
+                        <button class="btn-back-tracks" id="btn-back-tracks" onclick="resetTracklist()">
+                            <span class="lang-it">← Torna alla lista brani</span>
+                            <span class="lang-en">← Back to tracklist</span>
+                        </button>
+
+                        <div class="desktop-lyrics-view" id="desktop-lyrics-view">
+                            </div>
+
+                        <div class="tracklist-container" id="tracklist">
+                            </div>
+                        
+                        <button class="btn-close-bottom track-close-desktop-hidden" onclick="toggleMobileTracks()">
+                            <span class="lang-it">↑ Chiudi Lista Brani</span>
+                            <span class="lang-en">↑ Close Tracklist</span>
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper mobile-lyrics-accordion" style="border-top: none;">
+                    <button class="guide-trigger" id="lyrics-btn" onclick="toggleLyricsAccordion()">
+                        <span>
+                            <span class="lang-it">Parafrasi</span>
+                            <span class="lang-en">Paraphrase</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="lyrics-panel">
+                        <div class="guide-box" style="max-height: none; overflow: visible;">
+                            <div id="mobile-lyrics-content">
+                                <p style="text-align:center; color:#888; margin-top:30px; margin-bottom:30px;">
+                                    <span class="lang-it">Seleziona un brano dalla playlist per visualizzare la parafrasi.</span>
+                                    <span class="lang-en">Select a track from the playlist to view the paraphrase.</span>
+                                </p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleLyricsAccordion()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Parafrasi</span>
+                            <span class="lang-en">↑ Close Paraphrase</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper">
+                    <button class="guide-trigger" id="guide-btn" onclick="toggleGuide()">
+                        <span>
+                            <span class="lang-it">Guida all'Ascolto & Curiosità</span>
+                            <span class="lang-en">Listening Guide & Trivia</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="guide-panel">
+                        <div class="guide-grid">
+                            <div>
+                                <div class="guide-box">
+                                    <div id="guide-content" class="guide-content">
+                                        <p style="text-align:center; color:#888; margin-top:50px;">
+                                            <span class="lang-it">Seleziona un brano dalla playlist per visualizzare qui i dettagli.</span>
+                                            <span class="lang-en">Select a track from the playlist to view details here.</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="scroll-disclaimer msg-desktop" style="margin-top: 10px;">
+                                    <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere la guida</span>
+                                    <span class="lang-en">Use your keyboard or mouse wheel to scroll through the guide</span>
+                                </div>
+                            </div>
+
+                            <div class="band-gallery">
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774198565/1_lygxxd.jpg" alt="King Crimson Image"></div>
+                                        <div class="flip-card-back"><strong>Ian Wallace</strong><small>Source: drummagazine.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774198565/2_knhfq2.jpg" alt="King Crimson Image"></div>
+                                        <div class="flip-card-back"><strong>King Crimson Promo</strong><small>Source: recordmecca.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774198564/3_wvnbtr.jpg" alt="Greg Lake"></div>
+                                        <div class="flip-card-back"><strong>Greg Lake</strong><small>Source: voir.ca</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774198565/4_svrppb.jpg" alt="Michael Giles"></div>
+                                        <div class="flip-card-back"><strong>Michael Giles</strong><small>Source: drummagazine.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774198564/5_auhmhw.jpg" alt="King Crimson Setup"></div>
+                                        <div class="flip-card-back"><strong>Live Setup</strong><small>Source: pinterest.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774198564/6_gpllur.webp" alt="King Crimson Cover"></div>
+                                        <div class="flip-card-back"><strong>King Crimson Cover</strong><small>Source: squarespace-cdn.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774198564/7_cdxx5c.jpg" alt="King Crimson Band"></div>
+                                        <div class="flip-card-back"><strong>King Crimson Band</strong><small>Source: futurecdn.net</small></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn-close-bottom" onclick="toggleGuide()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Guida</span>
+                            <span class="lang-en">↑ Close Guide</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="history-btn" onclick="toggleHistory()">
+                        <span>
+                            <span class="lang-it">Contesto Storico & Artistico</span>
+                            <span class="lang-en">Historical & Artistic Context</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="history-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 1: La Genesi e l'Era del Romanticismo Sinfonico (1968-1971)</span>
+                                        <span class="lang-en">Chapter 1: The Genesis and the Era of Symphonic Romanticism (1968-1971)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure full">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774198563/8_amvy7j.jpg" alt="The band in '69" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">La band nel '69</span><span class="lang-en">The band in '69</span></strong>
+                                                    <small>Source: musicaddicts.my</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">La band nel '69</span>
+                                            <span class="lang-en">The band in '69</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">La storia dei King Crimson inizia ufficialmente nel novembre 1968, dalle ceneri dei Giles, Giles & Fripp, un trio pop eccentrico che non era riuscito a scalare le classifiche. Robert Fripp, insieme a Ian McDonald, Greg Lake, Michael Giles e al paroliere Peter Sinfield, diede vita a una formazione che in appena un anno avrebbe cambiato il volto del rock.</p>
+                                    <p class="lang-en">The history of King Crimson officially begins in November 1968, from the ashes of Giles, Giles & Fripp, an eccentric pop trio that had failed to climb the charts. Robert Fripp, along with Ian McDonald, Greg Lake, Michael Giles, and lyricist Peter Sinfield, gave life to a lineup that in just one year would change the face of rock.</p>
+                                    
+                                    <p class="lang-it">Il debutto avvenne sotto i riflettori di Hyde Park, aprendo per i Rolling Stones, e fu seguito dalla pubblicazione di In the Court of the Crimson King (1969). Questo album, definito un capolavoro assoluto, riuscì a fondere l'irruenza di Jimi Hendrix con la musica classica moderna e il jazz, introducendo l'uso del mellotron per creare tappeti sonori orchestrali e maestosi.</p>
+                                    <p class="lang-en">Their debut took place under the spotlight of Hyde Park, opening for the Rolling Stones, and was followed by the release of In the Court of the Crimson King (1969). This album, defined as an absolute masterpiece, managed to blend the impetuosity of Jimi Hendrix with modern classical music and jazz, introducing the use of the mellotron to create orchestral and majestic soundscapes.</p>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774198563/9_dtjf7p.jpg" alt="Greg Lake live" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>Greg Lake Live</strong>
+                                                    <small>Source: pinterest.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Greg Lake canta dal vivo con i King Crimson durante lo storico concerto di Hyde Park, Londra, 5 luglio 1969</span>
+                                            <span class="lang-en">Greg Lake singing live with King Crimson during the historic Hyde Park concert, London, July 5, 1969</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Tuttavia, l'equilibrio era fragile: già durante il primo tour americano del 1969, McDonald e Giles decisero di abbandonare, seguiti poco dopo da Greg Lake, attratto dalla collaborazione con Keith Emerson. Seguì un periodo di forte instabilità, definito "interregno", in cui Fripp e Sinfield pubblicarono lavori come In the Wake of Poseidon e il jazzistico Lizard, avvalendosi di collaboratori come il pianista Keith Tippett. Questa prima fase si concluse nel 1971 con Islands e l'allontanamento di Sinfield per divergenze artistiche con Fripp.</p>
+                                    <p class="lang-en">However, the balance was fragile: already during their first American tour in 1969, McDonald and Giles decided to leave, followed shortly after by Greg Lake, who was attracted by a collaboration with Keith Emerson. A period of strong instability ensued, defined as an "interregnum", in which Fripp and Sinfield released works such as In the Wake of Poseidon and the jazz-inflected Lizard, making use of collaborators like pianist Keith Tippett. This first phase concluded in 1971 with Islands and the departure of Sinfield due to artistic differences with Fripp.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 2: Sperimentazione e Potenza: Il Muro di Mattoni (1972-1974)</span>
+                                        <span class="lang-en">Chapter 2: Experimentation and Power: The Brick Wall (1972-1974)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774198563/10_e9avzf.jpg" alt="The '73 line up" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">La line up del '73</span><span class="lang-en">The '73 line up</span></strong>
+                                                    <small>Source: pienemmatpurot.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">La line up del '73</span>
+                                            <span class="lang-en">The '73 line up</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Nel 1972, Fripp rivoluzionò completamente la band, spostandola verso sonorità più dure e improvvisative. Reclutò Bill Bruford (che lasciò gli Yes per l'occasione), John Wetton e David Cross, oltre all'eccentrico percussionista Jamie Muir.</p>
+                                    <p class="lang-en">In 1972, Fripp completely revolutionized the band, shifting it towards harder and more improvisational sounds. He recruited Bill Bruford (who left Yes for the occasion), John Wetton, and David Cross, in addition to the eccentric percussionist Jamie Muir.</p>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774198564/11_lmituy.jpg" alt="Robert Fripp" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>Robert Fripp</strong>
+                                                    <small>Source: pinterest.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Robert Fripp in studio con la sua Gibson Les Paul</span>
+                                            <span class="lang-en">Robert Fripp in the studio with his Gibson Les Paul</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Con questa formazione, i King Crimson esplorarono territori vicini all'heavy metal e alla musica di Béla Bartók, producendo la trilogia Larks' Tongues in Aspic, Starless and Bible Black e Red. Nonostante il successo artistico, Fripp si sentiva frustrato dall'industria discografica e attraversava una crisi spirituale. Così, nel settembre 1974, dichiarò che la band aveva "cessato di esistere per sempre", ritirandosi dalle scene.</p>
+                                    <p class="lang-en">With this lineup, King Crimson explored territories close to heavy metal and the music of Béla Bartók, producing the trilogy Larks' Tongues in Aspic, Starless and Bible Black, and Red. Despite the artistic success, Fripp felt frustrated by the record industry and was going through a spiritual crisis. Thus, in September 1974, he declared that the band had "ceased to exist forever", retiring from the scene.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 3: La Svolta New Wave e il Gamelan Rock (1981-1984)</span>
+                                        <span class="lang-en">Chapter 3: The New Wave Turning Point and Gamelan Rock (1981-1984)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure full">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774198563/12_vastld.jpg" alt="Discipline era" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>Discipline Era</strong>
+                                                    <small>Source: musictap.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Il radicale cambio d'immagine contemporaneo a "Discipline" (1981)</span>
+                                            <span class="lang-en">The radical image change contemporary to "Discipline" (1981)</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Dopo sette anni di silenzio, Fripp tornò sui suoi passi nel 1981 con una formazione radicalmente nuova che includeva Adrian Belew, Tony Levin e il fedele Bruford. Sotto l'influenza della New Wave, i King Crimson adottarono uno stile basato su intricati arpeggi di chitarra e poliritmie ispirate al gamelan indonesiano.</p>
+                                    <p class="lang-en">After seven years of silence, Fripp retraced his steps in 1981 with a radically new lineup that included Adrian Belew, Tony Levin, and the faithful Bruford. Under the influence of New Wave, King Crimson adopted a style based on intricate guitar arpeggios and polyrhythms inspired by Indonesian gamelan.</p>
+                                    
+                                    <p class="lang-it">Album come Discipline, Beat e Three of a Perfect Pair segnarono un'epoca di innovazione tecnologica, con l'uso massiccio di sintetizzatori e del Chapman Stick. Ma ancora una volta, le tensioni interne portarono Fripp a sciogliere il gruppo subito dopo il tour del 1984.</p>
+                                    <p class="lang-en">Albums like Discipline, Beat, and Three of a Perfect Pair marked an era of technological innovation, with massive use of synthesizers and the Chapman Stick. But once again, internal tensions led Fripp to dissolve the group immediately after the 1984 tour.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 4: Dal Doppio Trio al Silenzio Finale (1994-2021)</span>
+                                        <span class="lang-en">Chapter 4: From the Double Trio to the Final Silence (1994-2021)</span>
+                                    </h3>
+                                    
+                                    <p class="lang-it">La band risorse negli anni novanta con il concetto del "Doppio Trio": sei musicisti con doppie postazioni di chitarra, basso e batteria. Questo periodo, che produsse l'album Thrak (1995), fuse le sonorità industrial con riferimenti ai Beatles. Per gestire le difficoltà di un gruppo così numeroso, Fripp ideò i ProjeKcts, sottogruppi di ricerca sonora che portarono poi alla formazione "Double Duo" degli anni 2000 e agli album The ConstruKction of Light e The Power to Believe.</p>
+                                    <p class="lang-en">The band was resurrected in the nineties with the concept of the "Double Trio": six musicians with double setups for guitar, bass, and drums. This period, which produced the album Thrak (1995), merged industrial sounds with references to the Beatles. To manage the difficulties of such a large group, Fripp devised the ProjeKcts, sonic research subgroups that later led to the "Double Duo" formation of the 2000s and the albums The ConstruKction of Light and The Power to Believe.</p>
+                                    
+                                    <figure class="wiki-figure full">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774198563/13_m089gh.jpg" alt="3 Batterie Live" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Front line a 3 batterie</span><span class="lang-en">3-Drummer Front Line</span></strong>
+                                                    <small>Source: 9gag.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">L'imponente assetto live con la celebre "front line" composta da tre batterie schierate in primo piano</span>
+                                            <span class="lang-en">The imposing live setup with the famous "front line" composed of three drum kits deployed in the foreground</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Dopo un'ultima fase caratterizzata da una "bestia a sette teste" (una formazione con ben tre batteristi frontali iniziata nel 2013), i King Crimson hanno continuato a celebrare la propria storia in tour mondiali fino al 2021. Con l'ultimo spettacolo di quell'anno, Robert Fripp ha sancito la fine dell'attività dal vivo, dichiarando che il gruppo era finalmente passato "dal suono al silenzio".</p>
+                                    <p class="lang-en">After a final phase characterized by a "seven-headed beast" (a lineup with a staggering three frontline drummers started in 2013), King Crimson continued to celebrate their history in world tours until 2021. With the last show of that year, Robert Fripp sanctioned the end of their live activity, declaring that the group had finally moved "from sound to silence".</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleHistory()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Storia</span>
+                            <span class="lang-en">↑ Close History</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="disclaimer-btn" onclick="toggleDisclaimer()">
+                        <span>
+                            <span class="lang-it">Disclaimer & Note Legali</span>
+                            <span class="lang-en">Disclaimer & Legal Notes</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="disclaimer-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                <h3 class="wiki-title lang-it">Disclaimer e Diritto di Citazione</h3>
+                                <h3 class="wiki-title lang-en">Disclaimer & Fair Use</h3>
+                                
+                                <p class="lang-it">I contenuti multimediali presenti in questa pagina (immagini e video) sono utilizzati esclusivamente per finalità didattiche, critiche e di approfondimento culturale, in conformità con l'Art. 70 della Legge 633/41 (Diritto di citazione e riproduzione per uso didattico o scientifico). L'utilizzo non ha alcuno scopo di lucro e mira a valorizzare l'opera dell'artista e dei relativi autori, citati puntualmente tramite la funzione interattiva sulle singole immagini.<br><br>Qualora i detentori dei diritti d'autore ritenessero inappropriata la pubblicazione o desiderassero la rimozione di specifici contenuti, possono scrivere all'indirizzo: <strong>lorenzo.sciallato@gmail.com</strong>. Provvederò all'immediata rimozione del materiale segnalato.</p>
+                                
+                                <p class="lang-en">The multimedia contents on this page (images and videos) are used exclusively for educational, critical, and cultural purposes, in accordance with international Fair Use principles and national copyright laws. This project is strictly non-commercial and aims to provide historical and artistic context, with full credit given to authors and sources via the interactive photo-flip feature.<br><br>If you are a copyright holder and object to the use of any material, or would like to request its removal, please contact: <strong>lorenzo.sciallato@gmail.com</strong>. Any disputed content will be removed immediately upon request.</p>
+
+                                <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 25px 0;">
+
+                                <p class="lang-it" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Pagina creata con l'assistenza di software di intelligenza artificiale generativa, unendo cura umana e supporto tecnologico per l'apprendimento e la divulgazione culturale.</p>
+                                <p class="lang-en" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Page created with the assistance of generative artificial intelligence software, combining human curation and technological support for educational and cultural dissemination.</p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleDisclaimer()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Disclaimer</span>
+                            <span class="lang-en">↑ Close Disclaimer</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const playlist = [
+            { id: "schizoid_man", title: "21st Century Schizoid Man", ytId: "7OvW8Z7kiws" },
+            { id: "talk_wind", title: "I Talk To The Wind", ytId: "UlKrH07au6E" },
+            { id: "epitaph", title: "Epitaph", ytId: "vXrpFxHfppI" },
+            { id: "moonchild", title: "Moonchild", ytId: "DnYDqv8-lJE" },
+            { id: "court_king", title: "In the Court of The Crimson King", ytId: "ukgraQ-xkp4" }
+        ];
+
+        // PARAPHRASE DATA
+        const paraphraseData = {
+            "schizoid_man": {
+                it: `Una visione brutale e senza sconti della modernità urbana e tecnologica. Il protagonista è un uomo del ventunesimo secolo ridotto a frammenti neurotici, uno schizoide che osserva il mondo con occhi distaccati e carichi di rabbia. L'alienazione dilaga tra acciaio, fumo e ingranaggi. Sinfield dipinge immagini di guerra e fredda burocrazia: il napalm brucia l'innocenza, le mani di politici e burocrati spingono i bottoni della distruzione. L'uomo è vittima e complice allo stesso tempo di un progresso che ha perso qualsiasi dimensione umana. Il brano descrive la dissociazione psichica collettiva come condizione normale: il dolore diventa uno spettacolo, l'orrore un prodotto di consumo. La musica stessa — aggressiva, dissonante, con la voce filtrata e deformata — è la perfetta incarnazione sonora di questa frammentazione interiore. Non c'è via di fuga nel brano, solo il riflesso spietato di ciò che siamo diventati.`,
+                en: `A brutal and uncompromising vision of urban and technological modernity. The protagonist is a twenty-first century man reduced to neurotic fragments, a schizoid who observes the world with detached, rage-filled eyes. Alienation spreads through steel, smoke, and gears. Sinfield paints images of war and cold bureaucracy: napalm burns innocence, politicians' and bureaucrats' hands push the buttons of destruction. Man is simultaneously victim and accomplice in a progress that has lost any human dimension. The track describes collective psychic dissociation as a normal condition: pain becomes spectacle, horror a consumer product. The music itself — aggressive, dissonant, with the voice filtered and distorted — is the perfect sonic embodiment of this inner fragmentation. There is no escape in the song, only the merciless reflection of what we have become.`
+            },
+            "talk_wind": {
+                it: `Un'oasi di quiete dopo la tempesta schizoide, "I Talk To The Wind" è una meditazione malinconica sulla solitudine del visionario e l'incomprensione del mondo. Il protagonista parla al vento — un interlocutore silenzioso, indifferente, che porta via le parole senza rispondere. L'immagine è quella di chi vede oltre, di chi intuisce verità che gli altri non riescono o non vogliono cogliere. La conversazione con il vento è dunque una metafora dell'artista che crea in un vuoto di comprensione, dell'intellettuale che grida in un deserto emotivo. Il brano è avvolto in una nebbia onirica: i flauti di McDonald creano un'atmosfera quasi celtica, fuori dal tempo. C'è dolcezza nella rassegnazione, bellezza nella solitudine accettata. Non è disperazione, è distanza: la distanza lucida di chi osserva il mondo da una posizione irraggiungibile agli altri.`,
+                en: `An oasis of calm after the schizoid storm, "I Talk To The Wind" is a melancholic meditation on the visionary's solitude and the world's incomprehension. The protagonist speaks to the wind — a silent, indifferent interlocutor that carries words away without responding. The image is that of someone who sees beyond, who senses truths that others cannot or will not grasp. The conversation with the wind is therefore a metaphor for the artist creating in a void of understanding, the intellectual crying out in an emotional desert. The track is enveloped in a dreamlike mist: McDonald's flutes create an almost Celtic atmosphere, outside of time. There is sweetness in the resignation, beauty in accepted solitude. This is not despair, it is distance: the lucid distance of one who observes the world from a position unreachable to others.`
+            },
+            "epitaph": {
+                it: `Una profezia solenne e terrificante sul destino collettivo dell'umanità. "Epitaph" è il brano più grandioso e cinematografico dell'album, una composizione che avanza con la lentezza inesorabile di un corteo funebre cosmico. Il muro sul quale erano stati scritti i destini dell'uomo si sta sgretolando, e nessun sapiente, nessun dottore della conoscenza è in grado di fermarne il crollo. Sinfield descrive un mondo in cui la confusione regna sovrana, dove le certezze si sono dissolte e il silenzio è diventato la sola forma di comunicazione autentica rimasta. L'epitaffio — la scritta tombale — è ancora da tracciare: è il futuro che giudicherà il nostro tempo. Le orchestrazioni del Mellotron creano un senso di tragedia universale e ineluttabilità che trascende la semplice canzone rock per toccare qualcosa di profondamente liturgico, quasi sacro.`,
+                en: `A solemn and terrifying prophecy about humanity's collective fate. "Epitaph" is the most grandiose and cinematic track on the album, a composition that advances with the inexorable slowness of a cosmic funeral procession. The wall on which the destinies of man had been written is crumbling, and no wise man, no doctor of knowledge is able to stop its collapse. Sinfield describes a world in which confusion reigns supreme, where certainties have dissolved and silence has become the only authentic form of communication left. The epitaph — the grave inscription — has yet to be written: it is the future that will judge our time. The Mellotron orchestrations create a sense of universal tragedy and inevitability that transcends the mere rock song to touch something deeply liturgical, almost sacred.`
+            },
+            "moonchild": {
+                it: `Un viaggio onirico nella notte, nel sogno, nell'inconscio collettivo. "Moonchild" è una creatura lunare, un essere che vive al confine tra il mondo reale e quello delle visioni, che danza sulle acque come un fantasma di luce riflessa. Sinfield evoca immagini di una gentilezza estrema e quasi irreale: fate d'argento, ali di seta, susurri del vento. C'è qualcosa di infantile e al tempo stesso di ancestrale in questa figura, qualcosa che appartiene ai miti più antichi dell'umanità. Il brano è una lullaby per esseri che non dormono mai del tutto, che vivono in uno stato di permanente semi-coscienza poetica. La lunga sezione improvvisata centrale è il sogno stesso: senza struttura, senza meta, puramente sensoriale, come le immagini che affiorano nei momenti di dormiveglia.`,
+                en: `A dreamlike journey into the night, into dreaming, into the collective unconscious. "Moonchild" is a lunar creature, a being that lives on the border between the real world and the world of visions, dancing on the waters like a ghost of reflected light. Sinfield evokes images of extreme and almost unreal gentleness: silver fairies, silk wings, whispers of the wind. There is something childlike and at the same time ancestral in this figure, something that belongs to humanity's oldest myths. The track is a lullaby for beings who never sleep completely, who live in a state of permanent semi-conscious poetry. The long central improvised section is the dream itself: without structure, without destination, purely sensory, like images that surface in the moments between sleep and waking.`
+            },
+            "court_king": {
+                it: `La grande chiusura, il brano che dà il titolo all'album e che ne sintetizza l'intera cosmologia. La Corte del Re Cremisi è un luogo metaforico, un reame immaginario che è al contempo una corte medievale e una proiezione del nostro inconscio collettivo. Il Re Cremisi non è un despota qualunque: è un'entità archetipica, forse la stessa coscienza creativa dell'artista, forse il caos organizzato che presiede alla creazione. Sinfield popola questo regno di figure allegoriche — il Buffone, il Guardiano, il Confine — e li intreccia in una narrazione che è più vicina a un poema epico che a una canzone rock. Il testo oscilla tra la grandiosità epica e la malinconia esistenziale: la gloria della corte è anche la sua prigione. Il finale aperto lascia l'ascoltatore sospeso tra la meraviglia e l'inquietudine.`,
+                en: `The grand finale, the title track of the album that synthesises its entire cosmology. The Court of the Crimson King is a metaphorical place, an imaginary realm that is simultaneously a medieval court and a projection of our collective unconscious. The Crimson King is no ordinary despot: he is an archetypal entity, perhaps the very creative consciousness of the artist, perhaps the organised chaos that presides over creation. Sinfield populates this kingdom with allegorical figures — the Jester, the Keeper, the Boundary — and weaves them into a narrative that is closer to an epic poem than a rock song. The text oscillates between epic grandeur and existential melancholy: the glory of the court is also its prison. The open ending leaves the listener suspended between wonder and unease.`
+            }
+        };
+
+        // GUIDA (Completely BILINGUAL)
+        const guideData = {
+            "schizoid_man": {
+                it: `
+                    <h3>21st Century Schizoid Man</h3>
+                    <p><strong>0:00 - Intro Ambientale e Dinamica:</strong> Il brano si apre con rumori di sottofondo e fiati distorti tenuti a un volume di missaggio volutamente bassissimo. Questa tecnica di "masking" costringe fisicamente l'ascoltatore ad alzare il volume dell'impianto, massimizzando l'impatto dinamico dell'esplosione immediata del riff principale in Do minore.</p>
+                    <p><strong>0:30 - Il Timbro Fuzz (Direct Injection):</strong> Il timbro acido e graffiante della chitarra di Robert Fripp non deriva da un normale amplificatore microfonato nella stanza. Fripp utilizzò un pedale fuzz inserito direttamente nel banco mixer della sala di registrazione. Questa tecnica (Direct Injection o DI) elimina l'aria e il naturale riverbero dell'ambiente, restituendo un attacco sonoro innaturalmente secco, aggressivo e "in faccia" all'ascoltatore.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Voce nell'Amplificatore.</span>Durante le prime registrazioni, la voce pulita di Greg Lake risultava troppo debole rispetto alla violenza della base strumentale. Per risolvere il problema, il segnale vocale venne fatto passare attraverso un amplificatore per chitarra (un Marshall), ripreso con un microfono e fortemente compresso, creando quel timbro metallico, tagliente e alienante che caratterizza la traccia.</div>
+                    <p><strong>4:37 - "Mirrors" e Poliritmia:</strong> La sezione strumentale centrale segna una rottura metrica brutale. La band abbandona il solido 4/4 iniziale per lanciarsi in complesse figure sincopate. La pulizia di esecuzione è esaltata da un "hard panning" molto netto: gli strumenti solisti (chitarra e sassofono) sono posizionati ai lati estremi del panorama stereo (tutto a sinistra o tutto a destra) per mantenere intellegibile ogni singola nota in una fase di estrema densità armonica.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Terrore del Nastro.</span>La complessa sezione centrale "Mirrors" fu registrata praticamente in presa diretta in una singola take. All'epoca, i registratori a nastro permettevano pochissime sovraincisioni e tagliare il nastro per correggere un errore di tempo in una poliritmia del genere era quasi impossibile senza che si sentisse lo "stacco" acustico. L'energia frenetica che si percepisce è anche frutto della tensione reale dei musicisti in studio.</div>
+                    <p><strong>6:00 - Caos Controllato (Coda):</strong> Il finale sfocia in una forma libera d'avanguardia. Vengono utilizzati delay (ritardi) sul sassofono e si generano voluti feedback di chitarra. Il mixaggio si sbilancia volutamente: i piatti della batteria invadono lo spettro delle alte frequenze, creando una sensazione di saturazione analogica sul nastro master prima del brusco taglio finale.</p>
+                `,
+                en: `
+                    <h3>21st Century Schizoid Man</h3>
+                    <p><strong>0:00 - Ambient and Dynamic Intro:</strong> The track opens with background noise and distorted horns kept at an intentionally extremely low mixing volume. This "masking" technique physically forces the listener to turn up the volume of their system, maximizing the dynamic impact of the immediate explosion of the main C minor riff.</p>
+                    <p><strong>0:30 - The Fuzz Tone (Direct Injection):</strong> The acidic and biting tone of Robert Fripp's guitar does not come from a normal amplifier mic'd in the room. Fripp used a fuzz pedal plugged directly into the mixing board of the recording room. This technique (Direct Injection or DI) eliminates the air and the natural reverb of the environment, returning an unnaturally dry, aggressive, and "in your face" sound attack.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Voice in the Amplifier.</span>During the first recordings, Greg Lake's clean voice was too weak compared to the violence of the instrumental backing. To solve the problem, the vocal signal was run through a guitar amplifier (a Marshall), mic'd up, and heavily compressed, creating that metallic, cutting, and alienating tone that characterizes the track.</div>
+                    <p><strong>4:37 - "Mirrors" and Polyrhythm:</strong> The central instrumental section marks a brutal metric break. The band abandons the solid initial 4/4 to launch into complex syncopated figures. The cleanliness of execution is enhanced by a very distinct "hard panning": the solo instruments (guitar and saxophone) are positioned at the extreme sides of the stereo panorama (all the way left or all the way right) to keep every single note intelligible in a phase of extreme harmonic density.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Terror of the Tape.</span>The complex central section "Mirrors" was recorded practically live in a single take. At the time, tape recorders allowed very few overdubs, and cutting the tape to correct a timing error in such a polyrhythm was almost impossible without hearing the acoustic "cut". The frantic energy perceived is also the result of the real tension of the musicians in the studio.</div>
+                    <p><strong>6:00 - Controlled Chaos (Coda):</strong> The finale flows into a free avant-garde form. Delays are used on the saxophone and deliberate guitar feedback is generated. The mixing becomes intentionally unbalanced: the drum cymbals invade the high-frequency spectrum, creating a sensation of analog saturation on the master tape before the abrupt final cut.</p>
+                `
+            },
+            "talk_wind": {
+                it: `
+                    <h3>I Talk To The Wind</h3>
+                    <p><strong>0:00 - Ripresa Microfonica Intima (Close-Miking):</strong> Il passaggio dal brano precedente è un esercizio di estremo contrasto dinamico e spaziale. I microfoni a condensatore sono posizionati a pochissimi centimetri dal flauto di Ian McDonald e dalla chitarra acustica. Questa vicinanza estrema cattura il rumore dell'aria sullo strumento e il tocco delle dita sulle corde, abbattendo la barriera spaziale e creando un senso di intimità immediata.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Un'Eredità Folk.</span>"I Talk to the Wind" è l'unico brano dell'album che non è nato durante le sessioni di composizione dei King Crimson. Deriva dal precedente trio "Giles, Giles and Fripp". Esisteva persino un provino cantato da Judy Dyble, voce storica della band folk-rock Fairport Convention, prima che Greg Lake ne assumesse le redini adattandola al suo registro vocale.</div>
+                    <p><strong>1:15 - Riverbero a Piastra (Plate Reverb) sulle Voci:</strong> La traccia vocale di Lake è sdoppiata (double-tracking) e leggermente "allargata" sul fronte stereo. La sensazione di etereità è data dall'applicazione di un riverbero a piastra, un dispositivo analogico che garantisce una coda di risonanza brillante ma compatta. Questo evita l'effetto fango (muddy) sulle frequenze medio-basse, lasciando la base acustica perfettamente intellegibile.</p>
+                    <p><strong>4:00 - Phantom Center e Spazializzazione:</strong> Durante l'assolo di flauto, il mixaggio mostra grande disciplina. La chitarra acustica ritmica è "pinnata" su un lato, mentre la batteria è mixata quasi interamente in mono sull'altro. Questo lascia il "phantom center" (il centro illusorio tra i due diffusori stereo) completamente libero e sgombro da frequenze concorrenti per dare massimo risalto al flauto e alla fondamentale linea di basso.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Assoli Liberi ma Disciplinati.</span>A differenza delle rigidissime strutture matematiche di "Schizoid Man", gli assoli di flauto di McDonald in questo brano vennero improvvisati su una base armonica fissa. Il tecnico del suono dovette "inseguire" le dinamiche del flautista abbassando o alzando i fader del volume in tempo reale (riding the fader) per evitare che i picchi acuti dello strumento saturassero il nastro.</div>
+                `,
+                en: `
+                    <h3>I Talk To The Wind</h3>
+                    <p><strong>0:00 - Intimate Mic Placement (Close-Miking):</strong> The transition from the previous track is an exercise in extreme dynamic and spatial contrast. Condenser microphones are positioned just a few centimeters from Ian McDonald's flute and the acoustic guitar. This extreme proximity captures the sound of the air on the instrument and the touch of fingers on the strings, breaking down the spatial barrier and creating a sense of immediate intimacy.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: A Folk Legacy.</span>"I Talk to the Wind" is the only track on the album that was not born during King Crimson's songwriting sessions. It derives from the previous trio "Giles, Giles and Fripp". There was even a demo sung by Judy Dyble, historical voice of the folk-rock band Fairport Convention, before Greg Lake took the reins, adapting it to his vocal register.</div>
+                    <p><strong>1:15 - Plate Reverb on Vocals:</strong> Lake's vocal track is double-tracked and slightly "widened" on the stereo front. The feeling of ethereality is given by the application of a plate reverb, an analog device that guarantees a bright but compact resonance tail. This avoids the muddy effect on the mid-low frequencies, leaving the acoustic base perfectly intelligible.</p>
+                    <p><strong>4:00 - Phantom Center and Spatialization:</strong> During the flute solo, the mixing shows great discipline. The rhythm acoustic guitar is "panned" to one side, while the drums are mixed almost entirely in mono on the other. This leaves the "phantom center" (the illusory center between the two stereo speakers) completely free and clear of competing frequencies to give maximum emphasis to the flute and the fundamental bassline.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Free but Disciplined Solos.</span>Unlike the rigid mathematical structures of "Schizoid Man", McDonald's flute solos in this song were improvised over a fixed harmonic base. The sound engineer had to "chase" the flautist's dynamics by lowering or raising the volume faders in real-time (riding the fader) to prevent the instrument's sharp peaks from saturating the tape.</div>
+                `
+            },
+            "epitaph": {
+                it: `
+                    <h3>Epitaph</h3>
+                    <p><strong>0:00 - Stratificazione del Mellotron:</strong> Il muro di suono iniziale è generato dal Mellotron Mk II, una tastiera analogica che riproduceva nastri magnetici pre-registrati di una sezione d'archi. Il suono leggermente inquietante e fluttuante è un artefatto meccanico: i motori che trascinavano i nastri non erano perfettamente stabili, creando un micro-slittamento dell'intonazione (effetto "wow and flutter") che rende l'accordo di Si minore intrinsecamente malinconico.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Nastro Infinito.</span>Il Mellotron aveva un limite fisico: ogni nastro durava al massimo otto secondi prima di riavvolgersi. Per mantenere gli accordi sostenuti senza interruzioni udibili, Ian McDonald doveva applicare una tecnica a "ragno", sollevando e riabbassando continuamente le dita sui tasti per far ripartire i nastri, creando i caratteristici attacchi "respiranti" dell'intro.</div>
+                    <p><strong>1:25 - Compressione Vocale e Pre-Delay:</strong> L'ingresso vocale di Greg Lake è ripreso da molto vicino (close-miking). Per dare un senso di vastità senza perdere la chiarezza delle parole, è stato applicato un riverbero a piastra (plate reverb) con un lungo "pre-delay". Questo significa che il riverbero parte qualche millisecondo dopo la voce pura, permettendo alle consonanti iniziali di colpire l'orecchio in modo nitido prima di essere sommerse dalla coda risonante.</p>
+                    <p><strong>2:20 - Timpani e Spazio Acustico:</strong> I riempimenti (fill) di batteria di Michael Giles utilizzano veri timpani orchestrali. Invece di microfonarli da vicino come si faceva per il rock standard, i microfoni panoramici (overhead) sono stati posizionati molto in alto nella stanza. Questo cattura le riflessioni acustiche delle pareti dello studio, restituendo un rimbombo maestoso e sinfonico, privo dell'attacco secco tipico dei tamburi rock.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Lacrime in cabina di regia.</span>Durante la registrazione della traccia vocale definitiva di "Epitaph", l'intensità dell'esecuzione di Greg Lake fu così estrema che, terminata la take, la band alzò lo sguardo verso il vetro della cabina di ripresa e lo vide in lacrime. Quella singola esecuzione, emotivamente svuotante, è quella stampata sul disco finale.</div>
+                    <p><strong>5:45 - Panning Dinamico in "March for No Reason":</strong> Nella sezione strumentale, il mix separa chirurgicamente gli elementi acustici per fare spazio all'imponente Mellotron centrale. La chitarra acustica è confinata nettamente sul canale sinistro, mentre i legni (fiati) e il pianoforte rispondono dal canale destro. Questo bilanciamento asimmetrico evita che le frequenze medie si impastino (muddy sound).</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Rifiuto della Perfezione.</span>All'epoca i sintetizzatori Moog stavano diventando lo standard per le band d'avanguardia. I King Crimson scelsero deliberatamente il Mellotron per Epitaph, rifiutando le perfette onde sonore elettroniche del Moog per favorire i difetti, la polvere magnetica e l'instabilità del nastro, ritenendoli gli unici capaci di tradurre in suono il testo apocalittico.</div>
+                    <p><strong>7:00 - Saturazione del Mix ("Tomorrow and Tomorrow"):</strong> Nel finale, la dinamica cresce fino a saturare deliberatamente il banco di missaggio. I livelli del volume vengono spinti nella zona rossa, causando una distorsione analogica sul master bus (tape saturation) che incolla letteralmente gli strumenti tra loro in un blocco sonoro monolitico prima del fade-out.</p>
+                `,
+                en: `
+                    <h3>Epitaph</h3>
+                    <p><strong>0:00 - Mellotron Layering:</strong> The initial wall of sound is generated by the Mellotron Mk II, an analog keyboard that played pre-recorded magnetic tapes of a string section. The slightly eerie and fluctuating sound is a mechanical artifact: the motors pulling the tapes were not perfectly stable, creating a micro-slip in pitch ("wow and flutter" effect) that makes the B minor chord intrinsically melancholic.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Infinite Tape.</span>The Mellotron had a physical limit: each tape lasted a maximum of eight seconds before rewinding. To keep chords sustained without audible interruptions, Ian McDonald had to apply a "spider" technique, continuously lifting and pressing his fingers on the keys to restart the tapes, creating the characteristic "breathing" attacks of the intro.</div>
+                    <p><strong>1:25 - Vocal Compression and Pre-Delay:</strong> Greg Lake's vocal entrance is recorded very closely (close-miking). To give a sense of vastness without losing word clarity, a plate reverb with a long "pre-delay" was applied. This means the reverb starts a few milliseconds after the pure voice, allowing the initial consonants to hit the ear sharply before being submerged by the resonant tail.</p>
+                    <p><strong>2:20 - Timpani and Acoustic Space:</strong> Michael Giles' drum fills use real orchestral timpani. Instead of close-miking them as was done for standard rock, the overhead microphones were positioned very high in the room. This captures the acoustic reflections of the studio walls, returning a majestic and symphonic rumble, devoid of the dry attack typical of rock drums.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Tears in the Control Room.</span>During the recording of the final vocal track for "Epitaph", the intensity of Greg Lake's performance was so extreme that, after the take was finished, the band looked up at the glass of the recording booth and saw him in tears. That single, emotionally draining performance is the one printed on the final record.</div>
+                    <p><strong>5:45 - Dynamic Panning in "March for No Reason":</strong> In the instrumental section, the mix surgically separates the acoustic elements to make room for the imposing central Mellotron. The acoustic guitar is sharply confined to the left channel, while the woodwinds and piano respond from the right channel. This asymmetrical balance prevents the mid-frequencies from muddying.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Rejection of Perfection.</span>At the time, Moog synthesizers were becoming the standard for avant-garde bands. King Crimson deliberately chose the Mellotron for Epitaph, rejecting the perfect electronic sound waves of the Moog to favor the defects, magnetic dust, and instability of the tape, believing them to be the only ones capable of translating the apocalyptic text into sound.</div>
+                    <p><strong>7:00 - Mix Saturation ("Tomorrow and Tomorrow"):</strong> In the finale, the dynamics grow until they deliberately saturate the mixing board. The volume levels are pushed into the red zone, causing analog distortion on the master bus (tape saturation) that literally glues the instruments together into a monolithic block of sound before the fade-out.</p>
+                `
+            },
+            "moonchild": {
+                it: `
+                    <h3>Moonchild</h3>
+                    <p><strong>0:00 - Il "Suono a Campana" della Chitarra:</strong> L'apertura è caratterizzata da un suono di chitarra elettrica anomalo. Robert Fripp utilizza il pickup al manico della sua Les Paul chiudendo quasi del tutto la manopola del tono (tagliando gli alti) e pizzicando le corde con un tocco leggerissimo. Questo abbattimento delle frequenze acute trasforma l'attacco metallico della plettrata in un timbro morbido e rotondo, simile a un vibrafono o a una campana.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il "Furto" Involontario.</span>La delicata melodia vocale iniziale di "Moonchild" ha una progressione di note quasi identica a "The Surrey with the Fringe on Top", brano tratto dal celebre musical Oklahoma!. Robert Fripp ammise in seguito la somiglianza, definendola un'influenza probabilmente subconscia riemersa in fase di scrittura.</div>
+                    <p><strong>2:25 - Abbattimento della Griglia Ritmica ("The Dream"):</strong> La canzone strutturata finisce bruscamente. Il mix scende a un livello di volume bassissimo. I preamplificatori dei microfoni vengono spinti ad altissimo guadagno (gain). In questo modo viene catturato non solo lo strumento, ma il "rumore di fondo" della stanza (room tone), il fruscio del nastro magnetico e persino i micromovimenti fisici dei musicisti sulle sedie.</p>
+                    <p><strong>4:30 - Pointillismo Sonoro e Pan estremo ("The Illusion"):</strong> L'improvvisazione si sviluppa tramite note isolate. Elementi percussivi minuti (piattini, legnetti, campanelli) subiscono un "hard panning" venendo scagliati improvvisamente tutti a destra o tutti a sinistra. Questo disorienta l'ascoltatore creando uno spazio acustico tridimensionale, spezzato, dove i suoni appaiono dal nulla senza essere ancorati a una traccia di basso o di grancassa al centro del mix.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Spreco di Nastro Magnetico.</span>La lunga sezione improvvisata fu registrata su costosi nastri Ampex da due pollici, fatti scorrere ad alta velocità (15 pollici al secondo) per catturare la massima fedeltà sulle alte frequenze. Il produttore e i tecnici della casa discografica rimasero interdetti di fronte all'enorme "spreco" economico di chilometri di nastro per registrare sostanzialmente "silenzi, cigolii e tintinnii casuali".</div>
+                    <p><strong>8:15 - Riverbero Naturale e Assenza di Masking:</strong> Vengono utilizzati degli archetti (simili a quelli da violino) strofinati sui piatti della batteria e sulle corde della chitarra. Mancando una base ritmica (effetto masking, dove un suono forte copre i suoni deboli), è possibile ascoltare per intero la coda di decadimento naturale del riverbero della grande sala degli Wessex Sound Studios, dimostrando che in studio il silenzio puro non esiste.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Magia Irripetibile.</span>Nonostante occupi una fetta enorme dell'album (oltre 12 minuti), l'intera sezione improvvisata di "Moonchild" venne eseguita dal vivo pochissime volte. La band si rese subito conto che la microscopica tensione acustica creata nel silenzio isolato dello studio di registrazione era letteralmente impossibile da replicare nel caos e nel frastuono dei club fumosi in cui suonavano all'epoca.</div>
+                `,
+                en: `
+                    <h3>Moonchild</h3>
+                    <p><strong>0:00 - The "Bell Sound" of the Guitar:</strong> The opening is characterized by an anomalous electric guitar sound. Robert Fripp uses the neck pickup of his Les Paul, turning down the tone knob almost completely (cutting the highs) and plucking the strings with an extremely light touch. This reduction of acute frequencies transforms the metallic attack of the pick into a soft and round tone, similar to a vibraphone or a bell.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Involuntary "Theft".</span>The delicate initial vocal melody of "Moonchild" has a note progression almost identical to "The Surrey with the Fringe on Top", a song from the famous musical Oklahoma!. Robert Fripp later admitted the similarity, defining it as a probably subconscious influence that resurfaced during the writing phase.</div>
+                    <p><strong>2:25 - Breakdown of the Rhythmic Grid ("The Dream"):</strong> The structured song ends abruptly. The mix drops to a very low volume level. The microphone preamplifiers are pushed to very high gain. In this way, not only the instrument is captured, but the "room tone", the hiss of the magnetic tape, and even the physical micro-movements of the musicians on their chairs.</p>
+                    <p><strong>4:30 - Sonic Pointillism and Extreme Panning ("The Illusion"):</strong> The improvisation develops through isolated notes. Minute percussive elements (cymbals, claves, bells) undergo "hard panning", being suddenly thrown all to the right or all to the left. This disorients the listener, creating a three-dimensional, broken acoustic space where sounds appear out of nowhere without being anchored to a bass or kick drum track in the center of the mix.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Waste of Magnetic Tape.</span>The long improvised section was recorded on expensive two-inch Ampex tapes, run at high speed (15 inches per second) to capture maximum fidelity on high frequencies. The producer and the record company technicians were dumbfounded by the enormous economic "waste" of miles of tape to essentially record "silences, squeaks, and random tinkling".</div>
+                    <p><strong>8:15 - Natural Reverb and Absence of Masking:</strong> Bows (similar to violin bows) are rubbed on the drum cymbals and guitar strings. Lacking a rhythmic base (masking effect, where a loud sound covers weak sounds), it is possible to hear the entire natural decay tail of the reverberation in the large room of Wessex Sound Studios, demonstrating that pure silence does not exist in the studio.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Unrepeatable Magic.</span>Despite taking up a huge chunk of the album (over 12 minutes), the entire improvised section of "Moonchild" was performed live very few times. The band immediately realized that the microscopic acoustic tension created in the isolated silence of the recording studio was literally impossible to replicate in the chaos and din of the smoky clubs where they played at the time.</div>
+                `
+            },
+            "court_king": {
+                it: `
+                    <h3>The Court Of The Crimson King</h3>
+                    <p><strong>0:00 - L'Impatto del Mellotron e Panning delle Batterie:</strong> Il brano si apre con un iconico fill di batteria di Michael Giles, mixato con un uso estremo del panorama stereo: i colpi sui tom si spostano fisicamente da un canale all'altro. Subito dopo esplode il tema principale guidato dal Mellotron (impostato sui registri dei cori e degli archi) e dalla chitarra acustica. La sovraincisione di molteplici tracce di Mellotron crea un muro sonoro gigantesco (Wall of Sound), ma fisiologicamente instabile a causa delle micro-variazioni di velocità dei nastri analogici interni allo strumento, che generano un naturale e inquietante effetto chorus.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Coro Fantasma.</span>I maestosi cori epici che si sentono non sono cantati dal vivo dalla band in studio. Ian McDonald utilizzò i banchi di suoni pre-registrati del Mellotron ("8-Voice Choir"). Poiché ogni tasto attivava un nastro magnetico individuale della durata massima di 8 secondi, per prolungare le note senza interruzioni McDonald doveva orchestrare i cambi di accordo con una tempistica meccanica perfetta, sollevando e ripremendo i tasti prima che il nastro arrivasse a fine corsa.</div>
+                    <p><strong>1:30 - Svuotamento della Scena Acustica (Strofe):</strong> Per contrastare la densità armonica del ritornello, le strofe sono mixate in modo estremamente scarno. La chitarra acustica è isolata e priva di riverberi invadenti (segnale dry), mentre la voce di Greg Lake è posizionata esattamente al centro (phantom center) con un leggerissimo ritardo (slapback delay). Questo svuotamento delle frequenze medie crea uno spazio acustico intimo che esalta, per puro contrasto dinamico, le massicce ripartenze del ritornello.</p>
+                    <p><strong>4:30 - "The Return of the Fire Witch" e Spazialità a Camera:</strong> In questa sezione strumentale, il flauto e le tastiere si intrecciano su un tempo dilatato. Il mix engineer sfrutta il panning dinamico per far letteralmente "muovere" gli strumenti all'interno del campo stereo. Vengono utilizzati riverberi a camera (chamber reverb) con tempi di decadimento molto lunghi per simulare l'acustica di una cattedrale, allontanando virtualmente gli strumenti dai microfoni e spingendoli sul fondo della traccia.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Inganno del Finto Finale.</span>Uno dei trucchi di produzione e arrangiamento più celebri del nascente rock progressivo avviene a ridosso del settimo minuto. Dopo un crescendo caotico e una rullata di batteria, il brano sembra finire bruscamente. Il master tape scorre nel silenzio totale per diversi secondi, ingannando gli ascoltatori dell'epoca (e i DJ radiofonici) che credevano l'album concluso, per poi esplodere improvvisamente nell'ultima, violenta ripresa.</div>
+                    <p><strong>7:30 - "The Dance of the Puppets" e Saturazione del Nastro:</strong> Dopo il finto finale, il brano riparte introducendo un suono acuto e stridente simile a un organo da fiera (Calliope). La batteria di Giles è suonata con un'intensità tale che i preamplificatori del banco mixer vengono spinti deliberatamente in zona rossa, generando saturazione armonica (tape overdrive). I piatti e i tamburi perdono la loro definizione acustica originaria e si fondono (effetto glueing) in un blocco sonoro distorto e opprimente che sfuma gradualmente, chiudendo definitivamente il disco.</p>
+                `,
+                en: `
+                    <h3>The Court Of The Crimson King</h3>
+                    <p><strong>0:00 - The Mellotron's Impact and Drum Panning:</strong> The track opens with an iconic drum fill by Michael Giles, mixed with an extreme use of the stereo panorama: the hits on the toms physically move from one channel to the other. Immediately after, the main theme explodes, driven by the Mellotron (set to choir and string registers) and acoustic guitar. The overdubbing of multiple Mellotron tracks creates a gigantic wall of sound, but it's physiologically unstable due to the micro-variations in speed of the analog tapes inside the instrument, which generate a natural and eerie chorus effect.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Phantom Choir.</span>The majestic epic choirs heard are not sung live by the band in the studio. Ian McDonald used the pre-recorded sound banks of the Mellotron ("8-Voice Choir"). Since each key activated an individual magnetic tape lasting a maximum of 8 seconds, to prolong the notes without interruption McDonald had to orchestrate chord changes with perfect mechanical timing, lifting and repressing the keys before the tape reached its end.</div>
+                    <p><strong>1:30 - Emptying the Acoustic Scene (Verses):</strong> To contrast the harmonic density of the chorus, the verses are mixed in an extremely sparse way. The acoustic guitar is isolated and devoid of invasive reverbs (dry signal), while Greg Lake's voice is positioned exactly in the center (phantom center) with a very slight delay (slapback delay). This emptying of the mid-frequencies creates an intimate acoustic space that enhances, by pure dynamic contrast, the massive restarts of the chorus.</p>
+                    <p><strong>4:30 - "The Return of the Fire Witch" and Chamber Spatiality:</strong> In this instrumental section, the flute and keyboards intertwine over a dilated tempo. The mix engineer exploits dynamic panning to literally make the instruments "move" within the stereo field. Chamber reverbs with very long decay times are used to simulate the acoustics of a cathedral, virtually pushing the instruments away from the microphones and into the back of the track.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Deception of the Fake Ending.</span>One of the most famous production and arrangement tricks of early progressive rock happens around the seventh minute. After a chaotic crescendo and a drum roll, the track seems to end abruptly. The master tape runs in total silence for several seconds, fooling listeners of the time (and radio DJs) who thought the album was over, only to explode suddenly into the final, violent reprise.</div>
+                    <p><strong>7:30 - "The Dance of the Puppets" and Tape Saturation:</strong> After the fake ending, the song restarts introducing a sharp and strident sound similar to a fairground organ (Calliope). Giles' drums are played with such intensity that the mixer's preamplifiers are deliberately pushed into the red zone, generating harmonic saturation (tape overdrive). The cymbals and drums lose their original acoustic definition and blend together (glueing effect) into a distorted and oppressive sound block that gradually fades out, definitively closing the record.</p>
+                `
+            }
+        };
+
+        let mobileGalleryInterval;
+        let currentImgIndex = 0;
+
+        function startMobileGallery() {
+            const images = document.querySelectorAll('.band-gallery .flip-card');
+            if (images.length === 0) return;
+
+            function updateGallery() {
+                if (window.innerWidth <= 900) {
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                    images[currentImgIndex].classList.add('mobile-active');
+                    currentImgIndex = (currentImgIndex + 1) % images.length;
+                }
+            }
+
+            if (window.innerWidth <= 900) {
+                updateGallery();
+                if (!mobileGalleryInterval) {
+                    mobileGalleryInterval = setInterval(updateGallery, 5000);
+                }
+            }
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth <= 900) {
+                    if (!mobileGalleryInterval) {
+                        updateGallery();
+                        mobileGalleryInterval = setInterval(updateGallery, 5000);
+                    }
+                } else {
+                    clearInterval(mobileGalleryInterval);
+                    mobileGalleryInterval = null;
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderPlaylist();
+            startMobileGallery();
+            
+            const trackList = document.getElementById('tracklist');
+            if(trackList) trackList.scrollTop = 0;
+        });
+
+        // GESTIONE CAMBIO LINGUA GLOBALE
+        function setGlobalLang(lang) {
+            document.documentElement.lang = lang;
+            
+            document.querySelectorAll('.global-lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-lang-' + lang).classList.add('active');
+
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentId = ytPlayer ? ytPlayer.getAttribute('data-current-id') : null;
+            
+            if (currentId) {
+                const paraphraseContentHTML = generateParaphraseHTML(currentId);
+                document.getElementById('desktop-lyrics-view').innerHTML = paraphraseContentHTML;
+                document.getElementById('mobile-lyrics-content').innerHTML = paraphraseContentHTML;
+                
+                const guideContent = document.getElementById('guide-content');
+                if (guideData[currentId] && guideData[currentId][lang]) {
+                    guideContent.innerHTML = guideData[currentId][lang];
+                }
+            }
+        }
+
+        // Funzione per generare il blocco HTML della Parafrasi
+        function generateParaphraseHTML(id) {
+            const data = paraphraseData[id] || { en: "Description not available.", it: "Descrizione non disponibile." };
+            const currentLang = document.documentElement.lang;
+
+            return `
+                <div class="lyrics-wrapper" style="padding: 10px 15px;">
+                    <div class="lyrics-content-area">
+                        <div class="lyrics-col eng active" style="width: 100%; white-space: normal;">
+                            <h4 style="margin: 0 0 2px 0; padding: 0; line-height: 1.2;">
+                                <span class="lang-it">Di cosa parla la canzone?</span>
+                                <span class="lang-en">What is this song about?</span>
+                            </h4><div style="white-space: pre-line; font-style: italic; color: #555; margin: 0; padding: 0; line-height: 1.5;">${data[currentLang]}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPlaylist() {
+            const container = document.getElementById('tracklist');
+            let html = '';
+
+            playlist.forEach((track, index) => {
+                html += `
+                    <div class="track-row" id="track-${track.id}" onclick="playTrack('${track.id}', '${track.ytId}', '${track.title.replace(/'/g, "\\'")}', this)">
+                        <div class="track-num">
+                            <span>${index + 1}</span>
+                            <div class="playing-icon">
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                            </div>
+                        </div>
+                        <div class="track-info">
+                            <div class="track-title">${track.title}</div>
+                            <div class="track-artist">King Crimson</div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function playTrack(id, ytId, title, rowElement) {
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentPlayingId = ytPlayer.getAttribute('data-current-id');
+            const currentLang = document.documentElement.lang;
+
+            if (currentPlayingId !== id) {
+                ytPlayer.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`;
+                ytPlayer.setAttribute('data-current-id', id);
+            }
+
+            const rows = document.querySelectorAll('.track-row');
+            rows.forEach(r => r.classList.remove('active'));
+            if(rowElement) rowElement.classList.add('active');
+
+            // Parafrasi
+            const paraphraseContentHTML = generateParaphraseHTML(id);
+            document.getElementById('desktop-lyrics-view').innerHTML = paraphraseContentHTML;
+            document.getElementById('mobile-lyrics-content').innerHTML = paraphraseContentHTML;
+            document.getElementById('tracklist-wrapper').classList.add('lyrics-active');
+            document.getElementById('tracklist').scrollTop = 0;
+
+            // Guida
+            const guideContent = document.getElementById('guide-content');
+            if (guideData[id] && guideData[id][currentLang]) {
+                guideContent.innerHTML = guideData[id][currentLang];
+                const gBox = document.querySelector('.guide-box');
+                if(gBox) gBox.scrollTop = 0;
+            } else {
+                guideContent.innerHTML = currentLang === 'it' ? "<p>Guida all'ascolto non disponibile.</p>" : "<p>Listening guide not available.</p>";
+            }
+
+            const guidePanel = document.getElementById('guide-panel');
+            if(guidePanel && !guidePanel.classList.contains('open')) {
+                toggleGuide();
+            }
+        }
+
+        function resetTracklist() {
+            document.getElementById('tracklist-wrapper').classList.remove('lyrics-active');
+        }
+
+        // --- FUNZIONI ACCORDION MASTER ---
+        function toggleLesson() { 
+            const content = document.getElementById('main-content');
+            const videoLayer = document.getElementById('video-layer');
+            const btn = document.getElementById('btn-inizia');
+            const btnTxtIt = document.getElementById('btn-txt-it');
+            const btnTxtEn = document.getElementById('btn-txt-en');
+            const icon = btn.querySelector('.icon-plus');
+            
+            const isOpening = !content.classList.contains('active');
+            
+            if (isOpening) {
+                content.classList.add('active'); 
+                btn.classList.add('active'); 
+                btnTxtIt.textContent = "Chiudi Esperienza"; 
+                btnTxtEn.textContent = "Close Experience";
+                icon.textContent = "×"; 
+                videoLayer.classList.add('video-hidden');
+            } else {
+                content.classList.remove('active'); 
+                btn.classList.remove('active'); 
+                btnTxtIt.textContent = "Inizia Esperienza"; 
+                btnTxtEn.textContent = "Start Experience"; 
+                icon.textContent = "→"; 
+                videoLayer.classList.remove('video-hidden');
+                
+                const ytPlayer = document.getElementById('youtube-player');
+                if(ytPlayer) ytPlayer.src = "about:blank";
+            }
+        }
+
+        function toggleLyricsAccordion() {
+            const panel = document.getElementById('lyrics-panel');
+            const btn = document.getElementById('lyrics-btn');
+            if (panel.classList.contains('open')) { 
+                panel.classList.remove('open'); btn.classList.remove('active'); 
+            } else { 
+                panel.classList.add('open'); btn.classList.add('active'); 
+            }
+        }
+
+        function toggleGuide() {
+            const panel = document.getElementById('guide-panel');
+            const btn = document.getElementById('guide-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleHistory() {
+            const panel = document.getElementById('history-panel');
+            const btn = document.getElementById('history-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleDisclaimer() {
+            const panel = document.getElementById('disclaimer-panel');
+            const btn = document.getElementById('disclaimer-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleMobileTracks() {
+            const trackList = document.getElementById('tracklist');
+            const wrapper = document.getElementById('tracklist-wrapper');
+            const trigger = document.querySelector('.mobile-track-trigger');
+            if (trackList.classList.contains('mobile-open')) {
+                trackList.classList.remove('mobile-open'); wrapper.classList.remove('opened'); wrapper.classList.add('closed'); trigger.classList.remove('active');
+            } else {
+                trackList.classList.add('mobile-open'); wrapper.classList.remove('closed'); wrapper.classList.add('opened'); trigger.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

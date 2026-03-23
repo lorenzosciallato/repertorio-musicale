@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Beatles | Audio Repertoire</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- VARIABILI & RESET --- */
+        :root {
+            --bg-color: #f0f0f2;
+            --paper-color: #fdfbf7;
+            --ink-color: #1a1a1a;
+            --accent-color: #375a7f;
+            --pop-yellow: #ffee00;
+            --font-title: 'Abril Fatface', cursive;
+            --font-body: 'Inter', sans-serif;
+            --hover-row: rgba(55, 90, 127, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: var(--font-body);
+            color: var(--ink-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px;
+            width: 100%;
+            overflow-x: hidden; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- MULTILINGUA CSS LOGIC --- */
+        html[lang="it"] .lang-en { display: none !important; }
+        html[lang="en"] .lang-it { display: none !important; }
+
+        /* --- BACKGROUND --- */
+        .video-background-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden;
+            background: #e0e0e5; 
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .video-foreground {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; transition: opacity 0.8s ease; opacity: 1;
+        }
+
+        .video-foreground img.bg-image {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.1; 
+            filter: grayscale(100%) sepia(1) hue-rotate(190deg) contrast(1.2);
+            mix-blend-mode: multiply;
+        }
+
+        .video-hidden { opacity: 0; }
+
+        /* --- HEADER --- */
+        header { text-align: center; margin-top: 3rem; margin-bottom: 1rem; padding: 0 1rem; position: relative; z-index: 4; }
+        
+        .main-logo {
+            max-width: 90%; width: 350px; height: auto;
+            display: block; margin: 0 auto;
+        }
+
+        .subtitle-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .subtitle {
+            font-family: var(--font-body); font-size: 1.5rem; color: var(--accent-color); font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 4px;
+        }
+
+        .global-lang-switch {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .global-lang-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 4px;
+            color: #888;
+            transition: all 0.3s;
+        }
+        
+        .global-lang-btn.active {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        /* --- CONTENITORE PRINCIPALE --- */
+        .content-card {
+            background: var(--paper-color); padding: 3rem; margin: 0 auto;
+            width: 90%; max-width: 1200px; position: relative;
+            border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); z-index: 4;
+            margin-bottom: 2rem; margin-top: 2rem;
+        }
+        @media (max-width: 600px) { 
+            .content-card { padding: 1.5rem; width: 95%; margin-top: 1rem; } 
+            .main-logo { width: 280px; }
+            .subtitle { font-size: 1.2rem; letter-spacing: 2px; }
+            .global-lang-btn { padding: 5px 10px; font-size: 0.8rem; }
+        }
+
+        /* --- ACCORDION GENERALE --- */
+        .accordion-item { margin-bottom: 1rem; border-bottom: none; }
+        
+        .master-header {
+            background: transparent; border: 2px solid var(--accent-color); border-radius: 8px;
+            padding: 15px 20px; justify-content: center; font-size: 1.5rem; 
+            color: var(--accent-color); width: 100%; margin-bottom: 1rem;
+            cursor: pointer; display: flex; align-items: center; font-family: var(--font-title);
+            transition: all 0.3s ease;
+        }
+        .master-header:hover { background: rgba(55, 90, 127, 0.1); }
+        .master-header .icon-plus { margin-left: 15px; font-family: var(--font-body); font-weight: 300; transition: transform 0.3s; }
+
+        .accordion-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, opacity 0.5s;
+            padding: 0; opacity: 0;
+        }
+        .accordion-content.active { max-height: 20000px; opacity: 1; padding-top: 2rem; }
+        .master-header.active .icon-plus { transform: rotate(90deg); }
+
+        /* --- LAYOUT PLAYER --- */
+        .playlist-layout {
+            display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; align-items: start; margin-bottom: 2rem;
+        }
+        @media (max-width: 900px) { .playlist-layout { grid-template-columns: 1fr; } }
+
+        /* --- AUDIO PLAYER CONTAINER --- */
+        .player-wrapper {
+            position: sticky; top: 20px; background: #fff; border-radius: 12px;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 10; border: 1px solid #eee;
+        }
+
+        .youtube-container { 
+            position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #000; 
+        }
+        .youtube-container iframe { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; 
+        }
+
+        /* --- TRACKLIST E MESSAGGI --- */
+        .tracklist-column { display: flex; flex-direction: column; }
+
+        .scroll-disclaimer {
+            font-size: 0.85rem; color: #665500; margin-bottom: 12px; font-style: italic; text-align: center; 
+            background-color: rgba(255, 238, 0, 0.2); border: 2px dashed #e6c200; padding: 10px; border-radius: 8px; width: 100%;
+        }
+        .msg-desktop { display: block; }
+        .msg-mobile { display: none; }
+        
+        .mobile-track-trigger {
+            display: none; width: 100%; background: #fff; border: 2px dashed #ddd; border-radius: 8px;
+            padding: 12px 20px; font-family: var(--font-title); font-size: 1.2rem; color: var(--accent-color);
+            justify-content: space-between; align-items: center; cursor: pointer; margin-top: 10px; margin-bottom: 10px; transition: all 0.3s;
+        }
+        .mobile-track-trigger:hover { background: #fdfdfd; border-color: var(--accent-color); }
+        .mobile-track-trigger.active { background: #f0f4f8; border-style: solid; border-color: var(--accent-color); }
+        .trigger-arrow { transition: transform 0.3s; font-size: 1rem; }
+        .mobile-track-trigger.active .trigger-arrow { transform: rotate(180deg); }
+
+        .tracklist-container { 
+            width: 100%; max-height: 500px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #ccc #f0f0f2;
+            padding-right: 5px; transition: max-height 0.5s ease-out, opacity 0.5s;
+        }
+        .tracklist-container::-webkit-scrollbar { width: 6px; }
+        .tracklist-container::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+
+        .track-row {
+            display: grid; grid-template-columns: 40px 1fr 40px; padding: 12px 10px; border-bottom: 1px solid rgba(0,0,0,0.05);
+            cursor: pointer; transition: background 0.2s, padding-left 0.2s; border-radius: 6px; align-items: center;
+        }
+        .track-row:hover { background-color: var(--hover-row); padding-left: 15px; }
+        .track-row.active { background-color: var(--hover-row); border-left: 4px solid var(--accent-color); }
+
+        .track-num { font-size: 0.9rem; color: #888; font-weight: 700; }
+        .track-row.active .track-num { display: none; }
+        .track-row.active .playing-icon { display: inline-block; }
+        
+        .playing-icon { display: none; width: 14px; height: 14px; position: relative; }
+        .bar { background: var(--accent-color); bottom: 0; position: absolute; width: 3px; animation: sound 0ms -800ms linear infinite alternate; }
+        .bar:nth-child(1) { left: 0px; height: 10px; animation-duration: 474ms; }
+        .bar:nth-child(2) { left: 5px; height: 6px; animation-duration: 433ms; }
+        .bar:nth-child(3) { left: 10px; height: 12px; animation-duration: 407ms; }
+        @keyframes sound { 0% { opacity: .35; height: 3px; } 100% { opacity: 1; height: 14px; } }
+
+        .track-info { display: flex; flex-direction: column; }
+        .track-title { font-weight: 700; font-size: 1rem; color: var(--ink-color); }
+        .track-row.active .track-title { color: var(--accent-color); }
+        .track-artist { font-size: 0.85rem; color: #666; }
+
+        /* --- STILI TESTI (LYRICS) TOGGLE E PULSANTI --- */
+        .btn-back-tracks {
+            display: none; width: 100%; padding: 8px; margin-bottom: 10px; background: var(--pop-yellow); border: none;
+            color: var(--ink-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; font-weight: 900; transition: background 0.3s; text-align: center;
+        }
+        .btn-back-tracks:hover { background: #e6d600; }
+
+        .desktop-lyrics-view { display: none; }
+        
+        .lyrics-wrapper { background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .lyrics-toggle { display: flex; gap: 10px; margin-bottom: 15px; justify-content: center; }
+        
+        .flag-btn { 
+            background: #f0f0f2; border: 2px solid #ddd; border-radius: 6px; padding: 8px 15px; 
+            font-size: 1rem; cursor: pointer; transition: all 0.3s; color: var(--ink-color); 
+        }
+        .flag-btn:hover { background: #e8e8e8; }
+        .flag-btn.active { 
+            background: #fff; border-color: var(--accent-color); font-weight: bold; 
+            color: var(--accent-color); box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+        }
+
+        .lyrics-content-area { max-height: 350px; overflow-y: auto; scrollbar-width: thin; padding-right: 5px; }
+        .lyrics-content-area::-webkit-scrollbar { width: 6px; }
+        .lyrics-content-area::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+        
+        .lyrics-col { display: none; white-space: pre-wrap; color: #333; font-size: 0.9rem; }
+        .lyrics-col.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        .lyrics-col h4 { color: var(--accent-color); margin-bottom: 10px; font-family: var(--font-title); font-size: 1.1rem; }
+        .lyrics-col.ita { font-style: italic; color: #555; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* GESTIONE LOGICA DESKTOP (Mostra Lyrics, Nascondi Lista) */
+        @media (min-width: 901px) {
+            .tracklist-wrapper.lyrics-active #tracklist { display: none; }
+            .tracklist-wrapper.lyrics-active #desktop-lyrics-view { display: block; }
+            .tracklist-wrapper.lyrics-active #btn-back-tracks { display: block; }
+            .tracklist-wrapper.lyrics-active .msg-desktop { display: none; }
+            .mobile-lyrics-accordion { display: none; } 
+        }
+
+        /* GESTIONE LOGICA MOBILE */
+        @media (max-width: 900px) {
+            .tracklist-wrapper.lyrics-active #desktop-lyrics-view { display: none !important; }
+            .tracklist-wrapper.lyrics-active #btn-back-tracks { display: none !important; }
+            
+            /* Su mobile l'accordion dei testi è visibile */
+            .mobile-lyrics-accordion { display: block; margin-top: 1rem; border-top: 1px solid #eee; }
+        }
+
+        /* --- ACCORDIONS COMUNI (Guida, Storia, Mobile Lyrics) --- */
+        .guide-accordion-wrapper { margin-top: 1rem; border-top: 1px solid #eee; }
+        .guide-trigger {
+            background: #fff; border: 2px dashed #ddd; border-radius: 8px; width: 100%; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s; margin-top: 1rem;
+        }
+        .guide-trigger:hover { border-color: var(--accent-color); background: #fdfdfd; }
+        .guide-trigger.active { border-color: var(--accent-color); background: #f0f4f8; border-style: solid; }
+        .guide-trigger span { font-family: var(--font-title); font-size: 1.4rem; color: var(--accent-color); }
+        .guide-arrow { font-size: 1.2rem; transition: transform 0.3s; color: var(--accent-color); }
+        .guide-trigger.active .guide-arrow { transform: rotate(180deg); }
+
+        .guide-panel { max-height: 0; overflow: hidden; transition: max-height 0.6s ease-out, opacity 0.5s; opacity: 0; background: #fff; border-radius: 0 0 8px 8px; }
+        .guide-panel.open { max-height: 80000px; opacity: 1; padding: 20px 0; }
+
+        .guide-grid { display: grid; grid-template-columns: 2fr 1.5fr; gap: 2rem; align-items: start; }
+        .guide-box { background: #fff; padding: 1rem 0; max-height: 600px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--accent-color) #f0f0f2; padding-right: 15px; }
+        .guide-box::-webkit-scrollbar { width: 8px; }
+        .guide-box::-webkit-scrollbar-thumb { background-color: var(--accent-color); border-radius: 10px; }
+        
+        .guide-content p { margin-bottom: 1rem; font-size: 1rem; color: #333; }
+        .guide-content strong { color: var(--accent-color); font-weight: 900; }
+
+        .curiosity-box { background: #fffcf0; border-left: 4px solid var(--pop-yellow); padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0; font-size: 0.95rem; font-style: italic; color: #554; }
+        .curiosity-label { font-weight: bold; font-style: normal; color: #d4a000; text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 5px; }
+
+        /* --- FLIP CARDS CHIRURGICHE --- */
+        .flip-card {
+            perspective: 1000px;
+            cursor: pointer;
+            width: 100%;
+            display: block;
+            margin-bottom: 15px;
+        }
+        .wiki-figure .flip-card { margin-bottom: 0; } /* Reset dentro al testo */
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-card-front, .flip-card-back {
+            width: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        
+        /* Il front detta l'altezza del blocco in modo naturale */
+        .flip-card-front {
+            position: relative;
+            height: auto;
+            z-index: 2;
+        }
+        
+        /* Il back si sovrappone esattamente e si adatta all'altezza */
+        .flip-card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: var(--accent-color);
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .flip-card-back strong { color: var(--pop-yellow); font-family: var(--font-title); font-size: 1.1rem; margin-bottom: 5px; line-height: 1.2; }
+        .flip-card-back small { font-size: 0.85rem; opacity: 0.9; }
+
+        /* Applica i bordi arrotondati alle facce, l'immagine li erediterà */
+        .flip-card-front img, .flip-card-back { border-radius: inherit; }
+        
+        .band-gallery .flip-card-front, .band-gallery .flip-card-back {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .wiki-figure .flip-card-front, .wiki-figure .flip-card-back {
+            border-radius: 4px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #ccc;
+        }
+        .wiki-figure .flip-card-back { border: none; }
+
+        /* Immagini base */
+        .gallery-img, .wiki-img { display: block; width: 100%; height: auto; object-fit: cover; }
+        .wiki-img { filter: sepia(0.1) contrast(1.05); transition: all 0.3s; border: none; box-shadow: none; border-radius: 0; }
+        .gallery-img { border: none; box-shadow: none; border-radius: 0; }
+        .flip-card-front:hover .wiki-img { filter: none; }
+
+        /* --- STILE GALLERIA IMMAGINI --- */
+        .band-gallery { display: flex; flex-direction: column; gap: 20px; max-height: 650px; overflow-y: auto; padding-right: 10px; }
+        .band-gallery::-webkit-scrollbar { width: 4px; }
+        .band-gallery::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
+        .band-gallery .flip-card { height: auto; margin-bottom: 0; }
+
+        /* --- STILE WIKI / STORIA --- */
+        .wiki-content { font-family: 'Inter', sans-serif; color: #333; line-height: 1.7; padding: 0 10px; text-align: justify; }
+        .wiki-title { font-family: var(--font-title); color: var(--accent-color); font-size: 1.4rem; margin-top: 10px; margin-bottom: 5px; letter-spacing: 1px; }
+        .wiki-subtitle { font-weight: 900; color: #d4a000; text-transform: uppercase; font-size: 0.85rem; margin-top: 40px; margin-bottom: 10px; }
+        .wiki-divider { border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); margin: 30px 0; overflow: hidden; }
+        .wiki-figure { margin: 15px 0; width: 100%; }
+        .wiki-figure figcaption { font-size: 0.75rem; color: #666; font-style: italic; text-align: center; margin-top: 5px; display: block; }
+        .wiki-gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 30px 0 40px 0; }
+        .wiki-gallery-grid .wiki-figure { height: 100%; margin: 0; }
+        .wiki-gallery-grid .wiki-img { height: 100%; object-fit: cover; }
+
+        .btn-close-bottom { width: 100%; padding: 12px; margin-top: 15px; background: #fff; border: 1px solid #ddd; color: var(--accent-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; font-weight: 700; transition: background 0.3s; text-align: center; }
+        .btn-close-bottom:hover { background: #f0f4f8; border-color: var(--accent-color); }
+        .track-close-desktop-hidden { display: none; }
+
+        @media (min-width: 901px) {
+            .wiki-figure.right { float: right; width: 40%; margin-left: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.left { float: left; width: 40%; margin-right: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.full { clear: both; width: 100%; margin: 30px 0; }
+        }
+
+        @media (max-width: 900px) {
+            .msg-desktop { display: none !important; }
+            .msg-mobile { display: block !important; text-align: center; }
+            .guide-grid { grid-template-columns: 1fr; }
+            .band-gallery { display: block; order: -1; max-height: none; overflow: hidden; padding-right: 0; margin-bottom: 10px; }
+            
+            /* Gestione Flip Card Slider su mobile */
+            .band-gallery .flip-card { display: none; animation: fadeInSlide 0.5s ease-in-out; margin-bottom: 0; }
+            .band-gallery .flip-card.mobile-active { display: block; }
+            
+            @keyframes fadeInSlide { from { opacity: 0; } to { opacity: 1; } }
+            .wiki-gallery-grid { grid-template-columns: 1fr; gap: 20px; }
+            .mobile-track-trigger { display: flex; } 
+            .tracklist-wrapper.opened .track-close-desktop-hidden { display: block; }
+            .tracklist-container { max-height: 0; overflow: hidden; opacity: 0; }
+            .tracklist-container.mobile-open { max-height: 5000px; overflow-y: visible; opacity: 1; margin-bottom: 1rem; }
+            .tracklist-wrapper.closed .scroll-disclaimer { display: none; }
+            .tracklist-wrapper.opened .scroll-disclaimer { display: block; }
+            .guide-box { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+            .lyrics-content-area { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-background-wrapper" id="bg-wrapper">
+        <div class="video-foreground" id="video-layer">
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123224/sfondo_tnvvvp.jpg" alt="The Beatles Background" class="bg-image">
+        </div>
+        <div class="video-filter-overlay"></div>
+    </div>
+
+    <header>
+        <h1>
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123223/logo_s6mr3q.png" alt="The Beatles Logo" class="main-logo">
+        </h1>
+        <div class="subtitle-wrapper">
+            <div class="subtitle">
+                <span class="lang-it">Repertorio</span>
+                <span class="lang-en">Full Repertoire</span>
+            </div>
+            <div class="global-lang-switch">
+                <button id="btn-lang-it" class="global-lang-btn active" onclick="setGlobalLang('it')">ITA</button>
+                <button id="btn-lang-en" class="global-lang-btn" onclick="setGlobalLang('en')">ENG</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-card">
+        
+        <div class="accordion-item">
+            <button class="master-header" id="btn-inizia" onclick="toggleLesson()">
+                <span id="btn-text">
+                    <span class="lang-it" id="btn-txt-it">Inizia Esperienza</span>
+                    <span class="lang-en" id="btn-txt-en">Start Experience</span>
+                </span> 
+                <span class="icon-plus">→</span>
+            </button>
+            
+            <div class="accordion-content" id="main-content">
+                
+                <div class="playlist-layout">
+                    <div class="player-wrapper" id="player-wrapper-ui">
+                        <div class="youtube-container">
+                            <iframe id="youtube-player" src="about:blank" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+                    </div>
+
+                    <div class="tracklist-column tracklist-wrapper closed" id="tracklist-wrapper">
+                        
+                        <button class="mobile-track-trigger" onclick="toggleMobileTracks()">
+                            <span>
+                                <span class="lang-it">Brani</span>
+                                <span class="lang-en">Tracks</span>
+                            </span>
+                            <span class="trigger-arrow">▼</span>
+                        </button>
+
+                        <div class="scroll-disclaimer msg-desktop">
+                            <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere l'intera lista di brani</span>
+                            <span class="lang-en">Use your keyboard or mouse wheel to scroll through the full tracklist</span>
+                        </div>
+                        <div class="scroll-disclaimer msg-mobile">
+                            <span class="lang-it">Clicca e scorri per vedere l'intera lista di brani</span>
+                            <span class="lang-en">Tap and scroll to see the full tracklist</span>
+                        </div>
+
+                        <button class="btn-back-tracks" id="btn-back-tracks" onclick="resetTracklist()">
+                            <span class="lang-it">← Torna alla lista brani</span>
+                            <span class="lang-en">← Back to tracklist</span>
+                        </button>
+
+                        <div class="desktop-lyrics-view" id="desktop-lyrics-view">
+                            </div>
+
+                        <div class="tracklist-container" id="tracklist">
+                            </div>
+                        
+                        <button class="btn-close-bottom track-close-desktop-hidden" onclick="toggleMobileTracks()">
+                            <span class="lang-it">↑ Chiudi Lista Brani</span>
+                            <span class="lang-en">↑ Close Tracklist</span>
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper mobile-lyrics-accordion" style="border-top: none;">
+                    <button class="guide-trigger" id="lyrics-btn" onclick="toggleLyricsAccordion()">
+                        <span>
+                            <span class="lang-it">Parafrasi</span>
+                            <span class="lang-en">Paraphrase</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="lyrics-panel">
+                        <div class="guide-box" style="max-height: none; overflow: visible;">
+                            <div id="mobile-lyrics-content">
+                                <p style="text-align:center; color:#888; margin-top:30px; margin-bottom:30px;">
+                                    <span class="lang-it">Seleziona un brano dalla playlist per visualizzare la parafrasi.</span>
+                                    <span class="lang-en">Select a track from the playlist to view the paraphrase.</span>
+                                </p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleLyricsAccordion()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Parafrasi</span>
+                            <span class="lang-en">↑ Close Paraphrase</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper">
+                    <button class="guide-trigger" id="guide-btn" onclick="toggleGuide()">
+                        <span>
+                            <span class="lang-it">Guida all'Ascolto & Curiosità</span>
+                            <span class="lang-en">Listening Guide & Trivia</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="guide-panel">
+                        <div class="guide-grid">
+                            <div>
+                                <div class="guide-box">
+                                    <div id="guide-content" class="guide-content">
+                                        <p style="text-align:center; color:#888; margin-top:50px;">
+                                            <span class="lang-it">Seleziona un brano dalla playlist per visualizzare qui i dettagli.</span>
+                                            <span class="lang-en">Select a track from the playlist to view details here.</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="scroll-disclaimer msg-desktop" style="margin-top: 10px;">
+                                    <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere la guida</span>
+                                    <span class="lang-en">Use your keyboard or mouse wheel to scroll through the guide</span>
+                                </div>
+                            </div>
+
+                            <div class="band-gallery">
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123227/1_ndvob0.webp" alt="Lennon & Paul"></div>
+                                        <div class="flip-card-back"><strong>John & Paul</strong><small>Source: americansongwriter.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123435/2_nbyyem.jpg
+" alt="Sul Letto"></div>
+                                        <div class="flip-card-back"><strong>The Beatles</strong><small>Source: tumblr.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123223/3_nxzdmu.avif" alt="Donne Fans"></div>
+                                        <div class="flip-card-back"><strong>Beatlemania</strong><small>Source: dailymail.co.uk</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123221/4_osjnot.jpg
+" alt="Abbey Road"></div>
+                                        <div class="flip-card-back"><strong>Abbey Road</strong><small>Source: openculture.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123222/5_m9itm8.jpg
+" alt="George Harrison"></div>
+                                        <div class="flip-card-back"><strong>George Harrison</strong><small>Source: pinterest.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123221/6_rkxifc.jpg
+" alt="Rooftop Concert"></div>
+                                        <div class="flip-card-back"><strong>Rooftop Concert</strong><small>Source: beatlesbible.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123228/7_brqvsm.webp
+" alt="Ringo Starr"></div>
+                                        <div class="flip-card-back"><strong>Ringo Starr</strong><small>Source: cheatsheet.com</small></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn-close-bottom" onclick="toggleGuide()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Guida</span>
+                            <span class="lang-en">↑ Close Guide</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="history-btn" onclick="toggleHistory()">
+                        <span>
+                            <span class="lang-it">Contesto Storico & Artistico</span>
+                            <span class="lang-en">Historical & Artistic Context</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="history-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Capitolo 1: Le Origini a Liverpool e l'Apprendistato ad Amburgo (1957-1962)</span>
+                                        <span class="lang-en">Chapter 1: The Origins in Liverpool and the Apprenticeship in Hamburg (1957-1962)</span>
+                                    </h3>
+                                    
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">Dallo Skiffle al Rock and Roll</span>
+                                        <span class="lang-en">From Skiffle to Rock and Roll</span>
+                                    </h4>
+
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123216/8_err93e.webp
+" alt="Paul McCartney e John Lennon nel 1957" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">McCartney & Lennon '57</span><span class="lang-en">McCartney & Lennon '57</span></strong>
+                                                    <small>Source: townsquare.media</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Paul McCartney e John Lennon nel 1957</span>
+                                            <span class="lang-en">Paul McCartney and John Lennon in 1957</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Nella seconda metà degli anni Cinquanta, la città portuale di Liverpool è il punto di ingresso in Gran Bretagna dei dischi di rock and roll americano. In questo contesto, nel luglio 1957, avviene lo storico incontro tra il diciassettenne John Lennon e il quindicenne Paul McCartney durante una festa parrocchiale.</p>
+                                    <p class="lang-en">In the second half of the 1950s, the port city of Liverpool was the entry point for American rock and roll records into Great Britain. In this context, in July 1957, the historic meeting between seventeen-year-old John Lennon and fifteen-year-old Paul McCartney took place during a parish festival.</p>
+
+                                    <p class="lang-it">Ai due si unisce presto il chitarrista George Harrison. La formazione si stabilizza solo nel 1962 con l'ingresso del batterista Ringo Starr, che sostituisce Pete Best.</p>
+                                    <p class="lang-en">Guitarist George Harrison soon joined the two. The lineup only stabilized in 1962 with the arrival of drummer Ringo Starr, who replaced Pete Best.</p>
+
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123214/9_vueolt.jpg
+" alt="I Beatles agli esordi" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">I Beatles agli esordi</span><span class="lang-en">The Early Beatles</span></strong>
+                                                    <small>Source: express.co.uk</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">I Beatles agli esordi in pelle ad Amburgo</span>
+                                            <span class="lang-en">The early Beatles in leather in Hamburg</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Fondamentale per la loro crescita tecnica è il periodo trascorso ad Amburgo (Germania), dove suonano nei club a luci rosse per otto ore a notte, affinando la coesione musicale e lo stile scenico ribelle, inizialmente caratterizzato da giacche di pelle e comportamenti rudi.</p>
+                                    <p class="lang-en">Fundamental to their technical growth was the time spent in Hamburg (Germany), where they played in red-light district clubs for eight hours a night, refining their musical cohesion and rebellious stage style, initially characterized by leather jackets and rough behavior.</p>
+
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">La Svolta di Brian Epstein</span>
+                                        <span class="lang-en">Brian Epstein's Turning Point</span>
+                                    </h4>
+
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123217/10_ayl0xz.jpg
+" alt="La band nel '63" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">La band nel '63</span><span class="lang-en">The band in '63</span></strong>
+                                                    <small>Source: pinterest.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">La band nel '63, con il classico look in giacca e cravatta che li ha resi icone.</span>
+                                            <span class="lang-en">The band in '63, with the classic suit and tie look that made them icons.</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Il manager Brian Epstein intuisce il potenziale commerciale del gruppo ma impone una "pulizia" dell'immagine: via le giacche di pelle, dentro i completi eleganti e il celebre taglio a caschetto (mop-top). Questo cambio di look rende il rock and roll accessibile alla classe media britannica.</p>
+                                    <p class="lang-en">Manager Brian Epstein sensed the group's commercial potential but imposed a "clean-up" of their image: out with the leather jackets, in with the elegant suits and the famous mop-top haircut. This change of look made rock and roll accessible to the British middle class.</p>
+                                </div>
+
+                                <hr class="wiki-divider">
+
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Capitolo 2: La Beatlemania e l'Invasione Britannica (1963-1965)</span>
+                                        <span class="lang-en">Chapter 2: Beatlemania and the British Invasion (1963-1965)</span>
+                                    </h3>
+                                    
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">Il Fenomeno di Massa</span>
+                                        <span class="lang-en">The Mass Phenomenon</span>
+                                    </h4>
+
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123216/11_crpovx.jpg
+" alt="L'iconica apparizione all'Ed Sullivan show" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Ed Sullivan Show</span><span class="lang-en">Ed Sullivan Show</span></strong>
+                                                    <small>Source: taschen.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">L'iconica apparizione all'Ed Sullivan show</span>
+                                            <span class="lang-en">The iconic appearance on the Ed Sullivan show</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Nel 1963, con i singoli Please Please Me e She Loves You, esplode nel Regno Unito la Beatlemania: un fenomeno sociologico caratterizzato da isteria collettiva, urla assordanti ai concerti e idolatria giovanile.</p>
+                                    <p class="lang-en">In 1963, with the singles Please Please Me and She Loves You, Beatlemania exploded in the United Kingdom: a sociological phenomenon characterized by collective hysteria, deafening screams at concerts, and youth idolatry.</p>
+
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123213/12_t7zrqt.jpg
+" alt="Fan in delirio" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Beatlemania</span><span class="lang-en">Beatlemania</span></strong>
+                                                    <small>Source: pinterest.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Fan in delirio durante un'apparizione dei Beatles, fenomeno noto come Beatlemania.</span>
+                                            <span class="lang-en">Delirious fans during a Beatles appearance, a phenomenon known as Beatlemania.</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">L'anno successivo, il gruppo sbarca negli Stati Uniti. La loro apparizione all'Ed Sullivan Show (febbraio 1964) viene vista da 73 milioni di americani, segnando l'inizio della "British Invasion", l'apertura del mercato USA alle band inglesi.</p>
+                                    <p class="lang-en">The following year, the group landed in the United States. Their appearance on the Ed Sullivan Show (February 1964) was watched by 73 million Americans, marking the beginning of the "British Invasion", the opening of the US market to English bands.</p>
+
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">Il Cinema e l'Immagine</span>
+                                        <span class="lang-en">Cinema and Image</span>
+                                    </h4>
+
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123214/13_jthnsi.jpg
+" alt="Celebre scatto di Dezo Hoffmann" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Dezo Hoffmann</span><span class="lang-en">Dezo Hoffmann</span></strong>
+                                                    <small>Source: pinterest.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Celebre scatto di Dezo Hoffmann divenuto simbolo dell'energia giovanile.</span>
+                                            <span class="lang-en">Famous shot by Dezo Hoffmann that became a symbol of youth energy.</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">I Beatles rivoluzionano anche il rapporto tra musica e cinema con il film A Hard Day's Night (1964), che codifica l'estetica del videoclip moderno e consolida le quattro personalità distinte: Lennon il leader intellettuale, McCartney il romantico, Harrison il mistico introverso, Starr il simpatico.</p>
+                                    <p class="lang-en">The Beatles also revolutionized the relationship between music and cinema with the film A Hard Day's Night (1964), which codified the aesthetics of the modern music video and consolidated the four distinct personalities: Lennon the intellectual leader, McCartney the romantic, Harrison the introverted mystic, Starr the funny one.</p>
+                                </div>
+
+                                <hr class="wiki-divider">
+
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Capitolo 3: L'Evoluzione Artistica e l'Addio ai Concerti (1965-1966)</span>
+                                        <span class="lang-en">Chapter 3: Artistic Evolution and Farewell to Concerts (1965-1966)</span>
+                                    </h3>
+
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">La Svolta della Maturità</span>
+                                        <span class="lang-en">The Turning Point of Maturity</span>
+                                    </h4>
+
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123217/14_ijsiho.jpg
+" alt="George Harrison con Ravi Shankar" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Harrison & Shankar</span><span class="lang-en">Harrison & Shankar</span></strong>
+                                                    <small>Source: exclaim.ca</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">George Harrison con il maestro Ravi Shankar durante una lezione di sitar (1967).</span>
+                                            <span class="lang-en">George Harrison with master Ravi Shankar during a sitar lesson (1967).</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Intorno al 1965, influenzati da Bob Dylan e dall'uso di sostanze psicotrope, i testi dei Beatles passano dalle canzoni d'amore adolescenziali a temi introspettivi e sociali (Help!, Nowhere Man).</p>
+                                    <p class="lang-en">Around 1965, influenced by Bob Dylan and the use of psychotropic substances, the Beatles' lyrics shifted from teenage love songs to introspective and social themes (Help!, Nowhere Man).</p>
+
+                                    <p class="lang-it">Musicalmente, l'album Rubber Soul (1965) introduce strumenti esotici come il sitar indiano, segnando il distacco dal pop tradizionale.</p>
+                                    <p class="lang-en">Musically, the album Rubber Soul (1965) introduced exotic instruments such as the Indian sitar, marking a departure from traditional pop.</p>
+
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">La Fine dei Tour</span>
+                                        <span class="lang-en">The End of Touring</span>
+                                    </h4>
+
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123212/15_grd7ut.jpg
+" alt="Candlestick Park" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Candlestick Park</span><span class="lang-en">Candlestick Park</span></strong>
+                                                    <small>Source: pinterest.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">I Beatles di spalle si avviano verso il palco del Candlestick Park (1966).</span>
+                                            <span class="lang-en">The Beatles from behind walking towards the Candlestick Park stage (1966).</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Nel 1966, la band decide di interrompere per sempre l'attività dal vivo. Le urla dei fan coprono la musica, rendendo impossibile l'esecuzione tecnica dei brani sempre più complessi.</p>
+                                    <p class="lang-en">In 1966, the band decided to stop live activity forever. The screams of the fans drowned out the music, making the technical execution of increasingly complex songs impossible.</p>
+
+                                    <p class="lang-it">L'ultimo concerto ufficiale si tiene al Candlestick Park di San Francisco. Da quel momento, i Beatles diventano una "studio band", dedicandosi esclusivamente alla registrazione. L'evento segnò la fine dell'epoca dei tour mondiali, permettendo al gruppo di dedicarsi esclusivamente alla sperimentazione in studio.</p>
+                                    <p class="lang-en">The last official concert was held at Candlestick Park in San Francisco. From that moment on, the Beatles became a "studio band", dedicating themselves exclusively to recording. The event marked the end of the world tour era, allowing the group to focus solely on studio experimentation.</p>
+                                </div>
+
+                                <hr class="wiki-divider">
+
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Capitolo 4: Lo Studio come Strumento e la Psichedelia (1967)</span>
+                                        <span class="lang-en">Chapter 4: The Studio as an Instrument and Psychedelia (1967)</span>
+                                    </h3>
+
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">Sgt. Pepper's Lonely Hearts Club Band</span>
+                                        <span class="lang-en">Sgt. Pepper's Lonely Hearts Club Band</span>
+                                    </h4>
+
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123216/16_wnai6j.jpg
+" alt="Sgt Pepper Cover" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Sgt. Pepper</span><span class="lang-en">Sgt. Pepper</span></strong>
+                                                    <small>Source: flickr.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">La cover di Sgt. Pepper's Lonely Hearts Club Band, tra le più iconiche.</span>
+                                            <span class="lang-en">The cover of Sgt. Pepper's Lonely Hearts Club Band, among the most iconic.</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Il 1967 è l'anno della Summer of Love. I Beatles pubblicano Sgt. Pepper's Lonely Hearts Club Band, considerato da molti critici il più importante album della storia del rock. È un concept album: la band finge di essere un'altra orchestra per liberarsi dalle aspettative del pubblico.</p>
+                                    <p class="lang-en">1967 was the year of the Summer of Love. The Beatles released Sgt. Pepper's Lonely Hearts Club Band, considered by many critics to be the most important album in rock history. It is a concept album: the band pretends to be another orchestra to free themselves from public expectations.</p>
+
+                                    <p class="lang-it">Grazie al produttore George Martin (spesso definito "il quinto Beatle"), utilizzano lo studio di registrazione come uno strumento musicale, sovrapponendo nastri, orchestre sinfoniche e suoni concreti, impiegando mesi per registrare ciò che prima richiedeva ore.</p>
+                                    <p class="lang-en">Thanks to producer George Martin (often called the "fifth Beatle"), they used the recording studio as a musical instrument, layering tapes, symphony orchestras, and concrete sounds, taking months to record what previously required hours.</p>
+
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">All You Need Is Love</span>
+                                        <span class="lang-en">All You Need Is Love</span>
+                                    </h4>
+                                    
+                                    <p class="lang-it">Nello stesso anno, rappresentano la Gran Bretagna nella prima trasmissione televisiva in mondovisione via satellite (Our World), eseguendo All You Need Is Love, che diventa l'inno del movimento hippie e del pacifismo.</p>
+                                    <p class="lang-en">In the same year, they represented Great Britain in the first worldwide satellite television broadcast (Our World), performing All You Need Is Love, which became the anthem of the hippie movement and pacifism.</p>
+                                </div>
+
+                                <hr class="wiki-divider">
+
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Capitolo 5: Frammentazione e Scioglimento (1968-1970)</span>
+                                        <span class="lang-en">Chapter 5: Fragmentation and Disbandment (1968-1970)</span>
+                                    </h3>
+
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">L'India e il White Album</span>
+                                        <span class="lang-en">India and the White Album</span>
+                                    </h4>
+
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123212/17_tactw6.jpg
+" alt="John Lennon e Yoko Ono" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Bed-In for Peace</span><span class="lang-en">Bed-In for Peace</span></strong>
+                                                    <small>Source: rollingstone.com.br</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">John Lennon e Yoko Ono durante il "Bed-In for Peace" ad Amsterdam (1969).</span>
+                                            <span class="lang-en">John Lennon and Yoko Ono during the "Bed-In for Peace" in Amsterdam (1969).</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Dopo un viaggio spirituale in India presso l'ashram del Maharishi Mahesh Yogi, il gruppo torna con un numero enorme di canzoni che confluiscono nel The Beatles (noto come White Album, 1968). L'album mostra la frammentazione del gruppo: non è più un lavoro collettivo, ma una raccolta di brani solisti eseguiti con gli altri come turnisti.</p>
+                                    <p class="lang-en">After a spiritual journey to India at Maharishi Mahesh Yogi's ashram, the group returned with an enormous number of songs that flowed into The Beatles (known as the White Album, 1968). The album shows the group's fragmentation: it's no longer a collective work, but a collection of solo tracks performed with the others as session musicians.</p>
+
+                                    <p class="lang-it">Le tensioni aumentano anche a causa della presenza costante di Yoko Ono, nuova compagna di Lennon, in studio di registrazione, infrangendo la regola non scritta che vietava l'ingresso agli estranei.</p>
+                                    <p class="lang-en">Tensions also increased due to the constant presence of Yoko Ono, Lennon's new partner, in the recording studio, breaking the unwritten rule that banned outsiders from entering.</p>
+
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">Il Concerto sul Tetto e la Fine</span>
+                                        <span class="lang-en">The Rooftop Concert and the End</span>
+                                    </h4>
+
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123212/18_qet4u5.jpg
+" alt="Rooftop Concert" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Rooftop Concert</span><span class="lang-en">Rooftop Concert</span></strong>
+                                                    <small>Source: bygonely.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">I Beatles si esibiscono sul tetto della Apple Corps a Londra (30 gennaio 1969).</span>
+                                            <span class="lang-en">The Beatles perform on the roof of Apple Corps in London (January 30, 1969).</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Nel gennaio 1969, nel tentativo di ritrovare l'unità, il gruppo si filma durante le prove del progetto Get Back (poi divenuto Let It Be). L'esperimento fallisce tra litigi e incomprensioni, ma culmina nella celebre esibizione a sorpresa sul tetto della Apple Corps a Londra, l'ultima volta che suoneranno insieme dal vivo.</p>
+                                    <p class="lang-en">In January 1969, in an attempt to regain unity, the group filmed themselves during rehearsals for the Get Back project (later to become Let It Be). The experiment failed amidst arguments and misunderstandings, but culminated in the famous surprise performance on the roof of Apple Corps in London, the last time they would play together live.</p>
+
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774123224/sfondo_tnvvvp.jpg" alt="Abbey Road" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Abbey Road</span><span class="lang-en">Abbey Road</span></strong>
+                                                    <small>Source: lahoguera.mx</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">I Beatles sulle strisce pedonali di Abbey Road (1969).</span>
+                                            <span class="lang-en">The Beatles on the Abbey Road zebra crossing (1969).</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Dopo aver registrato il loro testamento artistico, Abbey Road (1969), tecnicamente perfetto, le divergenze artistiche e legali diventano insanabili. Nell'aprile 1970, Paul McCartney annuncia ufficialmente l'addio. I Beatles si sciolgono, lasciando un'eredità culturale che ha ridefinito la musica, la moda e il costume del XX secolo.</p>
+                                    <p class="lang-en">After recording their artistic testament, Abbey Road (1969), technically perfect, the artistic and legal divergences became irreconcilable. In April 1970, Paul McCartney officially announced his departure. The Beatles disbanded, leaving a cultural legacy that redefined music, fashion, and the customs of the 20th century.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleHistory()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Storia</span>
+                            <span class="lang-en">↑ Close History</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="disclaimer-btn" onclick="toggleDisclaimer()">
+                        <span>
+                            <span class="lang-it">Disclaimer & Note Legali</span>
+                            <span class="lang-en">Disclaimer & Legal Notes</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="disclaimer-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                <h3 class="wiki-title lang-it">Disclaimer e Diritto di Citazione</h3>
+                                <h3 class="wiki-title lang-en">Disclaimer & Fair Use</h3>
+                                
+                                <p class="lang-it">I contenuti multimediali presenti in questa pagina (immagini e video) sono utilizzati esclusivamente per finalità didattiche, critiche e di approfondimento culturale, in conformità con l'Art. 70 della Legge 633/41 (Diritto di citazione e riproduzione per uso didattico o scientifico). L'utilizzo non ha alcuno scopo di lucro e mira a valorizzare l'opera dell'artista e dei relativi autori, citati puntualmente tramite la funzione interattiva sulle singole immagini.<br><br>Qualora i detentori dei diritti d'autore ritenessero inappropriata la pubblicazione o desiderassero la rimozione di specifici contenuti, possono scrivere all'indirizzo: <strong>lorenzo.sciallato@gmail.com</strong>. Provvederò all'immediata rimozione del materiale segnalato.</p>
+                                
+                                <p class="lang-en">The multimedia contents on this page (images and videos) are used exclusively for educational, critical, and cultural purposes, in accordance with international Fair Use principles and national copyright laws. This project is strictly non-commercial and aims to provide historical and artistic context, with full credit given to authors and sources via the interactive photo-flip feature.<br><br>If you are a copyright holder and object to the use of any material, or would like to request its removal, please contact: <strong>lorenzo.sciallato@gmail.com</strong>. Any disputed content will be removed immediately upon request.</p>
+
+                                <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 25px 0;">
+
+                                <p class="lang-it" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Pagina creata con l'assistenza di software di intelligenza artificiale generativa, unendo cura umana e supporto tecnologico per l'apprendimento e la divulgazione culturale.</p>
+                                <p class="lang-en" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Page created with the assistance of generative artificial intelligence software, combining human curation and technological support for educational and cultural dissemination.</p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleDisclaimer()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Disclaimer</span>
+                            <span class="lang-en">↑ Close Disclaimer</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const playlist = [
+            { id: "love_me_do", title: "Love Me Do", ytId: "pt_zgUqoyWI" },
+            { id: "from_me_to_you", title: "From Me To You", ytId: "-XTB3bCYMK0" },
+            { id: "she_loves_you", title: "She Loves You", ytId: "oVCwDl-S09A" },
+            { id: "hold_your_hand", title: "I Want To Hold Your Hand", ytId: "v1HDt1tknTc" },
+            { id: "cant_buy_me_love", title: "Can't Buy Me Love", ytId: "h3WJiqc_bEs" },
+            { id: "hard_days_night", title: "A Hard Day's Night", ytId: "AMSiHdrHl0g" },
+            { id: "i_feel_fine", title: "I Feel Fine", ytId: "xLBVgnZyuic" },
+            { id: "eight_days", title: "Eight Days A Week", ytId: "XTfmuDjwQTw" },
+            { id: "ticket_to_ride", title: "Ticket To Ride", ytId: "UHsN9d4FTVI" },
+            { id: "help", title: "Help!", ytId: "N4KvafPbauw" },
+            { id: "yesterday", title: "Yesterday", ytId: "fCV9oqtwyVA" },
+            { id: "day_tripper", title: "Day Tripper", ytId: "2IbPn5j2YKk" },
+            { id: "work_it_out", title: "We Can Work It Out", ytId: "IgRrWPdzkao" },
+            { id: "paperback_writer", title: "Paperback Writer", ytId: "SepZDSkY4Ro" },
+            { id: "yellow_submarine", title: "Yellow Submarine", ytId: "ZhxJAxa77sE" },
+            { id: "eleanor_rigby", title: "Eleanor Rigby", ytId: "6gluNoLVKiQ" },
+            { id: "penny_lane", title: "Penny Lane", ytId: "z7syIxQCquo" },
+            { id: "all_you_need", title: "All You Need Is Love", ytId: "4EGczv7iiEk" },
+            { id: "hello_goodbye", title: "Hello, Goodbye", ytId: "P2C3f0Atcoo" },
+            { id: "lady_madonna", title: "Lady Madonna", ytId: "czhd27cN2dg" },
+            { id: "hey_jude", title: "Hey Jude", ytId: "mQER0A0ej0M" },
+            { id: "get_back", title: "Get Back", ytId: "YEESfv-11ng" },
+            { id: "ballad_john_yoko", title: "The Ballad Of John And Yoko", ytId: "oZnm_s3wZeo" },
+            { id: "something", title: "Something", ytId: "uXRvmkQLyTc" },
+            { id: "come_together", title: "Come Together", ytId: "oVW6wJ7MYDM" },
+            { id: "let_it_be", title: "Let It Be", ytId: "HzvDofigTKQ" },
+            { id: "long_winding_road", title: "The Long And Winding Road", ytId: "NR0u_qjq2fM" },
+            { id: "obladi", title: "Ob-la-di, Ob-la-da", ytId: "_J9NpHKrKMw" }
+        ];
+
+        // PARAPHRASE DATA
+        const paraphraseData = {
+            "love_me_do": {
+                it: `Una supplica semplice come il primo respiro del mattino. Non ci sono metafore elaborate, non ci sono costruzioni filosofiche: solo un giovane che chiede, con una direttezza disarmante, di essere amato. L'armonica sale e scende come un cuore che accelera, e quella semplicità stessa è il messaggio — certi sentimenti non hanno bisogno di ornamenti per essere veri. È l'inizio di tutto, e sa già di tutto.`,
+                en: `A plea as simple as the first breath of morning. There are no elaborate metaphors, no philosophical constructions: just a young man asking, with disarming directness, to be loved. The harmonica rises and falls like an accelerating heartbeat, and that very simplicity is the message — certain feelings need no adornment to be true. It is the beginning of everything, and it already sounds like everything.`
+            },
+            "from_me_to_you": {
+                it: `Un dono che non si può toccare ma si sente eccome: braccia pronte ad abbracciare, labbra pronte a cantare, un cuore pronto a fare qualunque cosa l'altro desideri. La canzone è un catalogo gioioso di disponibilità totale, di quella generosità travolgente che solo i primi mesi di un amore sanno produrre. Le voci si inseguono e si trovano con la naturalezza di due persone che hanno già smesso di fingere di essere separate.`,
+                en: `A gift that cannot be touched but is deeply felt: arms ready to embrace, lips ready to sing, a heart ready to do whatever the other desires. The song is a joyful catalogue of total availability, of that overwhelming generosity that only the first months of love can produce. The voices chase each other and meet with the naturalness of two people who have already stopped pretending to be separate.`
+            },
+            "she_loves_you": {
+                it: `La notizia arriva di seconda mano, eppure brucia come se fosse stata detta in faccia: lei ti ama, lo sa, e tu sei uno sciocco a non correrle incontro. Il narratore è un messaggero entusiasta, quasi più felice del diretto interessato, travolto dall'urgenza di far capire che certe occasioni non si ripresentano. Quel grido collettivo — "Yeah, yeah, yeah!" — non è un ritornello, è un'esplosione fisica di certezza.`,
+                en: `The news arrives secondhand, yet burns as though spoken face to face: she loves you, she knows it, and you are a fool not to run to her. The narrator is an enthusiastic messenger, almost happier than the person involved, swept up in the urgency of making clear that certain chances do not come twice. That collective shout — "Yeah, yeah, yeah!" — is not a chorus, it is a physical explosion of certainty.`
+            },
+            "hold_your_hand": {
+                it: `Non un bacio, non un abbraccio: solo una mano. È il gesto più piccolo e più enorme al tempo stesso — il primo contatto fisico che trasforma tutto, che fa capire che qualcosa è cambiato per sempre. La canzone è elettrica di contenimento: tutta quella energia compressa nel gesto minimo, e proprio per questo ancora più potente. Il mondo esterno scompare; rimane solo il calore di un palmo che incontra un altro palmo.`,
+                en: `Not a kiss, not an embrace: just a hand. It is the smallest and most enormous gesture at the same time — the first physical contact that transforms everything, that makes clear something has changed forever. The song is electric with restraint: all that energy compressed into the minimal gesture, and for that very reason even more powerful. The outside world disappears; what remains is only the warmth of one palm meeting another.`
+            },
+            "cant_buy_me_love": {
+                it: `Un'affermazione di indipendenza travestita da canzone d'amore. Il cantante rifiuta i regali, i diamanti, le promesse materiali — non perché sia asceta, ma perché sa che certe cose o si danno liberamente o non valgono niente. C'è una gioia quasi insolente in questa dichiarazione: la libertà vale più di qualunque cosa si possa comprare, e l'amore che vale la pena avere non ha prezzo perché non è in vendita.`,
+                en: `A declaration of independence disguised as a love song. The singer refuses gifts, diamonds, material promises — not out of asceticism, but because he knows that certain things are either given freely or are worth nothing. There is an almost insolent joy in this declaration: freedom is worth more than anything money can buy, and the love worth having has no price because it is not for sale.`
+            },
+            "hard_days_night": {
+                it: `Il lavoro finisce, la stanchezza pesa sulle spalle, ma poi si apre una porta e lei è lì. E tutto il resto sparisce. La canzone racconta quella soglia magica tra la fatica e il sollievo, quel momento preciso in cui il peso del giorno si solleva non perché sia finito, ma perché qualcuno lo condivide. L'accordo di apertura — quell'esplosione di chitarra e pianoforte — è il suono esatto di una giornata che cade via dalle spalle.`,
+                en: `Work is done, exhaustion weighs heavy on the shoulders, but then a door opens and she is there. And everything else disappears. The song captures that magic threshold between fatigue and relief, that precise moment when the day's weight lifts — not because it is over, but because someone shares it. The opening chord — that explosion of guitar and piano — is the exact sound of a day falling from one's shoulders.`
+            },
+            "i_feel_fine": {
+                it: `Un loop di feedback che diventa melodia, un amore che diventa stato permanente dell'essere. Il cantante non sta descrivendo un momento: sta descrivendo una condizione. Lei lo fa sentire bene — non adesso, non oggi — sempre. C'è qualcosa di quasi spaventoso in questa pienezza, ma la musica è troppo brillante per lasciare spazio alla paura. È felicità allo stato puro, suonata come se durasse per sempre.`,
+                en: `A feedback loop that becomes melody, a love that becomes a permanent state of being. The singer is not describing a moment: he is describing a condition. She makes him feel fine — not now, not today — always. There is something almost frightening in this fullness, but the music is too bright to leave room for fear. It is happiness in its purest state, played as though it lasts forever.`
+            },
+            "eight_days": {
+                it: `La settimana non basta. Il calendario è troppo corto per contenere quello che sente. L'iperbole è dichiarata apertamente e con orgoglio, perché certi amori rendono ridicolo qualunque sistema di misurazione del tempo. Otto giorni, cento giorni, mille — il numero è irrilevante. Quello che conta è che ogni giorno esistente non è abbastanza, e questa insufficienza è, paradossalmente, la forma più precisa di abbondanza.`,
+                en: `The week is not enough. The calendar is too short to contain what he feels. The hyperbole is declared openly and with pride, because certain loves make any system of measuring time seem ridiculous. Eight days, a hundred days, a thousand — the number is irrelevant. What matters is that every existing day is not enough, and this insufficiency is, paradoxically, the most precise form of abundance.`
+            },
+            "ticket_to_ride": {
+                it: `Lei se ne va, e lui lo sa già da prima che lei lo dica. C'è qualcosa di freddo e definitivo nel modo in cui la canzone descrive questa separazione — non c'è dramma, non ci sono lacrime esplicite, solo la constatazione pesante di qualcuno che tiene il suo biglietto stretto e non si volta. Il ritmo è inaspettatamente lento e trascinato per una canzone pop del 1965: è il ritmo di qualcuno che cammina via senza fretta, perché sa già dove sta andando.`,
+                en: `She is leaving, and he knows it before she even says so. There is something cold and final in the way the song describes this separation — no drama, no explicit tears, just the heavy observation of someone clutching her ticket and not looking back. The rhythm is unexpectedly slow and dragging for a 1965 pop song: it is the rhythm of someone walking away without hurry, because she already knows where she is going.`
+            },
+            "help": {
+                it: `La maschera cade. Sotto tutta la frenesia beatlesiana c'è un uomo che ammette, per la prima volta con questa chiarezza, di non farcela da solo. La giovinezza sembrava più semplice, la sicurezza era facile da recitare — ma adesso qualcosa si è complicato, e il bisogno di un'altra persona non è debolezza ma urgenza vitale. È la canzone più onesta che avessero scritto fino a quel momento, e quella sincerità la rende ancora oggi quasi dolorosa da ascoltare.`,
+                en: `The mask falls. Beneath all the Beatlemania frenzy there is a man admitting, for the first time with this clarity, that he cannot manage alone. Youth seemed simpler, confidence was easy to perform — but now something has grown complicated, and the need for another person is not weakness but vital urgency. It is the most honest song they had written up to that point, and that sincerity makes it still almost painful to hear today.`
+            },
+            "yesterday": {
+                it: `Ieri tutto era diverso, e quella differenza adesso pesa come una pietra. Non c'è una spiegazione, non c'è una colpa precisa da attribuire — solo l'ombra di qualcosa che era e non è più, e la voce sola di un uomo con la sua chitarra acustica che non chiede comprensione ma semplicemente confessa. È la canzone più suonata della storia della musica registrata, e ogni volta che ricomincia sembra la prima.`,
+                en: `Yesterday everything was different, and that difference now weighs like a stone. There is no explanation, no precise blame to assign — only the shadow of something that was and is no longer, and the lone voice of a man with his acoustic guitar who asks not for understanding but simply confesses. It is the most performed song in the history of recorded music, and every time it begins again it sounds like the first.`
+            },
+            "day_tripper": {
+                it: `Qualcuno che si presenta come qualcosa che non è — un'avventuriera di superficie, una rivoluzionaria da weekend, una che gioca con le idee senza abitarle davvero. Il cantante l'ha capita tardi, ma l'ha capita. C'è ironia tagliente in questa canzone, mascherata da riff di chitarra tra i più memorabili mai scritti. Il day tripper non è necessariamente da condannare — ma da capire, e capire può fare male quanto qualunque altra cosa.`,
+                en: `Someone who presents herself as something she is not — a surface adventurer, a weekend revolutionary, one who plays with ideas without truly inhabiting them. The singer understood her late, but he understood her. There is sharp irony in this song, masked by one of the most memorable guitar riffs ever written. The day tripper is not necessarily to be condemned — but to be understood, and understanding can hurt as much as anything else.`
+            },
+            "work_it_out": {
+                it: `Una negoziazione in tempo reale tra due punti di vista che non riescono a trovare il centro. Lei vede le cose in un modo, lui in un altro, e nessuno dei due vuole cedere del tutto — ma entrambi vogliono che funzioni. La tensione tra le due voci è la tensione della canzone stessa: ottimismo e impazienza, dolcezza e frustrazione, tutto nello stesso brano di due minuti che cambia ritmo nel mezzo come cambia umore chi discute con qualcuno che ama.`,
+                en: `A real-time negotiation between two points of view that cannot find the center. She sees things one way, he another, and neither wants to yield entirely — but both want it to work. The tension between the two voices is the tension of the song itself: optimism and impatience, tenderness and frustration, all within the same two-minute track that shifts tempo in the middle the way one's mood shifts when arguing with someone you love.`
+            },
+            "paperback_writer": {
+                it: `Una lettera di candidatura trasformata in inno. Un giovane scrittore scrive al suo potenziale editore con una sfrontatezza commovente, vendendo un romanzo che non ha ancora scritto con la certezza di chi è convinto che basti crederci abbastanza. La canzone è un ritratto di ambizione giovanile nella sua forma più pura: un po' ingenua, un po' arrogante, completamente irresistibile. Il basso di McCartney, in primo piano come mai prima, è la spina dorsale di tutto — solido, assertivo, inamovibile come la convinzione del protagonista.`,
+                en: `A job application letter transformed into an anthem. A young writer addresses his potential publisher with a touching audacity, selling a novel he has not yet written with the certainty of one convinced that believing enough is sufficient. The song is a portrait of youthful ambition in its purest form: a little naive, a little arrogant, completely irresistible. McCartney's bass, more prominent than ever before, is the backbone of everything — solid, assertive, immovable as the protagonist's conviction.`
+            },
+            "yellow_submarine": {
+                it: `Un villaggio sonoro costruito con materiali di recupero: effetti, risate, voci sovrapposte, il rumore del mare. La canzone abita uno spazio tra il sogno infantile e la favola psichedelica, dove tutti vivono insieme sotto l'acqua in un sommergibile giallo e nessuno si chiede come sia possibile. Non c'è morale, non c'è metafora da decifrare a tutti i costi — c'è solo la gioia pura di un mondo inventato dove le regole della superficie non arrivano.`,
+                en: `A sonic village built from salvaged materials: sound effects, laughter, layered voices, the noise of the sea. The song inhabits a space between childhood dream and psychedelic fable, where everyone lives together underwater in a yellow submarine and nobody asks how it is possible. There is no moral, no metaphor to decode at all costs — there is only the pure joy of an invented world where the rules of the surface cannot reach.`
+            },
+            "eleanor_rigby": {
+                it: `Una chiesa vuota, un riso raccolto dopo un matrimonio finito, un prete che parla da solo davanti allo specchio. Eleanor Rigby muore e nessuno c'è. Padre McKenzie scrive sermoni che nessuno ascolterà mai. Le loro solitudini non si incontrano mai — vivono parallele, vicine ma impermeabili, come tutte le solitudini vere. Gli archi non consolano: incalzano, pressano, tolgono l'aria. È il ritratto più spietato che i Beatles abbiano mai disegnato, e lo hanno fatto senza una singola chitarra elettrica.`,
+                en: `An empty church, rice gathered after a wedding has passed, a priest rehearsing a sermon before the mirror alone. Eleanor Rigby dies and no one is there. Father McKenzie darns his socks in the night when nobody comes. Their solitudes never meet — they run parallel, close but impermeable, like all true loneliness. The strings offer no consolation: they press, they crowd, they take the air away. It is the most merciless portrait the Beatles ever drew, and they did it without a single electric guitar.`
+            },
+            "penny_lane": {
+                it: `Un quartiere di Liverpool ricostruito dalla memoria come se fosse un sogno lucido: il barbiere con le fotografie dei clienti, il banchiere con l'impermeabile, la bambinaia alla rotonda sotto la pioggia. Tutto è nitido e leggermente irreale, come i ricordi d'infanzia che col tempo acquistano una luce che non avevano davvero. Le trombe piccole e brillanti di Bach — reinterpretate da David Mason — danno alla scena quella qualità sospesa tra il documentario e il gioiello.`,
+                en: `A Liverpool neighborhood reconstructed from memory as though it were a lucid dream: the barber with his customers' photographs, the banker with his raincoat, the nurse beneath the roundabout in the pouring rain. Everything is sharp and slightly unreal, like childhood memories that over time acquire a light they never truly had. The bright piccolo trumpets — reinterpreted by David Mason — give the scene that quality suspended between documentary and jewel.`
+            },
+            "all_you_need": {
+                it: `Una trasmissione in diretta mondiale trasformata in manifesto. La semplicità del messaggio è deliberata e quasi provocatoria: in un'epoca di ideologie, guerre e rivoluzioni, la risposta è questa — quattro parole che chiunque può capire in qualunque lingua. Non è ingenuità: è la scelta consapevole di togliere tutto il superfluo e restare con l'unica cosa che regge davvero sotto pressione. Le citazioni musicali sparse nell'arrangiamento sono firme di un'intera civiltà che viene raccolta e offerta come dono.`,
+                en: `A worldwide live broadcast transformed into a manifesto. The simplicity of the message is deliberate and almost provocative: in an era of ideologies, wars, and revolutions, the answer is this — four words anyone can understand in any language. It is not naivety: it is the conscious choice to strip away everything superfluous and remain with the one thing that truly holds under pressure. The musical quotations scattered through the arrangement are signatures of an entire civilization gathered up and offered as a gift.`
+            },
+            "hello_goodbye": {
+                it: `Una conversazione impossibile tra opposti che si attraggono senza capirsi. Ogni parola dell'uno viene rovesciata dall'altro, ogni sì diventa no, ogni arrivederci diventa benvenuto. Ma non c'è conflitto: c'è un gioco, una danza linguistica che celebra il fatto che le contraddizioni possano coesistere e persino essere divertenti. La canzone non risolve la tensione tra gli opposti — la abbraccia, la canta, la fa diventare ritornello.`,
+                en: `An impossible conversation between opposites that attract without understanding each other. Every word from one is reversed by the other, every yes becomes no, every goodbye becomes welcome. But there is no conflict: there is a game, a linguistic dance celebrating the fact that contradictions can coexist and even be joyful. The song does not resolve the tension between opposites — it embraces it, sings it, turns it into a chorus.`
+            },
+            "lady_madonna": {
+                it: `Una madre che fa quadrare i conti, che non dorme, che allatta di notte e il venerdì sera non sa ancora come arrivare a lunedì. La canzone è un tributo laico alla resistenza silenziosa di milioni di donne che tengono in piedi il mondo senza che nessuno scriva canzoni su di loro — finché McCartney non lo fa, con un boogie piano che suona antico e urgente allo stesso tempo. C'è rispetto, ma anche dolore, in questa ammirazione.`,
+                en: `A mother balancing the books, not sleeping, nursing through the night with no idea on Friday evening how she will reach Monday. The song is a secular tribute to the silent resilience of millions of women who hold the world together without anyone writing songs about them — until McCartney does, with a boogie piano that sounds simultaneously ancient and urgent. There is respect, but also ache, in this admiration.`
+            },
+            "hey_jude": {
+                it: `Una lettera aperta travestita da canzone pop. Qualcuno ha paura di aprirsi, di lasciare entrare qualcosa di grande — e una voce amica gli dice che va bene, che il mondo non finisce se si è vulnerabili, che la canzone che porta dentro di sé è già quella giusta. Il "na na na" finale non è un riempitivo: è il momento in cui le parole cedono il passo a qualcosa che non ha bisogno di parole. Sette minuti che sembrano una vita e lasciano qualcosa di irrisolvibile nel petto.`,
+                en: `An open letter disguised as a pop song. Someone is afraid to open up, to let something large come in — and a friendly voice tells him it is fine, that the world does not end in vulnerability, that the song he carries inside is already the right one. The final "na na na" is not filler: it is the moment where words give way to something that needs no words. Seven minutes that feel like a lifetime and leave something unresolvable in the chest.`
+            },
+            "get_back": {
+                it: `Un ordine gentile ma fermo: torna. Torna da dove sei venuto, torna a te stesso, torna al suolo quando stai diventando qualcosa che non sei. La canzone è volutamente scarna, quasi spoglia — basso, chitarra, batteria, e quella voce che insiste senza mai alzare la voce davvero. È il suono dei Beatles che cercano di tornare alle origini, di ritrovare il filo di una semplicità che il successo aveva complicato.`,
+                en: `A gentle but firm command: get back. Back to where you once belonged, back to yourself, back to the ground when you are becoming something you are not. The song is deliberately lean, almost stripped bare — bass, guitar, drums, and that voice that insists without ever truly raising itself. It is the sound of the Beatles trying to return to their origins, to rediscover the thread of a simplicity that success had complicated.`
+            },
+            "ballad_john_yoko": {
+                it: `Una cronaca in tempo reale di un viaggio e di un matrimonio, scritta con la freschezza di qualcuno che ha ancora addosso la polvere dell'avventura. Parigi, Amsterdam, il Christ the King — i luoghi si susseguono come diapositive di un film di vita vera. E tutto intorno, la stampa che osserva e giudica e non capisce. La canzone è insieme diario personale e difesa pubblica, e John la canta con quella voce che non chiede permesso a nessuno.`,
+                en: `A real-time chronicle of a journey and a marriage, written with the freshness of someone still carrying the dust of the adventure. Paris, Amsterdam, the Christ the King — places follow one another like slides from a real-life film. And all around, the press watching and judging and failing to understand. The song is both personal diary and public defense, and John sings it with that voice that asks nobody's permission.`
+            },
+            "something": {
+                it: `Un mistero dichiarato fin dalla prima parola: qualcosa nel modo in cui si muove, nel modo in cui mi mostra tutto, nel modo in cui mi conquista — e non so dirti cos'è. George Harrison scrive la canzone d'amore più elegante del catalogo Beatles rifiutandosi di definire quello che descrive. L'imprecisione è la precisione. L'incomprensibilità di certi amori è la loro verità più profonda, e lui la custodisce senza tentare di svelarla.`,
+                en: `A mystery declared from the very first word: something in the way she moves, in the way she shows him everything, in the way she woos him — and he cannot say what it is. George Harrison writes the most elegant love song in the Beatles catalogue by refusing to define what he is describing. The imprecision is the precision. The incomprehensibility of certain loves is their deepest truth, and he guards it without attempting to reveal it.`
+            },
+            "come_together": {
+                it: `Un collage di immagini che non si spiegano e non devono farlo. Una figura strana, obliqua, costruita con frammenti di sogno e gergo e nonsense — e tuttavia, nel suo insieme, emanante una presenza magnetica innegabile. Lennon non racconta: evoca. Il groove è ipnotico, il basso incombe, e la somma di tutte quelle stranezze produce qualcosa di più coerente di qualunque descrizione lineare avrebbe potuto fare.`,
+                en: `A collage of images that do not explain themselves and need not do so. A strange, oblique figure assembled from fragments of dream and slang and nonsense — yet in its entirety emanating an undeniable magnetic presence. Lennon does not narrate: he evokes. The groove is hypnotic, the bass looms heavy, and the sum of all those strangeness produces something more coherent than any linear description could have managed.`
+            },
+            "let_it_be": {
+                it: `Nei momenti di buio più fitto arriva una voce — che sia la madre, che sia la saggezza, che sia qualcosa che non ha nome — e dice: lascia che sia. Non risolvere, non forzare, non combattere. Lascia che le cose trovino il loro posto da sole. È il messaggio più antico del mondo e i Beatles lo cantano come se lo stessero scoprendo per la prima volta, con quegli organi solenni e quella voce che trema appena sul bordo dell'emozione.`,
+                en: `In the darkest moments a voice arrives — whether mother, whether wisdom, whether something without a name — and says: let it be. Do not solve, do not force, do not fight. Let things find their place on their own. It is the oldest message in the world and the Beatles sing it as though discovering it for the first time, with those solemn organ chords and that voice trembling just at the edge of emotion.`
+            },
+            "long_winding_road": {
+                it: `Una strada che porta sempre allo stesso posto, che si percorre ancora e ancora perché non si sa dove altro andare. La canzone è stanca — non di stanchezza fisica, ma di quella stanchezza dell'anima che viene dal cercare troppo a lungo qualcosa che continua a spostarsi. Gli archi avvolgono tutto in una malinconia lussuosa. È una canzone di arrivo e di perdita allo stesso tempo, come tutte le cose che finiscono prima di essere finite.`,
+                en: `A road that always leads to the same place, walked again and again because there is nowhere else to go. The song is tired — not physically tired, but with that weariness of the soul that comes from seeking too long something that keeps moving. The strings wrap everything in a lush melancholy. It is a song of arrival and loss simultaneously, like all things that end before they are finished.`
+            },
+            "obladi": {
+                it: `La vita va avanti — questa è la notizia, e anche la filosofia. Desmond vende al mercato, Molly canta in una band, si sposano, hanno figli, e un giorno si ritrovano a fare esattamente il contrario di quello che avevano pianificato, e va bene lo stesso. La canzone celebra il caos affettuoso dell'esistenza ordinaria con una energia che non ha niente di banale: è la gioia di chi ha capito che non tutto deve avere un senso per essere bello.`,
+                en: `Life goes on — that is the news, and also the philosophy. Desmond sells in the marketplace, Molly sings in a band, they marry, have children, and one day find themselves doing exactly the opposite of what they had planned, and it is fine all the same. The song celebrates the affectionate chaos of ordinary existence with an energy that has nothing trivial about it: it is the joy of one who has understood that not everything needs to make sense to be beautiful.`
+            }
+        };
+
+        // GUIDA (Completely BILINGUAL)
+        const guideData = {
+            "love_me_do": {
+                it: `
+                    <h3>Love Me Do</h3>
+                    <p><strong>0:00 - L'armonica "blues":</strong> Il brano si apre immediatamente con il suono lamentoso dell'armonica a bocca di John Lennon. È un suono crudo, ispirato al blues americano, che diventerà il marchio di fabbrica del primissimo periodo dei Beatles, distinguendoli dalle altre band pop dell'epoca.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Esistono tre versioni di questa canzone. In quella dell'album (e in quella che ascolti qui), Ringo Starr non suona la batteria ma solo il tamburello. Al suo posto c'è il turnista Andy White, perché il produttore George Martin non si fidava ancora della precisione di Ringo.</div>
+                    <p><strong>1:05 - Il ponte vocale:</strong> Nota come la voce di Paul McCartney rimanga sola e tremolante sulla frase "Love me do", mentre la musica si ferma quasi del tutto. John Lennon avrebbe dovuto cantare quella parte, ma all'ultimo secondo George Martin gli disse di suonare l'armonica, lasciando a Paul il compito di cantare da solo, cosa che lo terrorizzava.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Questo è stato il primo singolo in assoluto della band, pubblicato il 5 ottobre 1962. Arrivò "solo" al 17° posto in classifica nel Regno Unito, un inizio modesto per quella che sarebbe diventata la più grande band del mondo.</div>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>La canzone fu scritta principalmente da un Paul McCartney sedicenne (anni prima della registrazione) mentre marinava la scuola.</div>
+                `,
+                en: `
+                    <h3>Love Me Do</h3>
+                    <p><strong>0:00 - The "blues" harmonica:</strong> The track opens immediately with the plaintive sound of John Lennon's harmonica. It's a raw sound, inspired by American blues, which would become the trademark of the Beatles' earliest period, distinguishing them from other pop bands of the time.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>There are three versions of this song. In the album version (which you hear here), Ringo Starr doesn't play drums but only the tambourine. In his place is session musician Andy White, because producer George Martin didn't yet trust Ringo's precision.</div>
+                    <p><strong>1:05 - The vocal bridge:</strong> Notice how Paul McCartney's voice remains alone and trembling on the phrase "Love me do", while the music almost completely stops. John Lennon was supposed to sing that part, but at the last second George Martin told him to play the harmonica, leaving Paul with the task of singing alone, which terrified him.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>This was the band's first ever single, released on October 5, 1962. It reached "only" number 17 in the UK charts, a modest start for what would become the biggest band in the world.</div>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The song was primarily written by a sixteen-year-old Paul McCartney (years before recording) while skipping school.</div>
+                `
+            },
+            "from_me_to_you": {
+                it: `
+                    <h3>From Me To You</h3>
+                    <p><strong>0:00 - L'aggancio immediato:</strong> "Da da da, da da dum dum da". L'intro vocale cantata all'unisono da John e Paul è stata studiata a tavolino per catturare l'attenzione dell'ascoltatore entro i primi 5 secondi, una tecnica che diventerà standard per le hit radiofoniche.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>La canzone fu scritta sul tour bus mentre la band viaggiava da York a Shrewsbury. John e Paul si scambiavano le strofe leggendo la rubrica delle lettere del New Musical Express, che si intitolava proprio "From You to Us".</div>
+                    <p><strong>1:00 - Assolo di armonica:</strong> A differenza dei blues lenti, qui l'armonica mantiene l'energia altissima, doppiando la melodia vocale per renderla ancora più incisiva.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>È stato il loro primo vero numero 1 nelle classifiche ufficiali britanniche, iniziando una serie di successi quasi ininterrotta che durerà anni.</div>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Durante la registrazione, i Beatles canticchiarono l'intro imitando ironicamente il falsetto di Little Richard, ma a George Martin piacque così tanto che chiese loro di tenerlo nella versione finale.</div>
+                `,
+                en: `
+                    <h3>From Me To You</h3>
+                    <p><strong>0:00 - The immediate hook:</strong> "Da da da, da da dum dum da". The vocal intro sung in unison by John and Paul was carefully designed to grab the listener's attention within the first 5 seconds, a technique that would become standard for radio hits.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The song was written on the tour bus while the band traveled from York to Shrewsbury. John and Paul exchanged verses while reading the letters column of the New Musical Express, which was appropriately titled "From You to Us".</div>
+                    <p><strong>1:00 - Harmonica solo:</strong> Unlike slow blues, here the harmonica keeps the energy extremely high, doubling the vocal melody to make it even more punchy.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>It was their first true number 1 in the official British charts, starting a nearly unbroken string of successes that would last for years.</div>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>During recording, the Beatles hummed the intro ironically imitating Little Richard's falsetto, but George Martin liked it so much he asked them to keep it in the final version.</div>
+                `
+            },
+            "she_loves_you": {
+                it: `
+                    <h3>She Loves You</h3>
+                    <p><strong>0:00 - L'esplosione iniziale:</strong> Ringo Starr apre il brano con una rullata di toms iconica e aggressiva, seguita subito dal ritornello. Iniziare con il ritornello invece che con la strofa era una mossa rivoluzionaria per l'epoca, pensata per non far cambiare stazione radio all'ascoltatore.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Il famoso ritornello "Yeah, Yeah, Yeah" divenne un tormentone talmente potente che in gran parte dell'Europa i Beatles venivano chiamati dai giornali "I ragazzi dello Yeah Yeah". Il padre di Paul gli suggerì di cantare "Yes, Yes, Yes" perché lo trovava più educato, ma Paul rifiutò.</div>
+                    <p><strong>1:25 - Il finale jazz:</strong> Ascolta l'accordo finale chitarristico (una sesta maggiore). Era un accordo tipico delle big band jazz e molto insolito per il rock. George Martin pensava fosse troppo "strano", ma i Beatles insistettero per tenerlo.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>È il singolo dei Beatles più venduto di tutti i tempi nel Regno Unito ed è il brano che ha scatenato la "Beatlemania" vera e propria.</div>
+                `,
+                en: `
+                    <h3>She Loves You</h3>
+                    <p><strong>0:00 - The initial explosion:</strong> Ringo Starr opens the track with an iconic and aggressive tom roll, immediately followed by the chorus. Starting with the chorus instead of the verse was a revolutionary move at the time, designed to keep the listener from changing the radio station.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The famous chorus "Yeah, Yeah, Yeah" became such a powerful catchphrase that in much of Europe the Beatles were called "The Yeah Yeah Boys" by newspapers. Paul's father suggested singing "Yes, Yes, Yes" because he found it more polite, but Paul refused.</div>
+                    <p><strong>1:25 - The jazz ending:</strong> Listen to the final guitar chord (a major sixth). It was a typical big band jazz chord and highly unusual for rock. George Martin thought it was too "weird", but the Beatles insisted on keeping it.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>It is the best-selling Beatles single of all time in the UK and the track that truly triggered "Beatlemania".</div>
+                `
+            },
+            "hold_your_hand": {
+                it: `
+                    <h3>I Want To Hold Your Hand</h3>
+                    <p><strong>0:00 - L'intro sincopata:</strong> L'attacco di chitarra è ingannevole e geniale. Sembra battere sul primo tempo, ma in realtà è in levare. Quando entra la batteria, il ritmo si "raddrizza" improvvisamente, disorientando e poi catturando l'ascoltatore.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Questa è la canzone che ha "sfondato" in America. Prima di questo brano, i Beatles non riuscivano a ottenere attenzione negli USA; dopo la sua uscita, dominarono l'intera Top 5 americana.</div>
+                    <p><strong>1:10 - L'energia del ponte:</strong> Quando cantano "I can't hide, I can't hide!", l'energia sale al massimo livello. Bob Dylan, ascoltando la canzone alla radio, fraintese questa frase pensando dicessero "I get high" (mi drogo), credendo che i Beatles fumassero marijuana già nel 1963.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>La canzone fu scritta da John e Paul "occhio a occhio" nel seminterrato della casa dei genitori di Jane Asher (la fidanzata di Paul), suonando insieme sullo stesso pianoforte.</div>
+                `,
+                en: `
+                    <h3>I Want To Hold Your Hand</h3>
+                    <p><strong>0:00 - The syncopated intro:</strong> The guitar attack is deceptive and brilliant. It seems to hit on the downbeat, but it's actually an upbeat. When the drums enter, the rhythm suddenly "straightens out", disorienting and then hooking the listener.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>This is the song that "broke through" in America. Before this track, the Beatles couldn't gain attention in the USA; after its release, they dominated the entire American Top 5.</div>
+                    <p><strong>1:10 - The bridge's energy:</strong> When they sing "I can't hide, I can't hide!", the energy reaches its peak. Bob Dylan, hearing the song on the radio, misunderstood this phrase thinking they were saying "I get high", believing the Beatles were already smoking marijuana in 1963.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The song was written by John and Paul "eyeball to eyeball" in the basement of Jane Asher's (Paul's girlfriend) parents' house, playing together on the same piano.</div>
+                `
+            },
+            "cant_buy_me_love": {
+                it: `
+                    <h3>Can't Buy Me Love</h3>
+                    <p><strong>0:00 - Solo Paul:</strong> Un altro inizio diretto con il ritornello urla il titolo. Nota l'assenza delle tipiche armonie vocali a tre parti: qui canta praticamente solo Paul McCartney (doppiato in studio), segnando un inizio di individualità nei compositori.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Fu registrata a Parigi, non a Londra. I Beatles avevano gli strumenti con loro all'hotel George V e, avendo un'ora libera, decisero di prenotare uno studio locale (Pathé Marconi) per registrare al volo.</div>
+                    <p><strong>1:15 - L'assolo di chitarra:</strong> George Harrison registrò il primo assolo, ma non ne fu soddisfatto. Quello che senti è una sovraincisione registrata successivamente, ma in sottofondo si può ancora sentire una "fantasmatica" traccia del primo assolo che sanguina nei microfoni.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Paul McCartney scrisse il brano pensando alle pressioni del successo materiale che stavano vivendo in quel momento, sostenendo che i soldi e la fama non potevano comprare ciò che contava davvero per lui.</div>
+                `,
+                en: `
+                    <h3>Can't Buy Me Love</h3>
+                    <p><strong>0:00 - Just Paul:</strong> Another direct start with the chorus shouting the title. Note the absence of the typical three-part vocal harmonies: here practically only Paul McCartney sings (double-tracked in the studio), marking the beginning of individuality in the songwriters.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>It was recorded in Paris, not London. The Beatles had their instruments with them at the George V hotel and, having a free hour, decided to book a local studio (Pathé Marconi) to record on the fly.</div>
+                    <p><strong>1:15 - The guitar solo:</strong> George Harrison recorded the first solo, but wasn't satisfied with it. What you hear is an overdub recorded later, but in the background you can still hear a "ghostly" trace of the first solo bleeding into the microphones.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>Paul McCartney wrote the track thinking about the pressures of material success they were experiencing at the time, arguing that money and fame couldn't buy what truly mattered to him.</div>
+                `
+            },
+            "hard_days_night": {
+                it: `
+                    <h3>A Hard Day's Night</h3>
+                    <p><strong>0:00 - L'Accordo Misterioso:</strong> Un singolo colpo di chitarra (Sol7sus4) suonato contemporaneamente da chitarra a 12 corde, basso e piano. È uno dei suoni più analizzati della storia della musica perché non si riusciva a capire come fosse stato creato. È il "gong" che apre il film omonimo.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Il titolo nasce da un "ringoismo". Ringo Starr, esausto dopo una giornata di lavoro in studio, disse "It's been a hard day..." (è stata una dura giornata), poi notò che era buio pesto e aggiunse "...'s night" (notte). John Lennon colse al volo la frase sgrammaticata ma poetica.</div>
+                    <p><strong>1:20 - L'assolo veloce:</strong> L'assolo è suonato da George Harrison con la Rickenbacker a 12 corde, ma è raddoppiato dal pianoforte a velocità dimezzata (suonato da George Martin) e poi velocizzato, per ottenere quel suono "metallico" e sovrumanamente preciso.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>John Lennon scrisse la canzone in una sola notte perché il regista del film aveva bisogno urgentemente di una traccia per i titoli di testa.</div>
+                `,
+                en: `
+                    <h3>A Hard Day's Night</h3>
+                    <p><strong>0:00 - The Mysterious Chord:</strong> A single guitar strum (G7sus4) played simultaneously by a 12-string guitar, bass, and piano. It is one of the most analyzed sounds in music history because people couldn't figure out how it was created. It's the "gong" that opens the self-titled film.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The title comes from a "Ringoism". Ringo Starr, exhausted after a day of work in the studio, said "It's been a hard day...", then noticed it was pitch black and added "...'s night". John Lennon quickly caught the ungrammatical but poetic phrase.</div>
+                    <p><strong>1:20 - The fast solo:</strong> The solo is played by George Harrison on his 12-string Rickenbacker, but it's doubled by a piano played at half speed (by George Martin) and then sped up, to achieve that "metallic" and superhumanly precise sound.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>John Lennon wrote the song in a single night because the film's director urgently needed a track for the opening credits.</div>
+                `
+            },
+            "i_feel_fine": {
+                it: `
+                    <h3>I Feel Fine</h3>
+                    <p><strong>0:00 - Il feedback:</strong> Quella nota distorta e ronzante all'inizio (un La basso) è considerata il primo utilizzo intenzionale di feedback (effetto Larsen) in una registrazione pop. John Lennon colpì la corda e avvicinò la chitarra all'amplificatore finché non urlò.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Il riff di chitarra principale è ispirato a "Watch Your Step" di Bobby Parker, un brano blues che i Beatles amavano suonare nei club.</div>
+                    <p><strong>1:10 - Il ritmo di batteria:</strong> Ringo Starr suona un tempo quasi latino/rockabilly sui piatti, molto sofisticato e complesso per una canzone pop di tre minuti, dimostrando la sua abilità tecnica spesso sottovalutata.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Durante le riprese del video promozionale (un antenato dei videoclip in cui mangiano fish & chips), George Harrison cantò nel microfono spento per scherzo, ma la scena fu tenuta nel montaggio finale.</div>
+                `,
+                en: `
+                    <h3>I Feel Fine</h3>
+                    <p><strong>0:00 - The feedback:</strong> That distorted, buzzing note at the beginning (a low A) is considered the first intentional use of feedback in a pop recording. John Lennon struck the string and moved his guitar closer to the amplifier until it howled.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The main guitar riff is inspired by "Watch Your Step" by Bobby Parker, a blues track the Beatles loved playing in clubs.</div>
+                    <p><strong>1:10 - The drum rhythm:</strong> Ringo Starr plays an almost Latin/rockabilly rhythm on the cymbals, very sophisticated and complex for a three-minute pop song, proving his often-underestimated technical skill.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>During the filming of the promotional video (an ancestor of music videos where they eat fish & chips), George Harrison sang into a dead microphone as a joke, but the scene was kept in the final edit.</div>
+                `
+            },
+            "eight_days": {
+                it: `
+                    <h3>Eight Days A Week</h3>
+                    <p><strong>0:00 - Fade-in:</strong> È la prima volta nella storia che una canzone pop inizia con una dissolvenza in entrata (il volume si alza gradualmente), creando l'effetto di un treno in arrivo o di una canzone che stava già suonando prima che noi ascoltassimo.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Anche questo titolo è attribuito a un autista che portava Paul a casa sua. Quando Paul gli chiese come stava, l'autista rispose di lavorare "otto giorni a settimana" per la troppa stanchezza.</div>
+                    <p><strong>1:40 - La struttura "a scalini":</strong> Ascolta la melodia del ritornello ("Hold me, love me..."). Le note salgono e scendono in modo molto scalare e orecchiabile, una tecnica compositiva classica dei Beatles.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Inizialmente la canzone doveva essere il tema principale del loro secondo film (Help!), e il film doveva chiamarsi proprio Eight Days A Week. Fu scartata all'ultimo a favore di Help!.</div>
+                `,
+                en: `
+                    <h3>Eight Days A Week</h3>
+                    <p><strong>0:00 - Fade-in:</strong> This is the first time in history that a pop song begins with a fade-in (the volume gradually increases), creating the effect of an arriving train or a song that was already playing before we tuned in.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>This title too is attributed to a driver taking Paul home. When Paul asked how he was, the driver replied he was working "eight days a week" due to extreme exhaustion.</div>
+                    <p><strong>1:40 - The "staircase" structure:</strong> Listen to the chorus melody ("Hold me, love me..."). The notes go up and down in a very scalar and catchy way, a classic Beatles compositional technique.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>Initially, the song was supposed to be the main theme of their second film (Help!), and the film itself was going to be called Eight Days A Week. It was scrapped at the last minute in favor of Help!.</div>
+                `
+            },
+            "ticket_to_ride": {
+                it: `
+                    <h3>Ticket To Ride</h3>
+                    <p><strong>0:00 - Il riff e la batteria "zoppa":</strong> Il brano inizia con un riff di chitarra ipnotico e discendente, ma la vera protagonista è la batteria di Ringo Starr. Suona un ritmo sincopato e "pesante" che trascina il brano invece di spingerlo, creando un sound molto più massiccio del solito.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>John Lennon definì questa canzone "la prima canzone heavy metal della storia" (scherzando, ma non troppo) a causa del suono denso delle chitarre e del ritmo pesante.</div>
+                    <p><strong>2:30 - Il cambio di tempo:</strong> Nel finale, il brano cambia improvvisamente ritmo e velocità mentre cantano "My baby don't care". Era molto insolito per una canzone pop cambiare tempo proprio alla fine.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Il titolo ha diverse interpretazioni. Alcuni dicono si riferisca a un biglietto del traghetto per la città di Ryde (Isola di Wight), altri sostengono sia un riferimento gergale ai certificati di buona salute ("ticket") che le prostitute di Amburgo dovevano avere negli anni '60.</div>
+                `,
+                en: `
+                    <h3>Ticket To Ride</h3>
+                    <p><strong>0:00 - The riff and "limping" drums:</strong> The track starts with a hypnotic, descending guitar riff, but the real star is Ringo Starr's drumming. He plays a syncopated and "heavy" rhythm that drags the song rather than pushing it, creating a much more massive sound than usual.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>John Lennon called this song "the first heavy metal song in history" (joking, but not entirely) because of the dense guitar sound and heavy rhythm.</div>
+                    <p><strong>2:30 - The tempo change:</strong> In the finale, the song suddenly shifts rhythm and speed as they sing "My baby don't care". It was highly unusual for a pop song to change tempo right at the end.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The title has various interpretations. Some say it refers to a ferry ticket to the town of Ryde (Isle of Wight), others claim it's a slang reference to the certificates of good health ("tickets") that Hamburg prostitutes had to carry in the 60s.</div>
+                `
+            },
+            "help": {
+                it: `
+                    <h3>Help!</h3>
+                    <p><strong>0:00 - L'intro vocale:</strong> "Help! I need somebody". Non c'è musica strumentale all'inizio, solo un'armonia vocale urgente. John canta la melodia principale mentre Paul e George rispondono in anticipo, creando un effetto di rincorsa frenetica.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>John Lennon scrisse questo brano come un vero e proprio grido d'aiuto. Era depresso, si sentiva in trappola a causa della fama mondiale ("il mio periodo Elvis grasso", lo chiamava) e scrisse un testo insicuro su una base rock veloce.</div>
+                    <p><strong>1:00 - La chitarra ritmica:</strong> Ascolta la chitarra acustica che "batte" costantemente in sottofondo. Serve a mantenere l'urgenza del pezzo, che fu velocizzato in studio per renderlo più commerciale (John lo preferiva più lento).</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Durante le riprese del film Help! alle Bahamas, i Beatles erano così stanchi e annoiati che iniziarono a fumare marijuana quasi costantemente, rendendo difficile per il regista Richard Lester girare scene coerenti.</div>
+                `,
+                en: `
+                    <h3>Help!</h3>
+                    <p><strong>0:00 - The vocal intro:</strong> "Help! I need somebody". There is no instrumental music at the beginning, only an urgent vocal harmony. John sings the main melody while Paul and George respond in anticipation, creating a frantic chasing effect.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>John Lennon wrote this track as a literal cry for help. He was depressed, felt trapped by worldwide fame (he called it "my fat Elvis period"), and wrote insecure lyrics over a fast rock backing.</div>
+                    <p><strong>1:00 - The rhythm guitar:</strong> Listen to the acoustic guitar constantly "beating" in the background. It serves to maintain the track's urgency, which was sped up in the studio to make it more commercial (John preferred it slower).</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>During the filming of Help! in the Bahamas, the Beatles were so tired and bored that they started smoking marijuana almost constantly, making it difficult for director Richard Lester to shoot coherent scenes.</div>
+                `
+            },
+            "yesterday": {
+                it: `
+                    <h3>Yesterday</h3>
+                    <p><strong>0:00 - Solo Paul:</strong> È la prima volta che un brano dei Beatles viene registrato da un solo membro della band. Paul McCartney suona la chitarra acustica e canta; gli altri tre Beatles non sono presenti nella registrazione.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>La melodia venne a Paul in sogno. Per mesi andò in giro chiedendo a tutti se l'avessero già sentita, temendo di averla plagiata inconsciamente (criptomnesia). Il titolo provvisorio era "Scrambled Eggs" (Uova strapazzate) e il testo iniziava con: "Scrambled eggs / Oh my baby how I love your legs".</div>
+                    <p><strong>1:05 - Il quartetto d'archi:</strong> George Martin suggerì di aggiungere degli archi. Paul era contrario perché temeva suonasse troppo "classico" o sdolcinato, ma accettò a patto che i musicisti non usassero il vibrato, per mantenere un suono più secco e moderno.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>È la canzone più coverizzata della storia della musica, con oltre 3.000 versioni registrate ufficialmente.</div>
+                `,
+                en: `
+                    <h3>Yesterday</h3>
+                    <p><strong>0:00 - Just Paul:</strong> This is the first time a Beatles track is recorded by a single band member. Paul McCartney plays acoustic guitar and sings; the other three Beatles are not present on the recording.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The melody came to Paul in a dream. For months he went around asking everyone if they had heard it before, fearing he had unconsciously plagiarized it (cryptomnesia). The working title was "Scrambled Eggs" and the lyrics began with: "Scrambled eggs / Oh my baby how I love your legs".</div>
+                    <p><strong>1:05 - The string quartet:</strong> George Martin suggested adding strings. Paul was opposed because he feared it would sound too "classical" or cheesy, but accepted on the condition that the musicians didn't use vibrato, to maintain a drier and more modern sound.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>It is the most covered song in music history, with over 3,000 officially recorded versions.</div>
+                `
+            },
+            "day_tripper": {
+                it: `
+                    <h3>Day Tripper</h3>
+                    <p><strong>0:00 - Il Riff iconico:</strong> Probabilmente uno dei riff di chitarra più riconoscibili della storia, basato su una scala blues. Viene suonato all'unisono dalla chitarra e dal basso, creando un muro sonoro potente.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>"Day tripper" (viaggiatore giornaliero) era un termine slang usato da John Lennon per prendere in giro le persone che si comportavano da hippy solo nel weekend, senza impegnarsi davvero nello stile di vita controculturale o nell'uso di droghe.</div>
+                    <p><strong>1:50 - Il crescendo vocale:</strong> Il brano sale di intensità con un accordo di Si che cresce progressivamente prima dell'assolo, creando una tensione palpabile.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Fu pubblicato come "doppio lato A" insieme a We Can Work It Out. Era la prima volta che un singolo aveva due canzoni considerate "principali", una strategia di marketing che fece storia.</div>
+                `,
+                en: `
+                    <h3>Day Tripper</h3>
+                    <p><strong>0:00 - The iconic Riff:</strong> Probably one of the most recognizable guitar riffs in history, based on a blues scale. It is played in unison by the guitar and bass, creating a powerful wall of sound.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>"Day tripper" was slang used by John Lennon to mock people who acted like hippies only on weekends, without truly committing to the countercultural lifestyle or drug use.</div>
+                    <p><strong>1:50 - The vocal crescendo:</strong> The track rises in intensity with a B chord that grows progressively before the solo, creating a palpable tension.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>It was released as a "double A-side" alongside We Can Work It Out. It was the first time a single had two songs considered "main" tracks, a marketing strategy that made history.</div>
+                `
+            },
+            "work_it_out": {
+                it: `
+                    <h3>We Can Work It Out</h3>
+                    <p><strong>0:00 - Il contrasto John/Paul:</strong> Questa canzone è l'esempio perfetto della collaborazione Lennon-McCartney. Le strofe ("Try to see it my way...") sono di Paul e sono ottimiste; il ponte ("Life is very short...") è di John ed è pessimista e impaziente.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Ascolta attentamente il cambio di tempo durante la parte di John ("Life is very short"). La batteria passa da un ritmo rock a un ritmo valzer (3/4) per poi tornare indietro. Un tocco di genialità ritmica che sottolinea l'instabilità del testo.</div>
+                    <p><strong>1:40 - L'armonium:</strong> Quello strumento che sembra una fisarmonica o un organo "respirato" è un armonium a pedali che John trovò nello studio di registrazione e decise di usare per dare al brano un sapore folk/marinaresco.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Il testo fu ispirato dalle litigate di Paul con la sua fidanzata dell'epoca, l'attrice Jane Asher, che voleva perseguire la sua carriera invece di seguirlo passivamente.</div>
+                `,
+                en: `
+                    <h3>We Can Work It Out</h3>
+                    <p><strong>0:00 - The John/Paul contrast:</strong> This song is the perfect example of the Lennon-McCartney collaboration. The verses ("Try to see it my way...") are by Paul and are optimistic; the bridge ("Life is very short...") is by John and is pessimistic and impatient.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>Listen closely to the tempo change during John's part ("Life is very short"). The drums switch from a rock rhythm to a waltz rhythm (3/4) and then back again. A touch of rhythmic genius that underscores the text's instability.</div>
+                    <p><strong>1:40 - The harmonium:</strong> That instrument sounding like an accordion or a "breathing" organ is a pedal harmonium John found in the recording studio, deciding to use it to give the track a folk/nautical flavor.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The lyrics were inspired by Paul's arguments with his then-girlfriend, actress Jane Asher, who wanted to pursue her career instead of following him passively.</div>
+                `
+            },
+            "paperback_writer": {
+                it: `
+                    <h3>Paperback Writer</h3>
+                    <p><strong>0:00 - Il coro a cappella:</strong> La canzone inizia con un complesso intreccio vocale polifonico ("Paperback Wriiiiiter"), prima di esplodere in un riff rock distorto.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>La zia di Paul gli lanciò una sfida: "Perché scrivi sempre canzoni d'amore? Non sei capace di scrivere una canzone su un cavallo o qualcos'altro?". Paul vide Ringo leggere un libro tascabile (paperback) e scrisse una canzone sotto forma di lettera di un aspirante scrittore a un editore.</div>
+                    <p><strong>1:00 - Il basso potenziato:</strong> In questo brano, per la prima volta, il basso Rickenbacker di Paul è mixato a volume altissimo e si sente "pompare" nelle casse. I Beatles volevano imitare il suono profondo dei dischi soul americani della Motown.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Se ascolti bene i cori di sottofondo nella terza strofa, John e George non cantano parole a caso, ma intonano ironicamente la filastrocca "Frère Jacques" (Fra Martino Campanaro) molto lentamente.</div>
+                `,
+                en: `
+                    <h3>Paperback Writer</h3>
+                    <p><strong>0:00 - The a cappella chorus:</strong> The song begins with a complex polyphonic vocal weave ("Paperback Wriiiiiter"), before exploding into a distorted rock riff.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>Paul's aunt challenged him: "Why do you always write love songs? Can't you write a song about a horse or something else?". Paul saw Ringo reading a paperback book and wrote a song in the form of a letter from an aspiring writer to a publisher.</div>
+                    <p><strong>1:00 - The boosted bass:</strong> In this track, for the first time, Paul's Rickenbacker bass is mixed at a very high volume and can be heard "pumping" through the speakers. The Beatles wanted to imitate the deep sound of American Motown soul records.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>If you listen closely to the backing vocals in the third verse, John and George aren't singing random words, but ironically intoning the nursery rhyme "Frère Jacques" very slowly.</div>
+                `
+            },
+            "yellow_submarine": {
+                it: `
+                    <h3>Yellow Submarine</h3>
+                    <p><strong>0:00 - La voce di Ringo:</strong> La canzone fu scritta appositamente per la voce di Ringo Starr, che aveva un'estensione limitata ma un timbro caldo e amichevole da "zio". Era pensata come una canzone per bambini.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>La sessione di registrazione si trasformò in una festa. I Beatles invitarono amici (tra cui Brian Jones dei Rolling Stones e Marianne Faithfull) a fare rumore in studio: soffiare bolle in una bacinella d'acqua, far tintinnare bicchieri, agitare catene nella vasca da bagno e urlare ordini navali nell'eco chamber.</div>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Nonostante fosse una canzone innocente, divenne un inno della cultura psichedelica. Le capsule di Nembutal (un barbiturico) erano gialle e venivano chiamate "sottomarini gialli" nello slang dell'epoca, anche se Paul ha sempre negato ogni riferimento intenzionale alla droga.</div>
+                `,
+                en: `
+                    <h3>Yellow Submarine</h3>
+                    <p><strong>0:00 - Ringo's voice:</strong> The song was written specifically for Ringo Starr's voice, who had a limited range but a warm and friendly "uncle" tone. It was intended as a children's song.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The recording session turned into a party. The Beatles invited friends (including Brian Jones of the Rolling Stones and Marianne Faithfull) to make noise in the studio: blowing bubbles in a basin of water, clinking glasses, rattling chains in the bathtub, and shouting naval orders in the echo chamber.</div>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>Despite being an innocent song, it became an anthem of psychedelic culture. Nembutal capsules (a barbiturate) were yellow and were called "yellow submarines" in the slang of the time, although Paul has always denied any intentional reference to drugs.</div>
+                `
+            },
+            "eleanor_rigby": {
+                it: `
+                    <h3>Eleanor Rigby</h3>
+                    <p><strong>0:00 - Nessuno strumento rock:</strong> Nessun Beatle suona strumenti in questa canzone. La base è interamente composta da un doppio quartetto d'archi (quattro violini, due viole, due violoncelli) arrangiato da George Martin.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>L'arrangiamento degli archi è secco, ritmico e "spigoloso", ispirato alle colonne sonore di Bernard Herrmann per i film di Alfred Hitchcock (come Psycho), per sottolineare l'angoscia del testo.</div>
+                    <p><strong>1:30 - La solitudine:</strong> "Ah, look at all the lonely people". Il testo affronta il tema della solitudine e della morte nella società moderna, un argomento molto cupo e maturo per una pop band nel 1966.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Paul giura di aver inventato i nomi, ma nel cimitero della chiesa di St. Peter a Liverpool (dove John e Paul si incontrarono per la prima volta nel 1957) esiste davvero una tomba intestata a una certa Eleanor Rigby. Paul ha ammesso che potrebbe essere stato un ricordo inconscio.</div>
+                `,
+                en: `
+                    <h3>Eleanor Rigby</h3>
+                    <p><strong>0:00 - No rock instruments:</strong> No Beatle plays instruments on this song. The backing track is entirely composed of a double string quartet (four violins, two violas, two cellos) arranged by George Martin.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The string arrangement is dry, rhythmic, and "edgy", inspired by Bernard Herrmann's soundtracks for Alfred Hitchcock films (like Psycho), to emphasize the text's anguish.</div>
+                    <p><strong>1:30 - Loneliness:</strong> "Ah, look at all the lonely people". The text addresses the theme of loneliness and death in modern society, a very dark and mature subject for a pop band in 1966.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>Paul swears he invented the names, but in the graveyard of St. Peter's church in Liverpool (where John and Paul first met in 1957) there actually is a grave registered to an Eleanor Rigby. Paul admitted it might have been an unconscious memory.</div>
+                `
+            },
+            "penny_lane": {
+                it: `
+                    <h3>Penny Lane</h3>
+                    <p><strong>0:00 - Il pianoforte brillante:</strong> Il suono "saltellante" e brillante del piano è ottenuto registrando più pianoforti uno sopra l'altro e passandoli attraverso un amplificatore per chitarra Vox, per ottenere un timbro metallico.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Penny Lane è una vera strada (e un capolinea degli autobus) a Liverpool. Paul descrive scene reali della sua infanzia: il barbiere che mostra le foto, il banchiere, il pompiere. È una canzone sulla nostalgia vista con occhi "surreali".</div>
+                    <p><strong>2:30 - La tromba piccolo:</strong> Quell'assolo di tromba altissimo e barocco fu un'idea di Paul dopo aver visto i Concerti Brandeburghesi di Bach in TV la sera prima. Chiese al trombettista David Mason di suonare note che erano quasi impossibili per lo strumento.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Nonostante il testo dica "beneath the blue suburban skies" (sotto i cieli blu di periferia), a Liverpool piove spessissimo. La canzone rappresenta un ricordo idealizzato e felice ("in my ears and in my eyes").</div>
+                `,
+                en: `
+                    <h3>Penny Lane</h3>
+                    <p><strong>0:00 - The bright piano:</strong> The "bouncing" and bright sound of the piano is achieved by recording multiple pianos over each other and running them through a Vox guitar amplifier, to achieve a metallic timbre.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>Penny Lane is a real street (and bus terminus) in Liverpool. Paul describes real scenes from his childhood: the barber showing photos, the banker, the fireman. It is a song about nostalgia seen through "surreal" eyes.</div>
+                    <p><strong>2:30 - The piccolo trumpet:</strong> That very high and baroque trumpet solo was Paul's idea after watching Bach's Brandenburg Concertos on TV the night before. He asked trumpeter David Mason to play notes that were almost impossible for the instrument.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>Although the lyrics say "beneath the blue suburban skies", it rains very often in Liverpool. The song represents an idealized and happy memory ("in my ears and in my eyes").</div>
+                `
+            },
+            "all_you_need": {
+                it: `
+                    <h3>All You Need Is Love</h3>
+                    <p><strong>0:00 - La Marsigliese:</strong> L'intro con l'inno nazionale francese serviva a sottolineare il carattere internazionale dell'evento per cui fu scritta.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>La canzone fu commissionata per Our World (25 giugno 1967), la prima trasmissione televisiva in mondovisione via satellite della storia. I Beatles rappresentavano il Regno Unito e suonarono dal vivo davanti a 400 milioni di spettatori.</div>
+                    <p><strong>2:50 - Il finale caotico:</strong> Durante la lunga dissolvenza finale, l'orchestra va fuori controllo e suona frammenti di canzoni famose: In The Mood di Glenn Miller, Greensleeves, l'Invenzione n. 8 di Bach e persino She Loves You urlata da John Lennon all'improvviso.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Il tempo della canzone è irregolare (alterna battute di 4/4 e 3/4), il che la rende difficile da ballare, ma il messaggio del ritornello era volutamente semplice per essere capito in ogni lingua: "L'amore è tutto ciò che serve".</div>
+                `,
+                en: `
+                    <h3>All You Need Is Love</h3>
+                    <p><strong>0:00 - La Marseillaise:</strong> The intro featuring the French national anthem served to emphasize the international nature of the event for which it was written.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The song was commissioned for Our World (June 25, 1967), the first live global satellite television broadcast in history. The Beatles represented the UK and played live to 400 million viewers.</div>
+                    <p><strong>2:50 - The chaotic finale:</strong> During the long final fade-out, the orchestra goes out of control and plays fragments of famous songs: Glenn Miller's In The Mood, Greensleeves, Bach's Invention No. 8, and even She Loves You suddenly screamed by John Lennon.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The song's tempo is irregular (alternating 4/4 and 3/4 measures), making it difficult to dance to, but the chorus message was deliberately simple to be understood in any language: "Love is all you need".</div>
+                `
+            },
+            "hello_goodbye": {
+                it: `
+                    <h3>Hello, Goodbye</h3>
+                    <p><strong>0:00 - La dualità:</strong> Il brano si basa su una melodia semplice e su un testo fatto di opposti (tu dici sì/io dico no, tu dici fermati/io dico vai). Nota come la linea di basso di Paul sia molto melodica e "cantabile", muovendosi molto più della voce.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>John Lennon odiava questa canzone. La definì "tre minuti di contraddizioni e suoni senza senso" e si infuriò perché fu scelta come Lato A del singolo, relegando la sua I Am the Walrus (che considerava un capolavoro) al Lato B.</div>
+                    <p><strong>2:40 - Il finale "Maori":</strong> La canzone sembra finire, ma poi riparte improvvisamente con una coda inaspettata ("Hela, heba helloa"). I Beatles suonano e cantano in modo percussivo, quasi tribale, senza alcun legame con il resto del pezzo.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>La canzone nacque come un esercizio di improvvisazione. Paul chiese a un assistente di sedersi al piano e suonare note a caso: per ogni nota o parola, Paul rispondeva con l'opposto (alto/basso, nero/bianco).</div>
+                `,
+                en: `
+                    <h3>Hello, Goodbye</h3>
+                    <p><strong>0:00 - Duality:</strong> The track is based on a simple melody and lyrics made of opposites (you say yes/I say no, you say stop/I say go). Notice how Paul's bassline is very melodic and "singable", moving much more than the voice.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>John Lennon hated this song. He called it "three minutes of contradictions and meaningless sounds" and was furious because it was chosen as the A-side of the single, relegating his I Am the Walrus (which he considered a masterpiece) to the B-side.</div>
+                    <p><strong>2:40 - The "Maori" finale:</strong> The song seems to end, but then suddenly restarts with an unexpected coda ("Hela, heba helloa"). The Beatles play and sing in a percussive, almost tribal way, completely unrelated to the rest of the piece.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The song began as an improvisation exercise. Paul asked an assistant to sit at the piano and play random notes: for every note or word, Paul responded with the opposite (high/low, black/white).</div>
+                `
+            },
+            "lady_madonna": {
+                it: `
+                    <h3>Lady Madonna</h3>
+                    <p><strong>0:00 - Il piano Boogie-Woogie:</strong> L'intro al pianoforte è ispirata allo stile rock 'n' roll anni '50 di Fats Domino. Anche la voce di Paul è volutamente più bassa e "roca" del solito per imitare il cantante di New Orleans.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Il testo è un elogio alle donne lavoratrici e alle madri ("Children at your feet"), ispirato a una foto di una donna vietnamita che allatta, vista da Paul sulla rivista National Geographic.</div>
+                    <p><strong>1:15 - Il sax distorto:</strong> L'assolo di sassofono è suonato dal celebre jazzista britannico Ronnie Scott. I Beatles però non volevano un suono jazz pulito, quindi lo registrarono attraverso un microfono economico e lo distorsero per farlo sembrare un vecchio disco graffiato.</p>
+                `,
+                en: `
+                    <h3>Lady Madonna</h3>
+                    <p><strong>0:00 - The Boogie-Woogie piano:</strong> The piano intro is inspired by Fats Domino's 50s rock 'n' roll style. Even Paul's voice is intentionally lower and "raspier" than usual to imitate the New Orleans singer.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The lyrics are a praise to working women and mothers ("Children at your feet"), inspired by a photo of a Vietnamese woman nursing, seen by Paul in National Geographic magazine.</div>
+                    <p><strong>1:15 - The distorted sax:</strong> The saxophone solo is played by famous British jazz musician Ronnie Scott. However, the Beatles didn't want a clean jazz sound, so they recorded it through a cheap microphone and distorted it to make it sound like a scratched old record.</p>
+                `
+            },
+            "hey_jude": {
+                it: `
+                    <h3>Hey Jude</h3>
+                    <p><strong>0:00 - L'intimità:</strong> Paul inizia da solo al pianoforte. La canzone fu scritta per Julian Lennon (il figlio di John) per consolarlo durante il divorzio dei genitori. Il titolo originale era "Hey Jules".</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>John Lennon pensò per anni che la canzone fosse dedicata a lui e al suo nuovo rapporto con Yoko Ono, interpretando il verso "go out and get her" (esci e vai a prenderla) come una benedizione di Paul.</div>
+                    <p><strong>3:00 - L'ingresso ritardato:</strong> La batteria entra molto tardi nel brano. Ringo Starr era andato in bagno e tornò di corsa nello studio proprio mentre Paul stava iniziando la canzone. Riuscì a sedersi e colpire il tamburo esattamente al momento giusto.</p>
+                    <p><strong>4:00 - Il mantra finale:</strong> Inizia la famosa coda "Na-na-na" che dura ben 4 minuti (più della metà della canzone). Un'orchestra di 36 elementi si unisce ai Beatles battendo le mani e cantando il coro.</p>
+                `,
+                en: `
+                    <h3>Hey Jude</h3>
+                    <p><strong>0:00 - Intimacy:</strong> Paul starts alone at the piano. The song was written for Julian Lennon (John's son) to console him during his parents' divorce. The original title was "Hey Jules".</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>John Lennon thought for years that the song was dedicated to him and his new relationship with Yoko Ono, interpreting the lyric "go out and get her" as a blessing from Paul.</div>
+                    <p><strong>3:00 - The delayed entrance:</strong> The drums enter very late in the track. Ringo Starr had gone to the bathroom and ran back into the studio just as Paul was starting the song. He managed to sit down and hit the drum at exactly the right moment.</p>
+                    <p><strong>4:00 - The final mantra:</strong> The famous "Na-na-na" coda begins, lasting a full 4 minutes (more than half the song). A 36-piece orchestra joins the Beatles clapping their hands and singing the chorus.</p>
+                `
+            },
+            "get_back": {
+                it: `
+                    <h3>Get Back</h3>
+                    <p><strong>0:00 - Il ritmo "gallop":</strong> La chitarra ritmica tiene un ritmo che ricorda il galoppo di un cavallo. L'idea era tornare alle radici del rock 'n' roll grezzo, suonando tutti insieme in una stanza come una band dal vivo, senza trucchi da studio.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Ascolta l'assolo di piano elettrico: è suonato da Billy Preston. È l'unico musicista esterno ad aver mai ricevuto un credito ("The Beatles with Billy Preston") su un singolo dei Beatles. La sua presenza in studio servì a calmare le tensioni tra i quattro membri.</div>
+                    <p><strong>2:00 - Satira politica:</strong> Una prima versione del testo prendeva in giro i politici britannici anti-immigrazione (il famoso discorso "Rivers of Blood" di Enoch Powell), ma Paul cambiò le parole per evitare che l'ironia venisse fraintesa come razzismo reale.</p>
+                `,
+                en: `
+                    <h3>Get Back</h3>
+                    <p><strong>0:00 - The "gallop" rhythm:</strong> The rhythm guitar holds a beat reminiscent of a horse's gallop. The idea was to return to raw rock 'n' roll roots, playing together in a room like a live band, without studio tricks.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>Listen to the electric piano solo: it's played by Billy Preston. He is the only outside musician to have ever received a credit ("The Beatles with Billy Preston") on a Beatles single. His presence in the studio served to calm tensions among the four members.</div>
+                    <p><strong>2:00 - Political satire:</strong> An early version of the lyrics mocked anti-immigration British politicians (Enoch Powell's famous "Rivers of Blood" speech), but Paul changed the words to avoid the irony being misunderstood as actual racism.</p>
+                `
+            },
+            "ballad_john_yoko": {
+                it: `
+                    <h3>The Ballad of John and Yoko</h3>
+                    <p><strong>0:00 - Solo due Beatles:</strong> In questa registrazione suonano solo John e Paul. John canta e suona le chitarre; Paul suona basso, batteria e piano. George era in vacanza e Ringo stava girando un film.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Il testo è un vero e proprio diario di viaggio ("giornalismo musicale", disse John) che racconta le difficoltà del matrimonio tra John e Yoko: il matrimonio a Gibilterra, la luna di miele ad Amsterdam nel letto (Bed-In) e i problemi con la stampa.</div>
+                    <p><strong>1:40 - La censura:</strong> Il verso "Christ! You know it ain't easy" (Cristo! Sai che non è facile) causò la censura della canzone in molte stazioni radio americane e spagnole, che consideravano l'uso del nome di Cristo in quel contesto come blasfemo.</p>
+                `,
+                en: `
+                    <h3>The Ballad of John and Yoko</h3>
+                    <p><strong>0:00 - Only two Beatles:</strong> Only John and Paul play on this recording. John sings and plays guitars; Paul plays bass, drums, and piano. George was on vacation and Ringo was shooting a film.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The lyrics are a literal travel diary ("musical journalism", John called it) recounting the difficulties of John and Yoko's marriage: the wedding in Gibraltar, the honeymoon in Amsterdam in bed (Bed-In), and issues with the press.</div>
+                    <p><strong>1:40 - Censorship:</strong> The lyric "Christ! You know it ain't easy" caused the song to be censored on many American and Spanish radio stations, which considered the use of Christ's name in that context as blasphemous.</p>
+                `
+            },
+            "something": {
+                it: `
+                    <h3>Something</h3>
+                    <p><strong>0:00 - Il capolavoro di George:</strong> La batteria morbida e la chitarra fluida aprono quella che è considerata la miglior canzone scritta da George Harrison. Frank Sinatra la definì "la più grande canzone d'amore degli ultimi 50 anni" (anche se spesso la presentava erroneamente come una canzone di Lennon/McCartney).</p>
+                    <p><strong>1:50 - Il ponte drammatico:</strong> La tonalità cambia e l'atmosfera diventa più scura e orchestrale ("You're asking me will my love grow..."), creando un contrasto perfetto con la dolcezza delle strofe.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Il primo verso, "Something in the way she moves", è preso direttamente da una canzone del musicista James Taylor, che all'epoca incideva per la Apple Records (l'etichetta dei Beatles).</div>
+                `,
+                en: `
+                    <h3>Something</h3>
+                    <p><strong>0:00 - George's masterpiece:</strong> The soft drums and fluid guitar open what is considered the best song written by George Harrison. Frank Sinatra called it "the greatest love song of the past 50 years" (even though he often mistakenly introduced it as a Lennon/McCartney song).</p>
+                    <p><strong>1:50 - The dramatic bridge:</strong> The key changes and the atmosphere becomes darker and more orchestral ("You're asking me will my love grow..."), creating a perfect contrast with the sweetness of the verses.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The first line, "Something in the way she moves", is taken directly from a song by musician James Taylor, who at the time was recording for Apple Records (the Beatles' label).</div>
+                `
+            },
+            "come_together": {
+                it: `
+                    <h3>Come Together</h3>
+                    <p><strong>0:00 - "Shoot me!":</strong> John sussurra questa frase sopra la linea di basso "paludosa" e iconica di Paul. Spesso si sente solo un suono percussivo ("shhh") perché il battito di mani copre la parola "me".</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>La canzone iniziò come inno per la campagna elettorale di Timothy Leary (il guru dell'LSD) che voleva candidarsi contro Ronald Reagan in California. Leary finì in prigione per possesso di marijuana e la campagna finì, così John tenne la canzone per i Beatles.</div>
+                    <p><strong>2:00 - L'assolo moderno:</strong> L'assolo di piano elettrico e chitarra ha un suono molto "blues moderno". Ringo Starr suonò i toms della batteria coprendoli con degli asciugamani per ottenere quel suono sordo e tribale.</p>
+                `,
+                en: `
+                    <h3>Come Together</h3>
+                    <p><strong>0:00 - "Shoot me!":</strong> John whispers this phrase over Paul's iconic "swampy" bassline. Often you only hear a percussive sound ("shhh") because the handclap covers the word "me".</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The song started as an anthem for the election campaign of Timothy Leary (the LSD guru) who wanted to run against Ronald Reagan in California. Leary ended up in prison for marijuana possession and the campaign ended, so John kept the song for the Beatles.</div>
+                    <p><strong>2:00 - The modern solo:</strong> The electric piano and guitar solo has a very "modern blues" sound. Ringo Starr played the drum toms covering them with towels to get that muffled, tribal sound.</p>
+                `
+            },
+            "let_it_be": {
+                it: `
+                    <h3>Let It Be</h3>
+                    <p><strong>0:00 - Il sogno:</strong> L'intro solenne di pianoforte accompagna un testo quasi religioso. In realtà, "Mother Mary" non è la Vergine Maria, ma la madre di Paul (Mary McCartney), morta quando lui aveva 14 anni. Gli apparve in sogno in un periodo di stress dicendogli: "Andrà tutto bene, lascia che sia (let it be)".</p>
+                    <p><strong>1:50 - L'assolo (Album vs Singolo):</strong> Esistono due versioni dell'assolo di chitarra. Nella versione dell'album (che senti qui), l'assolo è più rock, distorto e graffiante. Nella versione del singolo, è più morbido e melodico.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>John Lennon odiava questa canzone per il suo stile "chiesastico". Per prenderla in giro, pretese che nell'album fosse seguita da Maggie Mae, una canzone tradizionale sboccata su una prostituta di Liverpool.</div>
+                `,
+                en: `
+                    <h3>Let It Be</h3>
+                    <p><strong>0:00 - The dream:</strong> The solemn piano intro accompanies an almost religious text. In reality, "Mother Mary" isn't the Virgin Mary, but Paul's mother (Mary McCartney), who died when he was 14. She appeared to him in a dream during a stressful period telling him: "It will be alright, let it be".</p>
+                    <p><strong>1:50 - The solo (Album vs Single):</strong> There are two versions of the guitar solo. In the album version (which you hear here), the solo is more rock, distorted, and biting. In the single version, it is softer and more melodic.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>John Lennon hated this song for its "churchy" style. To mock it, he demanded that on the album it be followed by Maggie Mae, a bawdy traditional song about a Liverpool prostitute.</div>
+                `
+            },
+            "long_winding_road": {
+                it: `
+                    <h3>The Long And Winding Road</h3>
+                    <p><strong>0:00 - La ballata finale:</strong> Una canzone malinconica al piano che parla di una strada in Scozia (vicino alla fattoria di Paul) che ispirava un senso di solitudine irraggiungibile.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Paul McCartney si infuriò quando sentì la versione finale prodotta da Phil Spector. Il produttore aveva aggiunto cori angelici femminili e un'orchestra sfarzosa ("Wall of Sound") senza consultare Paul, coprendo il suono semplice della band. Questo fu uno dei motivi legali citati da Paul per lo scioglimento dei Beatles.</div>
+                    <p><strong>2:10 - La versione "Naked":</strong> Nel 2003 uscì l'album Let It Be... Naked, dove tutti questi arrangiamenti orchestrali furono rimossi per mostrare la canzone scarna come la intendeva Paul.</p>
+                `,
+                en: `
+                    <h3>The Long And Winding Road</h3>
+                    <p><strong>0:00 - The final ballad:</strong> A melancholic piano song about a road in Scotland (near Paul's farm) that inspired a sense of unreachable loneliness.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>Paul McCartney was furious when he heard the final version produced by Phil Spector. The producer had added angelic female choirs and a lavish orchestra ("Wall of Sound") without consulting Paul, covering up the band's simple sound. This was one of the legal reasons cited by Paul for the dissolution of the Beatles.</div>
+                    <p><strong>2:10 - The "Naked" version:</strong> In 2003 the album Let It Be... Naked was released, where all these orchestral arrangements were removed to show the bare song as Paul intended it.</p>
+                `
+            },
+            "obladi": {
+                it: `
+                    <h3>Ob-La-Di, Ob-La-Da</h3>
+                    <p><strong>0:00 - Ska bianco:</strong> L'intro di pianoforte martellante dà il via a un tentativo dei Beatles di suonare musica ska/reggae giamaicana, genere che stava iniziando a spopolare a Londra.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span>Le sessioni di registrazione per questo brano furono un incubo. Paul costrinse la band a rifarla per giorni interi alla ricerca della perfezione. John Lennon, esasperato, uscì dallo studio, si drogò, rientrò barcollando e suonò l'intro di piano fortissimo e velocissimo urlando: "Ecco come deve suonare questa fottuta canzone!". Quella è la versione finita sul disco.</div>
+                    <p><strong>2:20 - L'errore di genere:</strong> Nel testo finale, Paul canta "Desmond stays at home and does his pretty face" (Desmond sta a casa e si trucca il viso), sbagliando i nomi dei personaggi (doveva essere Molly). Decise di tenere l'errore perché creava confusione sui ruoli di genere e suonava divertente.</p>
+                `,
+                en: `
+                    <h3>Ob-La-Di, Ob-La-Da</h3>
+                    <p><strong>0:00 - White Ska:</strong> The pounding piano intro kicks off an attempt by the Beatles to play Jamaican ska/reggae music, a genre that was starting to become huge in London.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span>The recording sessions for this track were a nightmare. Paul forced the band to redo it for days on end searching for perfection. John Lennon, exasperated, left the studio, took drugs, stumbled back in, and played the piano intro extremely loud and fast, screaming: "This is how this fucking song should sound!". That is the version that ended up on the record.</div>
+                    <p><strong>2:20 - The gender mistake:</strong> In the final lyrics, Paul sings "Desmond stays at home and does his pretty face", messing up the character names (it should have been Molly). He decided to keep the mistake because it created confusion about gender roles and sounded funny.</p>
+                `
+            }
+        };
+
+        let mobileGalleryInterval;
+        let currentImgIndex = 0;
+
+        function startMobileGallery() {
+            const images = document.querySelectorAll('.band-gallery .flip-card');
+            if (images.length === 0) return;
+
+            function updateGallery() {
+                if (window.innerWidth <= 900) {
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                    images[currentImgIndex].classList.add('mobile-active');
+                    currentImgIndex = (currentImgIndex + 1) % images.length;
+                }
+            }
+
+            if (window.innerWidth <= 900) {
+                updateGallery();
+                if (!mobileGalleryInterval) {
+                    mobileGalleryInterval = setInterval(updateGallery, 5000);
+                }
+            }
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth <= 900) {
+                    if (!mobileGalleryInterval) {
+                        updateGallery();
+                        mobileGalleryInterval = setInterval(updateGallery, 5000);
+                    }
+                } else {
+                    clearInterval(mobileGalleryInterval);
+                    mobileGalleryInterval = null;
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderPlaylist();
+            startMobileGallery();
+            
+            const trackList = document.getElementById('tracklist');
+            if(trackList) trackList.scrollTop = 0;
+        });
+
+        // GESTIONE CAMBIO LINGUA GLOBALE
+        function setGlobalLang(lang) {
+            document.documentElement.lang = lang;
+            
+            document.querySelectorAll('.global-lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-lang-' + lang).classList.add('active');
+
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentId = ytPlayer ? ytPlayer.getAttribute('data-current-id') : null;
+            
+            if (currentId) {
+                const paraphraseContentHTML = generateParaphraseHTML(currentId);
+                document.getElementById('desktop-lyrics-view').innerHTML = paraphraseContentHTML;
+                document.getElementById('mobile-lyrics-content').innerHTML = paraphraseContentHTML;
+                
+                const guideContent = document.getElementById('guide-content');
+                if (guideData[currentId] && guideData[currentId][lang]) {
+                    guideContent.innerHTML = guideData[currentId][lang];
+                }
+            }
+        }
+
+        // Funzione per generare il blocco HTML della Parafrasi
+        function generateParaphraseHTML(id) {
+            const data = paraphraseData[id] || { en: "Description not available.", it: "Descrizione non disponibile." };
+            const currentLang = document.documentElement.lang;
+
+            return `
+                <div class="lyrics-wrapper" style="padding: 10px 15px;">
+                    <div class="lyrics-content-area">
+                        <div class="lyrics-col eng active" style="width: 100%; white-space: normal;">
+                            <h4 style="margin: 0 0 2px 0; padding: 0; line-height: 1.2;">
+                                <span class="lang-it">Di cosa parla la canzone?</span>
+                                <span class="lang-en">What is this song about?</span>
+                            </h4><div style="white-space: pre-line; font-style: italic; color: #555; margin: 0; padding: 0; line-height: 1.5;">${data[currentLang]}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPlaylist() {
+            const container = document.getElementById('tracklist');
+            let html = '';
+
+            playlist.forEach((track, index) => {
+                html += `
+                    <div class="track-row" id="track-${track.id}" onclick="playTrack('${track.id}', '${track.ytId}', '${track.title.replace(/'/g, "\\'")}', this)">
+                        <div class="track-num">
+                            <span>${index + 1}</span>
+                            <div class="playing-icon">
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                            </div>
+                        </div>
+                        <div class="track-info">
+                            <div class="track-title">${track.title}</div>
+                            <div class="track-artist">The Beatles</div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function playTrack(id, ytId, title, rowElement) {
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentPlayingId = ytPlayer.getAttribute('data-current-id');
+            const currentLang = document.documentElement.lang;
+
+            if (currentPlayingId !== id) {
+                ytPlayer.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`;
+                ytPlayer.setAttribute('data-current-id', id);
+            }
+
+            const rows = document.querySelectorAll('.track-row');
+            rows.forEach(r => r.classList.remove('active'));
+            if(rowElement) rowElement.classList.add('active');
+
+            // Parafrasi
+            const paraphraseContentHTML = generateParaphraseHTML(id);
+            document.getElementById('desktop-lyrics-view').innerHTML = paraphraseContentHTML;
+            document.getElementById('mobile-lyrics-content').innerHTML = paraphraseContentHTML;
+            document.getElementById('tracklist-wrapper').classList.add('lyrics-active');
+            document.getElementById('tracklist').scrollTop = 0;
+
+            // Guida
+            const guideContent = document.getElementById('guide-content');
+            if (guideData[id] && guideData[id][currentLang]) {
+                guideContent.innerHTML = guideData[id][currentLang];
+                const gBox = document.querySelector('.guide-box');
+                if(gBox) gBox.scrollTop = 0;
+            } else {
+                guideContent.innerHTML = currentLang === 'it' ? "<p>Guida all'ascolto non disponibile.</p>" : "<p>Listening guide not available.</p>";
+            }
+
+            const guidePanel = document.getElementById('guide-panel');
+            if(guidePanel && !guidePanel.classList.contains('open')) {
+                toggleGuide();
+            }
+        }
+
+        function resetTracklist() {
+            document.getElementById('tracklist-wrapper').classList.remove('lyrics-active');
+        }
+
+        // --- FUNZIONI ACCORDION MASTER ---
+        function toggleLesson() { 
+            const content = document.getElementById('main-content');
+            const videoLayer = document.getElementById('video-layer');
+            const btn = document.getElementById('btn-inizia');
+            const btnTxtIt = document.getElementById('btn-txt-it');
+            const btnTxtEn = document.getElementById('btn-txt-en');
+            const icon = btn.querySelector('.icon-plus');
+            
+            const isOpening = !content.classList.contains('active');
+            
+            if (isOpening) {
+                content.classList.add('active'); 
+                btn.classList.add('active'); 
+                btnTxtIt.textContent = "Chiudi Esperienza"; 
+                btnTxtEn.textContent = "Close Experience";
+                icon.textContent = "×"; 
+                videoLayer.classList.add('video-hidden');
+            } else {
+                content.classList.remove('active'); 
+                btn.classList.remove('active'); 
+                btnTxtIt.textContent = "Inizia Esperienza"; 
+                btnTxtEn.textContent = "Start Experience"; 
+                icon.textContent = "→"; 
+                videoLayer.classList.remove('video-hidden');
+                
+                const ytPlayer = document.getElementById('youtube-player');
+                if(ytPlayer) ytPlayer.src = "about:blank";
+            }
+        }
+
+        function toggleLyricsAccordion() {
+            const panel = document.getElementById('lyrics-panel');
+            const btn = document.getElementById('lyrics-btn');
+            if (panel.classList.contains('open')) { 
+                panel.classList.remove('open'); btn.classList.remove('active'); 
+            } else { 
+                panel.classList.add('open'); btn.classList.add('active'); 
+            }
+        }
+
+        function toggleGuide() {
+            const panel = document.getElementById('guide-panel');
+            const btn = document.getElementById('guide-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleHistory() {
+            const panel = document.getElementById('history-panel');
+            const btn = document.getElementById('history-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleDisclaimer() {
+            const panel = document.getElementById('disclaimer-panel');
+            const btn = document.getElementById('disclaimer-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleMobileTracks() {
+            const trackList = document.getElementById('tracklist');
+            const wrapper = document.getElementById('tracklist-wrapper');
+            const trigger = document.querySelector('.mobile-track-trigger');
+            if (trackList.classList.contains('mobile-open')) {
+                trackList.classList.remove('mobile-open'); wrapper.classList.remove('opened'); wrapper.classList.add('closed'); trigger.classList.remove('active');
+            } else {
+                trackList.classList.add('mobile-open'); wrapper.classList.remove('closed'); wrapper.classList.add('opened'); trigger.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

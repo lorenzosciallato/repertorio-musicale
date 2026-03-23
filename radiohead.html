@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Radiohead | Kid A</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- VARIABILI & RESET --- */
+        :root {
+            --bg-color: #f0f0f2;
+            --paper-color: #fdfbf7;
+            --ink-color: #1a1a1a;
+            --accent-color: #375a7f; /* Blu originale richiesto */
+            --pop-yellow: #ffee00;
+            --font-title: 'Abril Fatface', cursive;
+            --font-body: 'Inter', sans-serif;
+            --hover-row: rgba(55, 90, 127, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: var(--font-body);
+            color: var(--ink-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px;
+            width: 100%;
+            overflow-x: hidden; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- MULTILINGUA CSS LOGIC --- */
+        html[lang="it"] .lang-en { display: none !important; }
+        html[lang="en"] .lang-it { display: none !important; }
+
+        /* --- BACKGROUND --- */
+        .video-background-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden;
+            background: #e0e0e5; 
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .video-foreground {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; transition: opacity 0.8s ease; opacity: 1;
+        }
+
+        .video-foreground img.bg-image {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.15; 
+            filter: grayscale(30%) sepia(1) hue-rotate(190deg) contrast(1.2);
+            mix-blend-mode: multiply;
+        }
+
+        .video-hidden { opacity: 0; }
+
+        /* --- HEADER --- */
+        header { text-align: center; margin-top: 3rem; margin-bottom: 1rem; padding: 0 1rem; position: relative; z-index: 4; }
+        
+        .main-logo {
+            max-width: 90%; width: 350px; height: auto;
+            display: block; margin: 0 auto;
+        }
+
+        .subtitle-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .subtitle {
+            font-family: var(--font-body); font-size: 1.5rem; color: var(--accent-color); font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 4px;
+        }
+
+        .global-lang-switch {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .global-lang-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 4px;
+            color: #888;
+            transition: all 0.3s;
+        }
+        
+        .global-lang-btn.active {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        /* --- CONTENITORE PRINCIPALE --- */
+        .content-card {
+            background: var(--paper-color); padding: 3rem; margin: 0 auto;
+            width: 90%; max-width: 1200px; position: relative;
+            border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); z-index: 4;
+            margin-bottom: 2rem; margin-top: 2rem;
+        }
+        @media (max-width: 600px) { 
+            .content-card { padding: 1.5rem; width: 95%; margin-top: 1rem; } 
+            .main-logo { width: 280px; }
+            .subtitle { font-size: 1.2rem; letter-spacing: 2px; }
+            .global-lang-btn { padding: 5px 10px; font-size: 0.8rem; }
+        }
+
+        /* --- ACCORDION GENERALE --- */
+        .accordion-item { margin-bottom: 1rem; border-bottom: none; }
+        
+        .master-header {
+            background: transparent; border: 2px solid var(--accent-color); border-radius: 8px;
+            padding: 15px 20px; justify-content: center; font-size: 1.5rem; 
+            color: var(--accent-color); width: 100%; margin-bottom: 1rem;
+            cursor: pointer; display: flex; align-items: center; font-family: var(--font-title);
+            transition: all 0.3s ease;
+        }
+        .master-header:hover { background: rgba(55, 90, 127, 0.1); }
+        .master-header .icon-plus { margin-left: 15px; font-family: var(--font-body); font-weight: 300; transition: transform 0.3s; }
+
+        .accordion-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, opacity 0.5s;
+            padding: 0; opacity: 0;
+        }
+        .accordion-content.active { max-height: 20000px; opacity: 1; padding-top: 2rem; }
+        .master-header.active .icon-plus { transform: rotate(90deg); }
+
+        /* --- LAYOUT PLAYER --- */
+        .playlist-layout {
+            display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; align-items: start; margin-bottom: 2rem;
+        }
+        @media (max-width: 900px) { .playlist-layout { grid-template-columns: 1fr; } }
+
+        /* --- AUDIO PLAYER CONTAINER --- */
+        .player-wrapper {
+            position: sticky; top: 20px; background: #fff; border-radius: 12px;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 10; border: 1px solid #eee;
+        }
+
+        .youtube-container { 
+            position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #000; 
+        }
+        .youtube-container iframe { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; 
+        }
+
+        /* --- TRACKLIST E MESSAGGI --- */
+        .tracklist-column { display: flex; flex-direction: column; }
+
+        .scroll-disclaimer {
+            font-size: 0.85rem; color: #665500; margin-bottom: 12px; font-style: italic; text-align: center; 
+            background-color: rgba(255, 238, 0, 0.2); border: 2px dashed #e6c200; padding: 10px; border-radius: 8px; width: 100%;
+        }
+        .msg-desktop { display: block; }
+        .msg-mobile { display: none; }
+        
+        .mobile-track-trigger {
+            display: none; width: 100%; background: #fff; border: 2px dashed #ddd; border-radius: 8px;
+            padding: 12px 20px; font-family: var(--font-title); font-size: 1.2rem; color: var(--accent-color);
+            justify-content: space-between; align-items: center; cursor: pointer; margin-top: 10px; margin-bottom: 10px; transition: all 0.3s;
+        }
+        .mobile-track-trigger:hover { background: #fdfdfd; border-color: var(--accent-color); }
+        .mobile-track-trigger.active { background: #f0f4f8; border-style: solid; border-color: var(--accent-color); }
+        .trigger-arrow { transition: transform 0.3s; font-size: 1rem; }
+        .mobile-track-trigger.active .trigger-arrow { transform: rotate(180deg); }
+
+        .tracklist-container { 
+            width: 100%; max-height: 500px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #ccc #f0f0f2;
+            padding-right: 5px; transition: max-height 0.5s ease-out, opacity 0.5s;
+        }
+        .tracklist-container::-webkit-scrollbar { width: 6px; }
+        .tracklist-container::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+
+        .track-row {
+            display: grid; grid-template-columns: 40px 1fr 40px; padding: 12px 10px; border-bottom: 1px solid rgba(0,0,0,0.05);
+            cursor: pointer; transition: background 0.2s, padding-left 0.2s; border-radius: 6px; align-items: center;
+        }
+        .track-row:hover { background-color: var(--hover-row); padding-left: 15px; }
+        .track-row.active { background-color: var(--hover-row); border-left: 4px solid var(--accent-color); }
+
+        .track-num { font-size: 0.9rem; color: #888; font-weight: 700; }
+        .track-row.active .track-num { display: none; }
+        .track-row.active .playing-icon { display: inline-block; }
+        
+        .playing-icon { display: none; width: 14px; height: 14px; position: relative; }
+        .bar { background: var(--accent-color); bottom: 0; position: absolute; width: 3px; animation: sound 0ms -800ms linear infinite alternate; }
+        .bar:nth-child(1) { left: 0px; height: 10px; animation-duration: 474ms; }
+        .bar:nth-child(2) { left: 5px; height: 6px; animation-duration: 433ms; }
+        .bar:nth-child(3) { left: 10px; height: 12px; animation-duration: 407ms; }
+        @keyframes sound { 0% { opacity: .35; height: 3px; } 100% { opacity: 1; height: 14px; } }
+
+        .track-info { display: flex; flex-direction: column; }
+        .track-title { font-weight: 700; font-size: 1rem; color: var(--ink-color); }
+        .track-row.active .track-title { color: var(--accent-color); }
+        .track-artist { font-size: 0.85rem; color: #666; }
+
+        /* --- STILI TESTI (LYRICS) TOGGLE E PULSANTI --- */
+        .btn-back-tracks {
+            display: none; width: 100%; padding: 8px; margin-bottom: 10px; background: var(--pop-yellow); border: none;
+            color: var(--ink-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; font-weight: 900; transition: background 0.3s; text-align: center;
+        }
+        .btn-back-tracks:hover { background: #e6d600; }
+
+        .desktop-lyrics-view { display: none; }
+        
+        .lyrics-wrapper { background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .lyrics-toggle { display: flex; gap: 10px; margin-bottom: 15px; justify-content: center; }
+        
+        .flag-btn { 
+            background: #f0f0f2; border: 2px solid #ddd; border-radius: 6px; padding: 8px 15px; 
+            font-size: 1rem; cursor: pointer; transition: all 0.3s; color: var(--ink-color); 
+        }
+        .flag-btn:hover { background: #e8e8e8; }
+        .flag-btn.active { 
+            background: #fff; border-color: var(--accent-color); font-weight: bold; 
+            color: var(--accent-color); box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+        }
+
+        .lyrics-content-area { max-height: 350px; overflow-y: auto; scrollbar-width: thin; padding-right: 5px; }
+        .lyrics-content-area::-webkit-scrollbar { width: 6px; }
+        .lyrics-content-area::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+        
+        .lyrics-col { display: none; white-space: pre-wrap; color: #333; font-size: 0.9rem; }
+        .lyrics-col.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        .lyrics-col h4 { color: var(--accent-color); margin-bottom: 10px; font-family: var(--font-title); font-size: 1.1rem; }
+        .lyrics-col.ita { font-style: italic; color: #555; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* GESTIONE LOGICA DESKTOP (Mostra Lyrics, Nascondi Lista) */
+        @media (min-width: 901px) {
+            .tracklist-wrapper.lyrics-active #tracklist { display: none; }
+            .tracklist-wrapper.lyrics-active #desktop-lyrics-view { display: block; }
+            .tracklist-wrapper.lyrics-active #btn-back-tracks { display: block; }
+            .tracklist-wrapper.lyrics-active .msg-desktop { display: none; }
+            .mobile-lyrics-accordion { display: none; } 
+        }
+
+        /* GESTIONE LOGICA MOBILE */
+        @media (max-width: 900px) {
+            .tracklist-wrapper.lyrics-active #desktop-lyrics-view { display: none !important; }
+            .tracklist-wrapper.lyrics-active #btn-back-tracks { display: none !important; }
+            
+            /* Su mobile l'accordion dei testi è visibile */
+            .mobile-lyrics-accordion { display: block; margin-top: 1rem; border-top: 1px solid #eee; }
+        }
+
+        /* --- ACCORDIONS COMUNI (Guida, Storia, Mobile Lyrics) --- */
+        .guide-accordion-wrapper { margin-top: 1rem; border-top: 1px solid #eee; }
+        .guide-trigger {
+            background: #fff; border: 2px dashed #ddd; border-radius: 8px; width: 100%; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s; margin-top: 1rem;
+        }
+        .guide-trigger:hover { border-color: var(--accent-color); background: #fdfdfd; }
+        .guide-trigger.active { border-color: var(--accent-color); background: #f0f4f8; border-style: solid; }
+        .guide-trigger span { font-family: var(--font-title); font-size: 1.4rem; color: var(--accent-color); }
+        .guide-arrow { font-size: 1.2rem; transition: transform 0.3s; color: var(--accent-color); }
+        .guide-trigger.active .guide-arrow { transform: rotate(180deg); }
+
+        .guide-panel { max-height: 0; overflow: hidden; transition: max-height 0.6s ease-out, opacity 0.5s; opacity: 0; background: #fff; border-radius: 0 0 8px 8px; }
+        .guide-panel.open { max-height: 80000px; opacity: 1; padding: 20px 0; }
+
+        .guide-grid { display: grid; grid-template-columns: 2fr 1.5fr; gap: 2rem; align-items: start; }
+        .guide-box { background: #fff; padding: 1rem 0; max-height: 600px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--accent-color) #f0f0f2; padding-right: 15px; }
+        .guide-box::-webkit-scrollbar { width: 8px; }
+        .guide-box::-webkit-scrollbar-thumb { background-color: var(--accent-color); border-radius: 10px; }
+        
+        .guide-content p { margin-bottom: 1rem; font-size: 1rem; color: #333; }
+        .guide-content strong { color: var(--accent-color); font-weight: 900; }
+
+        .curiosity-box { background: #fffcf0; border-left: 4px solid var(--pop-yellow); padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0; font-size: 0.95rem; font-style: italic; color: #554; }
+        .curiosity-label { font-weight: bold; font-style: normal; color: #d4a000; text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 5px; }
+
+        /* --- FLIP CARDS CHIRURGICHE --- */
+        .flip-card {
+            perspective: 1000px;
+            cursor: pointer;
+            width: 100%;
+            display: block;
+            margin-bottom: 15px;
+        }
+        .wiki-figure .flip-card { margin-bottom: 0; } /* Reset dentro al testo */
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-card-front, .flip-card-back {
+            width: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        
+        /* Il front detta l'altezza del blocco in modo naturale */
+        .flip-card-front {
+            position: relative;
+            height: auto;
+            z-index: 2;
+        }
+        
+        /* Il back si sovrappone esattamente e si adatta all'altezza */
+        .flip-card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: var(--accent-color);
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .flip-card-back strong { color: var(--pop-yellow); font-family: var(--font-title); font-size: 1.1rem; margin-bottom: 5px; line-height: 1.2; }
+        .flip-card-back small { font-size: 0.85rem; opacity: 0.9; }
+
+        /* Applica i bordi arrotondati alle facce, l'immagine li erediterà */
+        .flip-card-front img, .flip-card-back { border-radius: inherit; }
+        
+        .band-gallery .flip-card-front, .band-gallery .flip-card-back {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .wiki-figure .flip-card-front, .wiki-figure .flip-card-back {
+            border-radius: 4px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #ccc;
+        }
+        .wiki-figure .flip-card-back { border: none; }
+
+        /* Immagini base */
+        .gallery-img, .wiki-img { display: block; width: 100%; height: auto; object-fit: cover; }
+        .wiki-img { filter: sepia(0.1) contrast(1.05); transition: all 0.3s; border: none; box-shadow: none; border-radius: 0; }
+        .gallery-img { border: none; box-shadow: none; border-radius: 0; }
+        .flip-card-front:hover .wiki-img { filter: none; }
+
+        /* --- STILE GALLERIA IMMAGINI --- */
+        .band-gallery { display: flex; flex-direction: column; gap: 20px; max-height: 650px; overflow-y: auto; padding-right: 10px; }
+        .band-gallery::-webkit-scrollbar { width: 4px; }
+        .band-gallery::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
+        .band-gallery .flip-card { height: auto; margin-bottom: 0; }
+
+        /* --- STILE WIKI / STORIA --- */
+        .wiki-content { font-family: 'Inter', sans-serif; color: #333; line-height: 1.7; padding: 0 10px; text-align: justify; }
+        .wiki-title { font-family: var(--font-title); color: var(--accent-color); font-size: 1.4rem; margin-top: 10px; margin-bottom: 5px; letter-spacing: 1px; }
+        .wiki-subtitle { font-weight: 900; color: #d4a000; text-transform: uppercase; font-size: 0.85rem; margin-top: 40px; margin-bottom: 10px; clear: both; }
+        .wiki-divider { border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); margin: 30px 0; clear: both; }
+        .wiki-figure { margin: 15px 0; width: 100%; }
+        .wiki-figure figcaption { font-size: 0.75rem; color: #666; font-style: italic; text-align: center; margin-top: 5px; display: block; }
+        .wiki-gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 30px 0 40px 0; }
+        .wiki-gallery-grid .wiki-figure { height: 100%; margin: 0; }
+        .wiki-gallery-grid .wiki-img { height: 100%; object-fit: cover; }
+
+        .btn-close-bottom { width: 100%; padding: 12px; margin-top: 15px; background: #fff; border: 1px solid #ddd; color: var(--accent-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; font-weight: 700; transition: background 0.3s; text-align: center; }
+        .btn-close-bottom:hover { background: #f0f4f8; border-color: var(--accent-color); }
+        .track-close-desktop-hidden { display: none; }
+
+        @media (min-width: 901px) {
+            .wiki-figure.right { float: right; width: 40%; margin-left: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.left { float: left; width: 40%; margin-right: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.full { clear: both; width: 100%; margin: 30px 0; }
+            .wiki-chapter::after { content: ""; display: table; clear: both; }
+        }
+
+        @media (max-width: 900px) {
+            .msg-desktop { display: none !important; }
+            .msg-mobile { display: block !important; text-align: center; }
+            .guide-grid { grid-template-columns: 1fr; }
+            .band-gallery { display: block; order: -1; max-height: none; overflow: hidden; padding-right: 0; margin-bottom: 10px; }
+            
+            /* Gestione Flip Card Slider su mobile */
+            .band-gallery .flip-card { display: none; animation: fadeInSlide 0.5s ease-in-out; margin-bottom: 0; }
+            .band-gallery .flip-card.mobile-active { display: block; }
+            
+            @keyframes fadeInSlide { from { opacity: 0; } to { opacity: 1; } }
+            .wiki-gallery-grid { grid-template-columns: 1fr; gap: 20px; }
+            .mobile-track-trigger { display: flex; } 
+            .tracklist-wrapper.opened .track-close-desktop-hidden { display: block; }
+            .tracklist-container { max-height: 0; overflow: hidden; opacity: 0; }
+            .tracklist-container.mobile-open { max-height: 5000px; overflow-y: visible; opacity: 1; margin-bottom: 1rem; }
+            .tracklist-wrapper.closed .scroll-disclaimer { display: none; }
+            .tracklist-wrapper.opened .scroll-disclaimer { display: block; }
+            .guide-box { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+            /* INTERVENTO CHIRURGICO: rimuovo lo scroll annidato dei lyrics su mobile */
+            .lyrics-content-area { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-background-wrapper" id="bg-wrapper">
+        <div class="video-foreground" id="video-layer">
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211763/sfondo_uxjctu.jpg" alt="Radiohead Background" class="bg-image">
+        </div>
+        <div class="video-filter-overlay"></div>
+    </div>
+
+    <header>
+        <h1>
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211767/logo_i0mvx1.png" alt="Radiohead Logo" class="main-logo">
+        </h1>
+        <div class="subtitle-wrapper">
+            <div class="subtitle">
+                <span class="lang-it">Repertorio</span>
+                <span class="lang-en">Repertorio</span>
+            </div>
+            <div class="global-lang-switch">
+                <button id="btn-lang-it" class="global-lang-btn active" onclick="setGlobalLang('it')">ITA</button>
+                <button id="btn-lang-en" class="global-lang-btn" onclick="setGlobalLang('en')">ENG</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-card">
+        
+        <div class="accordion-item">
+            <button class="master-header" id="btn-inizia" onclick="toggleLesson()">
+                <span id="btn-text">
+                    <span class="lang-it" id="btn-txt-it">Inizia Esperienza</span>
+                    <span class="lang-en" id="btn-txt-en">Start Experience</span>
+                </span> 
+                <span class="icon-plus">→</span>
+            </button>
+            
+            <div class="accordion-content" id="main-content">
+                
+                <div class="playlist-layout">
+                    <div class="player-wrapper" id="player-wrapper-ui">
+                        <div class="youtube-container">
+                            <iframe id="youtube-player" src="about:blank" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+                    </div>
+
+                    <div class="tracklist-column tracklist-wrapper closed" id="tracklist-wrapper">
+                        
+                        <button class="mobile-track-trigger" onclick="toggleMobileTracks()">
+                            <span>
+                                <span class="lang-it">Brani</span>
+                                <span class="lang-en">Tracks</span>
+                            </span>
+                            <span class="trigger-arrow">▼</span>
+                        </button>
+
+                        <div class="scroll-disclaimer msg-desktop">
+                            <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere l'intera lista di brani</span>
+                            <span class="lang-en">Use your keyboard or mouse wheel to scroll through the full tracklist</span>
+                        </div>
+                        <div class="scroll-disclaimer msg-mobile">
+                            <span class="lang-it">Clicca e scorri per vedere l'intera lista di brani</span>
+                            <span class="lang-en">Tap and scroll to see the full tracklist</span>
+                        </div>
+
+                        <button class="btn-back-tracks" id="btn-back-tracks" onclick="resetTracklist()">
+                            <span class="lang-it">← Torna alla lista brani</span>
+                            <span class="lang-en">← Back to tracklist</span>
+                        </button>
+
+                        <div class="desktop-lyrics-view" id="desktop-lyrics-view">
+                            </div>
+
+                        <div class="tracklist-container" id="tracklist">
+                            </div>
+                        
+                        <button class="btn-close-bottom track-close-desktop-hidden" onclick="toggleMobileTracks()">
+                            <span class="lang-it">↑ Chiudi Lista Brani</span>
+                            <span class="lang-en">↑ Close Tracklist</span>
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper mobile-lyrics-accordion" style="border-top: none;">
+                    <button class="guide-trigger" id="lyrics-btn" onclick="toggleLyricsAccordion()">
+                        <span>
+                            <span class="lang-it">Parafrasi</span>
+                            <span class="lang-en">Paraphrase</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="lyrics-panel">
+                        <div class="guide-box" style="max-height: none; overflow: visible;">
+                            <div id="mobile-lyrics-content">
+                                <p style="text-align:center; color:#888; margin-top:30px; margin-bottom:30px;">
+                                    <span class="lang-it">Seleziona un brano dalla playlist per visualizzare la parafrasi.</span>
+                                    <span class="lang-en">Select a track from the playlist to view the paraphrase.</span>
+                                </p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleLyricsAccordion()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Parafrasi</span>
+                            <span class="lang-en">↑ Close Paraphrase</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper">
+                    <button class="guide-trigger" id="guide-btn" onclick="toggleGuide()">
+                        <span>
+                            <span class="lang-it">Guida all'Ascolto & Curiosità</span>
+                            <span class="lang-en">Listening Guide & Trivia</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="guide-panel">
+                        <div class="guide-grid">
+                            <div>
+                                <div class="guide-box">
+                                    <div id="guide-content" class="guide-content">
+                                        <p style="text-align:center; color:#888; margin-top:50px;">
+                                            <span class="lang-it">Seleziona un brano dalla playlist per visualizzare qui i dettagli.</span>
+                                            <span class="lang-en">Select a track from the playlist to view details here.</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="scroll-disclaimer msg-desktop" style="margin-top: 10px;">
+                                    <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere la guida</span>
+                                    <span class="lang-en">Use your keyboard or mouse wheel to scroll through the guide</span>
+                                </div>
+                            </div>
+
+                            <div class="band-gallery">
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211762/1_etcptv.webp" alt="Radiohead 2000"></div>
+                                        <div class="flip-card-back"><strong>Radiohead 2000</strong><small>Source: Far Out Magazine</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211756/2_oaskko.jpg" alt="Radiohead Studio"></div>
+                                        <div class="flip-card-back"><strong>Radiohead Studio</strong><small>Source: SPIN</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211755/3_uppsae.jpg" alt="Radiohead Live"></div>
+                                        <div class="flip-card-back"><strong>Radiohead Live</strong><small>Source: Future</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211754/4_dcbihe.jpg" alt="Radiohead"></div>
+                                        <div class="flip-card-back"><strong>Radiohead</strong><small>Source: Rolling Stone</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211742/5_rt3qpa.jpg" alt="Radiohead Live"></div>
+                                        <div class="flip-card-back"><strong>Radiohead Live</strong><small>Source: Bing</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211741/6_kr2wum.jpg" alt="Radiohead On Stage"></div>
+                                        <div class="flip-card-back"><strong>On Stage</strong><small>Source: Bing</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211741/7_nf6ct9.jpg" alt="Radiohead Band"></div>
+                                        <div class="flip-card-back"><strong>Radiohead</strong><small>Source: Pinterest</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211717/8_wuagmg.jpg" alt="Radiohead Streaming"></div>
+                                        <div class="flip-card-back"><strong>Radiohead</strong><small>Source: NME</small></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn-close-bottom" onclick="toggleGuide()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Guida</span>
+                            <span class="lang-en">↑ Close Guide</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="history-btn" onclick="toggleHistory()">
+                        <span>
+                            <span class="lang-it">Contesto Storico & Artistico</span>
+                            <span class="lang-en">Historical & Artistic Context</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="history-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">L'Esordio e il Fenomeno Creep (1992–1994)</span>
+                                        <span class="lang-en">Debut and the Creep Phenomenon (1992–1994)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure full">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211712/9_euahue.jpg" alt="Abingdon School" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Abingdon School</span><span class="lang-en">Abingdon School</span></strong>
+                                                    <small>Source: The Oxford Magazine</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>Abingdon School, Oxford, dove tutto ebbe inizio nel 1985.</figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Il 5 maggio 1992 esce Drill, l'EP di debutto prodotto da Hufford ed Edge, che non ottiene risultati significativi nelle classifiche britanniche. La band ingaggia quindi i produttori americani Paul Q. Kolderie e Sean Slade — già noti per il lavoro con Pixies e Dinosaur Jr. — per la registrazione del primo album. Pablo Honey viene inciso in sole tre settimane nell'autunno del 1992, con un'impronta fortemente influenzata dall'indie rock americano — da R.E.M. a Nirvana, dai Pixies agli Smiths.</p>
+                                    <p class="lang-en">On May 5, 1992, the debut EP Drill was released, produced by Hufford and Edge, but it failed to achieve significant results on the British charts. The band then hired American producers Paul Q. Kolderie and Sean Slade — already known for their work with Pixies and Dinosaur Jr. — to record their first album. Pablo Honey was cut in just three weeks in the autumn of 1992, with a strong imprint influenced by American indie rock — from R.E.M. to Nirvana, from Pixies to The Smiths.</p>
+                                    
+                                    <p class="lang-it">Il singolo Creep è il punto catalizzatore dell'album. In patria viene inizialmente ignorato o addirittura respinto: la rivista NME lo stroncò, mentre BBC Radio 1 si rifiutò di trasmetterlo giudicandolo "troppo deprimente". Eppure, con una dinamica che sarebbe diventata quasi paradigmatica nella storia dei Radiohead, il brano trova un pubblico inatteso altrove: negli Stati Uniti, grazie alla rotazione su MTV, Creep sale fino alla posizione numero 32 nella classifica rock di Billboard, trascinando la band nel suo primo tour americano nella primavera del 1993.</p>
+                                    <p class="lang-en">The single Creep was the album's catalyst. At home it was initially ignored or even rejected: NME magazine panned it, while BBC Radio 1 refused to play it, judging it "too depressing." Yet, with a dynamic that would become almost paradigmatic in Radiohead's history, the song found an unexpected audience elsewhere: in the United States, thanks to rotation on MTV, Creep climbed to number 32 on the Billboard rock chart, dragging the band into their first American tour in the spring of 1993.</p>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211711/10_yyenfa.jpg" alt="Radiohead 1993" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Radiohead 1993</span><span class="lang-en">Radiohead 1993</span></strong>
+                                                    <small>Source: Science of Noise</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>Il periodo di Creep e l'improvvisa fama americana, 1993.</figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Quando il singolo viene ristampato nel Regno Unito nell'autunno dello stesso anno, raggiunge la settima posizione. Il successo improvviso rischia però di diventare un peso insostenibile: la pressione generata porta il gruppo sull'orlo dello scioglimento. Per anni i Radiohead si rifiuteranno persino di eseguire Creep dal vivo, per evitare di essere identificati esclusivamente come "il gruppo di Creep".</p>
+                                    <p class="lang-en">When the single was re-released in the United Kingdom in the autumn of the same year, it reached number seven. The sudden success, however, risked becoming an unsustainable burden: the pressure generated brought the group to the brink of dissolution. For years, Radiohead would refuse to perform Creep live, to avoid being identified exclusively as "the Creep band."</p>
+
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Il Consolidamento e il Successo Britannico (1995–1996)</span>
+                                        <span class="lang-en">Consolidation and British Success (1995–1996)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211711/11_i8m4ti.jpg" alt="Radiohead Live 90s" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Live anni '90</span><span class="lang-en">90s Live</span></strong>
+                                                    <small>Source: SFGate</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption></figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Terminato l'estenuante tour legato a Pablo Honey, i Radiohead si mettono al lavoro sul secondo album. La scelta del produttore cade su John Leckie, veterano degli Abbey Road Studios già conosciuto per i lavori con i Stone Roses. La tensione nel gruppo è palpabile: ci si aspetta un disco all'altezza o superiore al successo di Creep. Le registrazioni iniziano in un deposito di frutta nell'Oxfordshire, per poi proseguire ai Rak Studios.</p>
+                                    <p class="lang-en">After the exhausting tour related to Pablo Honey, Radiohead set to work on their second album. The choice of producer fell on John Leckie, a veteran of Abbey Road Studios already known for his work with the Stone Roses. Tension in the group was palpable: a record equal to or greater than the success of Creep was expected. Recordings began in a fruit warehouse in Oxfordshire, then continued at Rak Studios.</p>
+                                    
+                                    <p class="lang-it">The Bends esce il 25 marzo 1995 e segna una maturazione sonora significativa: chitarre più elaborate, tastiere più presenti, atmosfere meno cupe rispetto al predecessore. I singoli Fake Plastic Trees, Just e High and Dry ottengono buoni risultati, ma è soprattutto Street Spirit (Fade Out) a consacrare definitivamente il gruppo in Gran Bretagna, raggiungendo la quinta posizione nelle classifiche britanniche. Nell'estate del 1995, i Radiohead aprono i concerti degli R.E.M. in Europa, una delle band che maggiormente li aveva influenzati. Michael Stipe, presentandoli al pubblico, pronuncia la frase destinata a restare nella storia: "I Radiohead sono così bravi che mi fanno paura".</p>
+                                    <p class="lang-en">The Bends was released on March 25, 1995, and marked a significant sonic maturation: more elaborate guitars, more present keyboards, less gloomy atmospheres than its predecessor. The singles Fake Plastic Trees, Just, and High and Dry achieved good results, but it was above all Street Spirit (Fade Out) that definitively consecrated the group in Great Britain, reaching number five on the British charts. In the summer of 1995, Radiohead opened for R.E.M. in Europe, one of the bands that had most influenced them. Michael Stipe, introducing them to the public, uttered the phrase destined to go down in history: "Radiohead are so good they scare me."</p>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://www.rollingstone.com/wp-content/uploads/2018/07/radiohead-1994.jpg?w=1581&h=1054&crop=1" alt="Radiohead Live" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Live 1994</span><span class="lang-en">Live 1994</span></strong>
+                                                    <small>Source: Rolling Stone</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption></figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">The Bends, inizialmente considerato poco commerciale, nel giro di dodici mesi è già salutato come un classico. Philip Selway ricorderà con ironia come la casa discografica fosse preoccupata per la mancanza di singoli, mentre in realtà ben cinque brani entered nella top 30 britannica.</p>
+                                    <p class="lang-en">The Bends, initially considered not very commercial, within twelve months was already hailed as a classic. Philip Selway would ironically recall how the record company was worried about the lack of singles, while in fact five tracks entered the British top 30.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">La Pietra Miliare: OK Computer (1997–1998)</span>
+                                        <span class="lang-en">The Milestone: OK Computer (1997–1998)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211710/12_xjtnu1.jpg" alt="REM e Radiohead" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">REM e Radiohead</span><span class="lang-en">REM and Radiohead</span></strong>
+                                                    <small>Source: Darkside</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>Michael Stipe dei REM con Thom Yorke, 1995</figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Con il produttore Nigel Godrich — destinato a diventare il collaboratore stabile della band — i Radiohead intraprendono la realizzazione del loro terzo album in un clima di rinnovata libertà creativa. Le registrazioni si svolgono in parte in un deposito di mele a Didcot, in parte in una storica villa del XV secolo precedentemente di proprietà dell'attrice Jane Seymour. L'album viene completato nell'inverno del 1996.</p>
+                                    <p class="lang-en">With producer Nigel Godrich — destined to become the band's regular collaborator — Radiohead undertook the creation of their third album in a climate of renewed creative freedom. The recordings took place partly in an apple warehouse in Didcot, partly in a historic 15th-century villa previously owned by actress Jane Seymour. The album was completed in the winter of 1996.</p>
+                                    
+                                    <p class="lang-it">OK Computer, pubblicato il 16 giugno 1997, rappresenta uno dei momenti più alti della storia del rock alternativo del decennio. Il disco spinge i Radiohead verso territori sonori inesplorati: rock progressivo, sperimentazione elettronica, texture orchestrali. I temi affrontati — la spersonalizzazione dell'individuo, l'alienazione moderna, il senso di smarrimento nell'era tecnologica — si integrano perfettamente con un paesaggio sonoro oscillante tra malinconia, visioni paranoiche e isteria. È il primo album della band a debuttare al primo posto nelle classifiche britanniche.</p>
+                                    <p class="lang-en">OK Computer, released on June 16, 1997, represents one of the highest moments in the history of the decade's alternative rock. The record pushes Radiohead towards unexplored sonic territories: progressive rock, electronic experimentation, orchestral textures. The themes addressed — the depersonalization of the individual, modern alienation, the feeling of bewilderment in the technological age — integrate perfectly with a soundscape oscillating between melancholy, paranoid visions, and hysteria. It is the band's first album to debut at number one on the British charts.</p>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211707/13_olz9xb.jpg" alt="OK Computer" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>OK Computer</strong>
+                                                    <small>Source: KLFM</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>OK Computer, 1997: il rock incontra l'alienazione moderna</figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">I tre singoli estratti — Paranoid Android, Karma Police e No Surprises — diventano punti di riferimento del decennio. Il primo, con i suoi oltre sei minuti di durata, viene definito dalla band stessa una scelta volutamente anticommerciale, eppure ottiene una rotazione massiccia su MTV grazie al video animato firmato da Magnus Carlsson. L'album ottiene un Grammy come miglior album alternative e una candidatura nella categoria album dell'anno, oltre a una nomination al Premio Mercury. La successiva tournée mondiale, l'Against Demons World Tour, si protrae fino all'inizio del 1998 e viene documentata nel film Meeting People Is Easy del regista Grant Gee.</p>
+                                    <p class="lang-en">The three singles extracted — Paranoid Android, Karma Police and No Surprises — become benchmarks of the decade. The first, with its over six minutes duration, was defined by the band itself as a deliberately anti-commercial choice, yet it received massive rotation on MTV thanks to the animated video by Magnus Carlsson. The album won a Grammy for Best Alternative Album and a nomination for Album of the Year, as well as a Mercury Prize nomination. The subsequent world tour, the Against Demons World Tour, lasted until early 1998 and was documented in the film Meeting People Is Easy by director Grant Gee.</p>
+                                    
+                                    <figure class="wiki-figure full">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211706/14_rqwe7r.jpg" alt="Kid A Album" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>Kid A</strong>
+                                                    <small>Source: Elephant.art</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>Kid A, 2000: niente singoli, niente chitarre, solo il futuro.</figcaption>
+                                    </figure>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">La Rivoluzione Silenziosa: Kid A e Amnesiac (1999–2001)</span>
+                                        <span class="lang-en">The Silent Revolution: Kid A and Amnesiac (1999–2001)</span>
+                                    </h3>
+                                    
+                                    <p class="lang-it">Il periodo successivo è segnato da una crisi profonda. Thom Yorke ammette pubblicamente di essere caduto in depressione, descrivendo il capodanno del 1998 come uno dei peggiori giorni della sua vita. La band, esausta, si prende una pausa e sfiora nuovamente lo scioglimento. Quando torna in studio, nel 1999, il clima interno è teso: Ed O'Brien spinge verso un sound più pop e chitarristico, mentre Yorke guida il gruppo verso territori sperimentali.</p>
+                                    <p class="lang-en">The subsequent period was marked by a deep crisis. Thom Yorke publicly admitted to falling into depression, describing New Year's Eve 1998 as one of the worst days of his life. The band, exhausted, took a break and again came close to splitting up. When they returned to the studio in 1999, the internal climate was tense: Ed O'Brien pushed for a more pop and guitar-oriented sound, while Yorke led the group towards experimental territories.</p>
+                                    
+                                    <p class="lang-it">Alla fine prevale la visione di Yorke. Le registrazioni — condotte con Nigel Godrich in vari studi tra Parigi, Copenaghen, Gloucester e Oxford — danno vita a un materiale radicalmente diverso da tutto ciò che la band aveva prodotto in precedenza: ritmi elettronici, onde Martenot, influenze jazz e musica contemporanea, chitarre quasi irriconoscibili.</p>
+                                    <p class="lang-en">In the end, Yorke's vision prevailed. The recordings — conducted with Nigel Godrich in various studios between Paris, Copenhagen, Gloucester, and Oxford — gave life to material radically different from anything the band had produced before: electronic rhythms, ondes Martenot, jazz influences and contemporary music, almost unrecognizable guitars.</p>
+                                    
+                                    <p class="lang-it">Kid A, uscito il 2 ottobre 2000, provoca una vera e propria deflagrazione nel panorama musicale. Nessun singolo, nessuna promozione tradizionale, ma una serie di brevi video animati distribuiti gratuitamente via Internet — i cosiddetti blips. Il disco debutta al primo posto sia nel Regno Unito sia negli Stati Uniti, dove OK Computer era arrivato solo alla posizione 21. È il più grande successo commerciale della band. L'industria discografica rimane disorientata: come può un album senza singoli, sperimentale e ostico, conquistare le vette delle classifiche mondiali?</p>
+                                    <p class="lang-en">Kid A, released on October 2, 2000, caused a real explosion in the musical landscape. No singles, no traditional promotion, but a series of short animated videos distributed for free via the Internet — the so-called blips. The album debuted at number one both in the United Kingdom and in the United States, where OK Computer had only reached number 21. It is the band's greatest commercial success. The record industry remained bewildered: how could an album with no singles, experimental and difficult, conquer the top of world charts?</p>
+                                    
+                                    <p class="lang-it">Amnesiac, pubblicato il 4 giugno 2001, è il gemello concettuale di Kid A: nasce dalle stesse sessioni di registrazione ma sviluppa un percorso sonoro distinto, con una maggiore presenza di elettronica d'avanguardia e art rock. Il collegamento tra i due album è reso esplicito dalla presenza di due diverse versioni di Morning Bell in entrambe le tracklist. Il singolo Pyramid Song entra nella top 5 britannica.</p>
+                                    <p class="lang-en">Amnesiac, released on June 4, 2001, is the conceptual twin of Kid A: born from the same recording sessions but developing a distinct sonic path, with a greater presence of avant-garde electronics and art rock. The connection between the two albums is made explicit by the presence of two different versions of Morning Bell in both tracklists. The single Pyramid Song entered the British top 5.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Il Ritorno e la Pausa (2002–2004)</span>
+                                        <span class="lang-en">The Return and the Break (2002–2004)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211705/15_vyjycm.jpg" alt="In Rainbows" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>In Rainbows</strong>
+                                                    <small>Source: BrooklynVegan</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>In Rainbows, 2007: paghi quanto vuoi, o niente.</figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Con il sesto album, Hail to the Thief (9 giugno 2003), i Radiohead operano una sintesi delle esperienze precedenti: chitarre elettriche più presenti, atmosfere elettroniche, testi più direttamente legati all'attualità politica e sociale. Il titolo — traducibile come "Osanna al ladro" — viene inevitabilmente letto come un commento alle controverse elezioni presidenziali americane del 2000, benché Yorke neghi questa interpretazione univoca. Il disco debutta al primo posto nel Regno Unito.</p>
+                                    <p class="lang-en">With their sixth album, Hail to the Thief (June 9, 2003), Radiohead synthesized previous experiences: more present electric guitars, electronic atmospheres, lyrics more directly linked to current political and social events. The title — translatable as "Praise the Thief" — was inevitably read as a comment on the controversial 2000 US presidential elections, although Yorke denies this unequivocal interpretation. The record debuted at number one in the United Kingdom.</p>
+                                    
+                                    <p class="lang-it">Nel 2004, liberi da ogni obbligo contrattuale con la EMI, i membri del gruppo si prendono una pausa per dedicarsi alla vita privata e a progetti solisti. È un momento di transizione fondamentale: quando torneranno in studio, lo faranno come artisti completamente liberi da vincoli discografici.</p>
+                                    <p class="lang-en">In 2004, free from any contractual obligations with EMI, the group members took a break to dedicate themselves to private life and solo projects. It was a fundamental moment of transition: when they returned to the studio, they would do so as artists completely free from record label constraints.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">La Rivoluzione del Mercato: In Rainbows (2005–2008)</span>
+                                        <span class="lang-en">The Market Revolution: In Rainbows (2005–2008)</span>
+                                    </h3>
+                                    
+                                    <p class="lang-it">Il settimo album nasce in un contesto radicalmente nuovo: nessun contratto con una major, nessuna scadenza imposta dall'esterno. Le registrazioni iniziano nel 2005, sotto la supervisione di Nigel Godrich, e culminano nell'estate del 2007.</p>
+                                    <p class="lang-en">The seventh album was born in a radically new context: no contract with a major label, no deadlines imposed from outside. Recordings began in 2005, under the supervision of Nigel Godrich, and culminated in the summer of 2007.</p>
+                                    
+                                    <p class="lang-it">Il 10 ottobre 2007, i Radiohead pubblicano In Rainbows con una modalità che scuote le fondamenta dell'industria musicale: il disco è disponibile in download digitale sul sito ufficiale della band, e ciascun acquirente può liberamente scegliere il prezzo da pagare, incluso zero. Il fenomeno del pay what you want genera un dibattito mondiale sul futuro della distribuzione musicale. Nel solo giorno di uscita, l'album viene scaricato da circa 1,2 milioni di persone. Una versione fisica di lusso — il discbox — viene venduta a 40 sterline e include vinili, un bonus CD e un artbook.</p>
+                                    <p class="lang-en">On October 10, 2007, Radiohead released In Rainbows in a way that shook the foundations of the music industry: the record was available for digital download on the band's official website, and each buyer could freely choose the price to pay, including zero. The "pay what you want" phenomenon generated a worldwide debate on the future of music distribution. On the release day alone, the album was downloaded by about 1.2 million people. A deluxe physical version — the discbox — was sold for £40 and included vinyl records, a bonus CD, and an artbook.</p>
+                                    
+                                    <p class="lang-it">L'album raggiunge il primo posto sia in Gran Bretagna sia negli Stati Uniti, vincendo un Grammy come miglior album alternative e ricevendo la terza nomination per il miglior album dell'anno. La critica lo accoglie come il lavoro più accessibile e maturo della band.</p>
+                                    <p class="lang-en">The album reached number one both in Great Britain and the United States, winning a Grammy for Best Alternative Album and receiving its third nomination for Album of the Year. Critics welcomed it as the band's most accessible and mature work.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">The King of Limbs e il Proseguimento (2009–2016)</span>
+                                        <span class="lang-en">The King of Limbs and Beyond (2009–2016)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774211707/16_slnzrn.jpg" alt="Radiohead Macerata" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Live a Macerata</span><span class="lang-en">Live in Macerata</span></strong>
+                                                    <small>Source: Arte pro Arte</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>Thom Yorke e Johnny Greenwood live allo sferisterio di Macerata</figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Nel maggio 2009 la band torna in studio. Il 18 febbraio 2011 esce The King of Limbs, ottavo album in studio, disponibile immediatamente in download digitale. Il disco riceve candidature ai Grammy nelle categorie miglior album alternative e miglior edizione speciale, mentre il singolo Lotus Flower ottiene tre nomination.</p>
+                                    <p class="lang-en">In May 2009 the band returned to the studio. On February 18, 2011, The King of Limbs was released, their eighth studio album, immediately available for digital download. The record received Grammy nominations in the categories of Best Alternative Album and Best Special Edition, while the single Lotus Flower received three nominations.</p>
+                                    
+                                    <p class="lang-it">Dopo una lunga assenza dai social network — il 2016 vede la cancellazione di tutti i contenuti dalle pagine ufficiali e il sito ufficiale che si tinge interamente di bianco — i Radiohead annunciano il ritorno con il nono album, anticipato dai singoli Burn the Witch e Daydreaming. A Moon Shaped Pool viene pubblicato l'8 maggio 2016, bissando il successo critico che ha caratterizzato tutta la carriera del gruppo.</p>
+                                    <p class="lang-en">After a long absence from social networks — 2016 saw the deletion of all content from official pages and the official website turning entirely white — Radiohead announced their return with their ninth album, preceded by the singles Burn the Witch and Daydreaming. A Moon Shaped Pool was released on May 8, 2016, matching the critical success that had characterized the group's entire career.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Eredità e Riconoscimenti</span>
+                                        <span class="lang-en">Legacy and Recognition</span>
+                                    </h3>
+                                    
+                                    <p class="lang-it">La rivista Rolling Stone include quattro album dei Radiohead nella sua lista dei 500 migliori album di tutti i tempi: Kid A alla posizione 20, OK Computer alla 42, The Bends alla 276 e In Rainbows alla 387. La stessa rivista colloca i Radiohead al numero 73 tra i 100 migliori artisti della storia del rock. Tutti e quattro gli album figurano nel volume 1001 Albums You Must Hear Before You Die.</p>
+                                    <p class="lang-en">Rolling Stone magazine includes four Radiohead albums in its list of the 500 Greatest Albums of All Time: Kid A at number 20, OK Computer at 42, The Bends at 276, and In Rainbows at 387. The same magazine places Radiohead at number 73 among the 100 Greatest Artists of Rock History. All four albums appear in the book 1001 Albums You Must Hear Before You Die.</p>
+                                    
+                                    <p class="lang-it">L'influenza dei Radiohead si estende ben oltre la loro discografia: artisti come Coldplay, Muse e Anathema li hanno indicati come fonte d'ispirazione primaria. Nel 2012, il compositore minimalista Steve Reich dedica loro l'opera Radio Rewrite, ispirata a Everything in Its Right Place e Jigsaw Falling into Place — un riconoscimento straordinario che testimonia come la musica dei Radiohead abbia varcato i confini del rock per entrare nel dominio della musica colta contemporanea.</p>
+                                    <p class="lang-en">Radiohead's influence extends far beyond their discography: artists like Coldplay, Muse, and Anathema have cited them as a primary source of inspiration. In 2012, minimalist composer Steve Reich dedicated his work Radio Rewrite to them, inspired by Everything in Its Right Place and Jigsaw Falling into Place — an extraordinary recognition that testifies to how Radiohead's music has crossed the boundaries of rock to enter the domain of contemporary classical music.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleHistory()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Storia</span>
+                            <span class="lang-en">↑ Close History</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="disclaimer-btn" onclick="toggleDisclaimer()">
+                        <span>
+                            <span class="lang-it">Disclaimer & Note Legali</span>
+                            <span class="lang-en">Disclaimer & Legal Notes</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="disclaimer-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                <h3 class="wiki-title lang-it">Disclaimer e Diritto di Citazione</h3>
+                                <h3 class="wiki-title lang-en">Disclaimer & Fair Use</h3>
+                                
+                                <p class="lang-it">I contenuti multimediali presenti in questa pagina (immagini e video) sono utilizzati esclusivamente per finalità didattiche, critiche e di approfondimento culturale, in conformità con l'Art. 70 della Legge 633/41 (Diritto di citazione e riproduzione per uso didattico o scientifico). L'utilizzo non ha alcuno scopo di lucro e mira a valorizzare l'opera dell'artista e dei relativi autori, citati puntualmente tramite la funzione interattiva sulle singole immagini.<br><br>Qualora i detentori dei diritti d'autore ritenessero inappropriata la pubblicazione o desiderassero la rimozione di specifici contenuti, possono scrivere all'indirizzo: <strong>lorenzo.sciallato@gmail.com</strong>. Provvederò all'immediata rimozione del materiale segnalato.</p>
+                                
+                                <p class="lang-en">The multimedia contents on this page (images and videos) are used exclusively for educational, critical, and cultural purposes, in accordance with international Fair Use principles and national copyright laws. This project is strictly non-commercial and aims to provide historical and artistic context, with full credit given to authors and sources via the interactive photo-flip feature.<br><br>If you are a copyright holder and object to the use of any material, or would like to request its removal, please contact: <strong>lorenzo.sciallato@gmail.com</strong>. Any disputed content will be removed immediately upon request.</p>
+
+                                <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 25px 0;">
+
+                                <p class="lang-it" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Pagina creata con l'assistenza di software di intelligenza artificiale generativa, unendo cura umana e supporto tecnologico per l'apprendimento e la divulgazione culturale.</p>
+                                <p class="lang-en" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Page created with the assistance of generative artificial intelligence software, combining human curation and technological support for educational and cultural dissemination.</p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleDisclaimer()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Disclaimer</span>
+                            <span class="lang-en">↑ Close Disclaimer</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Playlist completa di Kid A (10 brani)
+        const playlist = [
+            { id: "everything-in-its-right-place", title: "Everything In Its Right Place", ytId: "NUnXxh5U25Y" },
+            { id: "kid-a", title: "Kid A", ytId: "MXNbfU0Ww_E" },
+            { id: "the-national-anthem", title: "The National Anthem", ytId: "NfQD1QiQ9o4" },
+            { id: "how-to-disappear-completely", title: "How to Disappear Completely", ytId: "6W6HhdqA95w" },
+            { id: "treefingers", title: "Treefingers", ytId: "L7p47zYKJoM" },
+            { id: "optimistic", title: "Optimistic", ytId: "1On-ZHfTWOo" },
+            { id: "in-limbo", title: "In Limbo", ytId: "Q29iibXXiOs" },
+            { id: "idioteque", title: "Idioteque", ytId: "svwJTnZOaco" },
+            { id: "morning-bell", title: "Morning Bell", ytId: "XTT6k3Q4JnQ" },
+            { id: "motion-picture-soundtrack", title: "Motion Picture Soundtrack", ytId: "EcSvMFm2ABE" }
+        ];
+
+        // PARAPHRASE DATA (Di cosa parla la canzone?) - Testo bilingue dal file
+        const paraphraseData = {
+            "everything-in-its-right-place": {
+                it: `Qualcosa si è rotto — o forse si è finalmente sistemato, è difficile dirlo. La voce è passata attraverso un filtro che la rende irriconoscibile a se stessa, eppure dice cose vere: ieri ho fatto qualcosa di sbagliato, le parole non escono come dovrebbero, tutto è al suo posto e quel posto fa paura. Il brano non racconta una storia — abita uno stato. È la sensazione di guardare la propria vita da dietro un vetro, nitida e distante allo stesso tempo. La musica sale e scende in loop come un respiro meccanico, e dopo un po' non sai più se sei tu che la ascolti o lei che ascolta te.`,
+                en: `Something has broken — or perhaps finally settled into place, it is hard to say. The voice has passed through a filter that makes it unrecognizable to itself, yet it speaks true things: yesterday something went wrong, the words do not come out as they should, everything is in its right place and that place is frightening. The track does not tell a story — it inhabits a state. It is the feeling of watching one's own life from behind glass, sharp and distant at the same time. The music rises and falls in loops like mechanical breathing, and after a while you no longer know whether you are listening to it or it is listening to you.`
+            },
+            "kid-a": {
+                it: `Il primo bambino — o forse l'ultimo. Una creatura che non ha ancora imparato il linguaggio degli uomini, o che lo ha dimenticato deliberatamente. La voce è smembrata, riassemblata, trasformata in qualcosa che assomiglia a una voce ma non lo è del tutto — come un riflesso in un'acqua mossa. Il paesaggio sonoro è fatto di ghiaccio e rumore bianco, di qualcosa che scricchiola sotto i piedi senza cedere mai del tutto. Non si capisce se sia una nascita o una sparizione — e forse sono la stessa cosa.`,
+                en: `The first child — or perhaps the last. A creature that has not yet learned the language of men, or that has deliberately forgotten it. The voice is dismembered, reassembled, transformed into something that resembles a voice but is not entirely one — like a reflection in moving water. The sonic landscape is made of ice and white noise, of something that creaks underfoot without ever fully giving way. It is unclear whether this is a birth or a disappearance — and perhaps they are the same thing.`
+            },
+            "the-national-anthem": {
+                it: `Tutti sono in giro, tutti fanno parte di qualcosa, eppure nessuno si vede davvero. L'inno nazionale di un paese che non esiste su nessuna mappa — un paese fatto di folla e solitudine simultanee, di corpi che si toccano senza mai incontrarsi. Il basso pulsa come un cuore troppo grande per il petto che lo contiene, e poi gli ottoni esplodono in un caos che non è disordine ma eccesso di ordine — troppo di tutto, tutti che parlano allo stesso tempo, nessuno che ascolta. È il suono del mondo moderno registrato dall'interno.`,
+                en: `Everyone is out there, everyone is part of something, yet no one truly sees anyone else. The national anthem of a country that exists on no map — a country made of simultaneous crowd and loneliness, of bodies that touch without ever meeting. The bass pulses like a heart too large for the chest containing it, and then the brass erupts into a chaos that is not disorder but excess of order — too much of everything, everyone speaking at once, no one listening. It is the sound of the modern world recorded from the inside.`
+            },
+            "how-to-disappear-completely": {
+                it: `Una tecnica di sopravvivenza appresa in emergenza: convincersi di non essere lì. Questo non sta succedendo. Quel corpo non è il mio corpo. Quella città non è la mia città. Gli archi costruiscono un'architettura di distacco — bella, quasi consolante — intorno a qualcuno che ha deciso di rendersi invisibile non per scelta ma per necessità. È la canzone di chi ha imparato che a volte l'unico modo di attraversare qualcosa è fingere di non esserci. Il finale si dissolve come nebbia al sole, e chi era lì prima non è sicuro di essere tornato.`,
+                en: `A survival technique learned in emergency: convincing oneself of not being there. This is not happening. That body is not my body. That city is not my city. The strings build an architecture of detachment — beautiful, almost consoling — around someone who has decided to make themselves invisible not by choice but by necessity. It is the song of one who has learned that sometimes the only way to pass through something is to pretend not to be there. The ending dissolves like fog in sunlight, and whoever was there before is not certain of having returned.`
+            },
+            "treefingers": {
+                it: `Nessuna parola, nessuna storia. Solo un paesaggio che si distende all'orizzonte senza inizio né fine evidente. La chitarra è stata trasformata in qualcosa che non somiglia più a una chitarra — un respiro lento, un campo aperto, la sensazione fisica dello spazio. È il brano che il disco si concede per fermarsi, per non chiedere nulla, per lasciare che l'ascoltatore esista semplicemente dentro il suono senza dover interpretare nulla. Un atto di generosità raro in un album così denso di significato.`,
+                en: `No words, no story. Only a landscape stretching to the horizon with no clear beginning or end. The guitar has been transformed into something that no longer resembles a guitar — a slow breath, an open field, the physical sensation of space. It is the track the album allows itself to stop, to ask nothing, to let the listener simply exist inside the sound without having to interpret anything. A rare act of generosity in an album so dense with meaning.`
+            },
+            "optimistic": {
+                it: `Il titolo è ironico — o forse no. I dinosauri si trascinano verso l'estinzione, i grandi animali vengono abbattuti per fare spazio, eppure qualcosa persiste nel cercare la luce. Il brano è il più vicino al rock tradizionale dell'intero album, e quella scelta sembra deliberata: usare un linguaggio familiare per dire cose che il linguaggio familiare non riesce a contenere. L'ottimismo qui non è ingenuità — è la decisione di continuare a muoversi anche sapendo dove porta la strada.`,
+                en: `The title is ironic — or perhaps not. The dinosaurs drag themselves toward extinction, the big animals are struck down to make room, yet something persists in seeking the light. The track is the closest thing to traditional rock on the entire album, and that choice seems deliberate: using a familiar language to say things that familiar language cannot contain. The optimism here is not naivety — it is the decision to keep moving even knowing where the road leads.`
+            },
+            "in-limbo": {
+                it: `Né qui né là. Una soglia che non porta da nessuna parte, o che porta ovunque contemporaneamente. La voce chiede una direzione e non la ottiene — o forse la ottiene ma non riesce a leggerla. Il suono è scivoloso, cambia forma mentre lo si ascolta, come cercare di afferrare qualcosa di liquido con le mani. Il limbo del titolo non è un luogo teologico: è la condizione precisa di chi si trova esattamente tra due stati e non sa — o non può — scegliere quale abitare.`,
+                en: `Neither here nor there. A threshold that leads nowhere, or that leads everywhere simultaneously. The voice asks for a direction and does not receive one — or perhaps receives one but cannot read it. The sound is slippery, changing shape as one listens, like trying to grasp something liquid with bare hands. The limbo of the title is not a theological place: it is the precise condition of one who finds themselves exactly between two states and does not know — or cannot — choose which one to inhabit.`
+            },
+            "idioteque": {
+                it: `Il ghiaccio si sta sciogliendo, le donne e i bambini prima, chi si prende cura di chi quando tutto cede? Il brano balla — è forse l'unico momento in cui l'album balla davvero — su un ritmo che viene dal futuro e dai campionamenti di musica concreta degli anni Sessanta allo stesso tempo. È la danza dell'apocalisse: non tragica, non eroica, semplicemente la risposta del corpo a qualcosa di troppo grande per essere compreso intellettualmente. Se la fine del mondo avesse una colonna sonora, avrebbe questo basso, questo ritmo, questa voce che urla ridendo.`,
+                en: `The ice is melting, women and children first, who takes care of whom when everything gives way? The track dances — it is perhaps the only moment the album truly dances — on a rhythm that comes from the future and from concrete music samples of the nineteen-sixties at the same time. It is the dance of the apocalypse: not tragic, not heroic, simply the body's response to something too large to be comprehended intellectually. If the end of the world had a soundtrack, it would have this bass, this rhythm, this voice that screams while laughing.`
+            },
+            "morning-bell": {
+                it: `La campana del mattino suona e qualcosa deve essere diviso — la casa, i vestiti, il bambino. È il vocabolario freddo e preciso della separazione, detto con una voce che non ha più lacrime, solo stanchezza. Il ritmo inciampa su se stesso come qualcuno che cammina senza dormire, e la musica costruisce intorno a questa stanchezza qualcosa di strano e bello, come brina su un vetro rotto. Taglia il bambino a metà — e non si capisce se sia una citazione biblica, una metafora, o qualcosa di letterale e terribile.`,
+                en: `The morning bell rings and something must be divided — the house, the clothes, the child. It is the cold and precise vocabulary of separation, spoken in a voice that has no more tears, only exhaustion. The rhythm stumbles over itself like someone walking without sleep, and the music builds around this exhaustion something strange and beautiful, like frost on a broken window. Cut the kid in half — and it is unclear whether this is a biblical quotation, a metaphor, or something literal and terrible.`
+            },
+            "motion-picture-soundtrack": {
+                it: `Un arrivederci che sa di essere un addio. Le luci del cinema si spengono, il film finisce, e quello che rimane è più silenzio di quanto ci si aspettasse. L'arpa e le voci sintetiche costruiscono qualcosa che assomiglia al paradiso immaginato da qualcuno che non ci crede davvero — bello, ma con la qualità artificiale di un sogno riconosciuto come tale mentre lo si fa. Il disco si chiude su questa nota sospesa tra il sacro e il posticcio, tra la consolazione vera e quella fabbricata, e lascia l'ascoltatore nel silenzio a decidere da che parte stare.`,
+                en: `A farewell that knows itself to be a goodbye. The cinema lights go out, the film ends, and what remains is more silence than one expected. The harp and synthetic voices build something that resembles heaven as imagined by someone who does not truly believe in it — beautiful, but with the artificial quality of a dream recognized as such while it is being dreamed. The album closes on this note suspended between the sacred and the fabricated, between genuine consolation and manufactured consolation, and leaves the listener in silence to decide which side to stand on.`
+            }
+        };
+
+        // GUIDA ALL'ASCOLTO (dettaglio tecnico con timestamp e curiosità)
+        const guideData = {
+            "everything-in-its-right-place": {
+                it: `
+                    <h3>Everything in Its Right Place</h3>
+                    <p><strong>0:00 — Il Synth Come Unico Mondo</strong><br>Il brano apre con un accordo di piano elettrico — o qualcosa che ci assomiglia — suonato attraverso filtri che ne smussano ogni angolo tagliente. Non c'è attacco percussivo, non c'è decadimento netto: ogni nota si fonde nella successiva come colori che si mischiano. Siamo già dentro un linguaggio diverso da quello del rock tradizionale. Questo non è un brano che "inizia" — è un brano in cui ci si risveglia già dentro.</p>
+                    <p><strong>0:15 — La Voce Come Strumento Deformato</strong><br>Thom Yorke cantò la sua voce e poi la passò attraverso un vocoder — uno strumento che analizza le frequenze vocali e le risintetizza attraverso un sintetizzatore. Il risultato non è una voce robotica nel senso pop del termine: è qualcosa di più sottile, una voce che mantiene il calore umano ma perde i bordi, come una fotografia leggermente mossa. Le frasi vengono tagliate e riassemblate in loop che si ripetono con variazioni minime — tecnicamente è editing digitale del campionamento vocale, percettivamente è la sensazione di un pensiero che gira su se stesso senza risolversi.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Crisi Come Fonte.</span>Thom Yorke scrisse questo brano in un momento di collasso emotivo seguente all'enorme successo del tour di OK Computer (1997). La band aveva passato due anni a suonare davanti a folle enormi in arene mondiali, e Yorke aveva sviluppato una forma di esaurimento nervoso che gli rendeva impossibile cantare testi con senso compiuto. Everything in Its Right Place nacque da quella incapacità — le frasi frammentate non sono un effetto estetico, sono la trascrizione fedele di una mente che non riesce a costruire frasi complete.</div>
+                    <p><strong>1:00 — La Struttura a Loop</strong><br>Il brano non ha strofa, ritornello e bridge nel senso tradizionale. È costruito su un pattern armonico che si ripete — quattro accordi in sequenza — con variazioni progressive nella texture e nel trattamento vocale. Ogni ripetizione aggiunge o toglie qualcosa di impercettibile, come le variazioni in un pezzo di musica minimalista di Steve Reich o Philip Glass. La direzione non è narrativa ma atmosferica: non si va da A a B, si approfondisce A.</p>
+                    <p><strong>2:30 — Il Momento di Apertura</strong><br>Circa a metà brano, i layer vocali si moltiplicano — più voci deformate che si sovrappongono in armonie che non sono esattamente armonie tradizionali, ma frequenze che si intersecano creando battimenti e risonanze. È il momento in cui il brano si "apre" verso qualcosa di più grande, prima di tornare alla texture iniziale nel finale.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Rifiuto del Rock.</span>La band aveva deliberatamente deciso che Kid A non avrebbe contenuto chitarre rock nel senso tradizionale — niente riff, niente assoli, niente delle strutture che avevano definito The Bends e OK Computer. Everything in Its Right Place fu il modo più diretto di comunicare questa intenzione al pubblico: il primo brano dell'album, e non c'è una chitarra elettrica in primo piano da nessuna parte.</div>
+                `,
+                en: `
+                    <h3>Everything in Its Right Place</h3>
+                    <p><strong>0:00 — The Synth as the Only World</strong><br>The track opens with an electric piano chord — or something resembling it — played through filters that smooth every sharp edge. There's no percussive attack, no clear decay: each note blends into the next like colors mixing. We are already inside a different language from traditional rock. This is not a song that "begins" — it's a song you wake up inside of.</p>
+                    <p><strong>0:15 — The Voice as Distorted Instrument</strong><br>Thom Yorke sang his voice and then passed it through a vocoder — an instrument that analyzes vocal frequencies and resynthesizes them through a synthesizer. The result is not a robotic voice in the pop sense of the term: it's something more subtle, a voice that maintains human warmth but loses its edges, like a slightly blurred photograph. The phrases are cut and reassembled into loops that repeat with minimal variations — technically it's digital editing of vocal sampling, perceptually it's the feeling of a thought circling itself without resolution.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Crisis as Source.</span>Thom Yorke wrote this song during a moment of emotional collapse following the enormous success of the OK Computer tour (1997). The band had spent two years playing in front of huge crowds in world arenas, and Yorke had developed a form of nervous exhaustion that made it impossible for him to sing lyrics with coherent meaning. Everything in Its Right Place was born from that incapacity — the fragmented phrases are not an aesthetic effect, they are the faithful transcription of a mind unable to construct complete sentences.</div>
+                    <p><strong>1:00 — The Loop Structure</strong><br>The song has no verse, chorus, and bridge in the traditional sense. It is built on a repeating harmonic pattern — four chords in sequence — with progressive variations in texture and vocal treatment. Each repetition adds or removes something imperceptible, like variations in a minimalist piece by Steve Reich or Philip Glass. The direction is not narrative but atmospheric: you don't go from A to B, you deepen A.</p>
+                    <p><strong>2:30 — The Opening Moment</strong><br>About halfway through, the vocal layers multiply — more distorted voices overlapping in harmonies that are not exactly traditional harmonies, but frequencies intersecting creating beats and resonances. It's the moment when the song "opens" toward something larger, before returning to the initial texture in the finale.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Rejection of Rock.</span>The band had deliberately decided that Kid A would contain no rock guitars in the traditional sense — no riffs, no solos, none of the structures that had defined The Bends and OK Computer. Everything in Its Right Place was the most direct way to communicate this intention to the public: the first track on the album, and there's no electric guitar in the foreground anywhere.</div>
+                `
+            },
+            "kid-a": {
+                it: `
+                    <h3>Kid A</h3>
+                    <p><strong>0:00 — L'Apertura Elettronica</strong><br>Un sintetizzatore suona una melodia semplice — quasi infantile nella sua struttura — su un accordo tenuto di tastiera. Il suono è quello di un organo elettrico passato attraverso effetti di modulazione che lo rendono instabile, tremante. C'è qualcosa di deliberatamente "sbagliato" in questa apertura: troppo semplice per essere innocente, troppo distorta per essere rassicurante.</p>
+                    <p><strong>0:20 — La Voce Attraverso il Vocoder</strong><br>La voce di Yorke è completamente processata attraverso un vocoder Digitech Talker — uno strumento che scompone la voce in formanti (le frequenze caratteristiche delle vocali) e le resintetizza attraverso un segnale portante sintetico. Il risultato è qualcosa che riconosciamo come voce ma che non suona come nessuna voce umana che abbiamo sentito prima. Le parole sono quasi incomprensibili senza il libretto — e quella incomprensibilità è parte del progetto.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Titolo Come Concetto.</span>"Kid A" era il nome che i ricercatori davano al primo bambino clonato in esperimenti ipotetici di clonazione umana — un essere che sarebbe stato tecnicamente umano ma prodotto in modo radicalmente non naturale. Yorke usò questo concetto come metafora della band stessa in quel momento: qualcosa che era nato in un modo e stava cercando di rinascere in un altro, attraverso un processo che non garantiva che il risultato fosse ancora riconoscibile.</div>
+                    <p><strong>1:15 — I Fiati Come Presenza Fantasma</strong><br>Nel bridge del brano entrano fiati — arrangiati da Jonny Greenwood — che suonano una melodia lirica e quasi romantica, completamente in contrasto con la texture elettronica circostante. Questa dissonanza stilistica è deliberata: i fiati rappresentano il linguaggio emotivo tradizionale che il brano sta cercando di abbandonare, e la loro presenza "fantasma" suggerisce che l'abbandono non è mai completo.</p>
+                    <p><strong>2:40 — La Dissoluzione Finale</strong><br>Il brano non finisce — si dissolve. Gli elementi si staccano uno per uno dalla texture, come astronauti che si perdono nell'orbita, finché rimane solo il sintetizzatore di apertura e poi il silenzio. È una struttura compositiva presa dalla musica elettroacustica europea — la dissoluzione come forma narrativa invece della risoluzione.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Registrata in Una Notte.</span>Secondo quanto riferito da Jonny Greenwood, la traccia base di Kid A fu registrata in una singola sessione notturna nello studio della band a Oxford. Yorke aveva costruito la struttura elettronica da solo durante settimane di lavoro solitario, e la band la ascoltò per la prima volta quasi completa. L'arrangiamento dei fiati fu aggiunto successivamente, ma la struttura elettronica rimase quasi invariata dalla prima versione.</div>
+                `,
+                en: `
+                    <h3>Kid A</h3>
+                    <p><strong>0:00 — The Electronic Opening</strong><br>A synthesizer plays a simple melody — almost childlike in its structure — over a sustained keyboard chord. The sound is that of an electric organ passed through modulation effects that make it unstable, trembling. There's something deliberately "wrong" about this opening: too simple to be innocent, too distorted to be reassuring.</p>
+                    <p><strong>0:20 — The Voice Through the Vocoder</strong><br>Yorke's voice is completely processed through a Digitech Talker vocoder — an instrument that breaks down the voice into formants (the characteristic frequencies of vowels) and resynthesizes them through a synthetic carrier signal. The result is something we recognize as a voice but that sounds like no human voice we've heard before. The words are almost incomprehensible without the booklet — and that incomprehensibility is part of the project.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Title as Concept.</span>"Kid A" was the name researchers gave to the first cloned child in hypothetical human cloning experiments — a being that would be technically human but produced in a radically unnatural way. Yorke used this concept as a metaphor for the band itself at that moment: something born in one way trying to be reborn in another, through a process that didn't guarantee the result would still be recognizable.</div>
+                    <p><strong>1:15 — The Horns as Phantom Presence</strong><br>In the bridge, horns enter — arranged by Jonny Greenwood — playing a lyrical and almost romantic melody, completely in contrast with the surrounding electronic texture. This stylistic dissonance is deliberate: the horns represent the traditional emotional language the song is trying to abandon, and their "phantom" presence suggests that abandonment is never complete.</p>
+                    <p><strong>2:40 — The Final Dissolution</strong><br>The song doesn't end — it dissolves. Elements detach one by one from the texture, like astronauts lost in orbit, until only the opening synthesizer remains and then silence. It's a compositional structure taken from European electroacoustic music — dissolution as narrative form instead of resolution.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Recorded in One Night.</span>According to Jonny Greenwood, the basic track of Kid A was recorded in a single night session at the band's Oxford studio. Yorke had built the electronic structure alone during weeks of solitary work, and the band heard it for the first time almost complete. The horn arrangement was added later, but the electronic structure remained almost unchanged from the first version.</div>
+                `
+            },
+            "the-national-anthem": {
+                it: `
+                    <h3>The National Anthem</h3>
+                    <p><strong>0:00 — Il Bassline Come Fondamenta Ossessiva</strong><br>Colin Greenwood costruisce una linea di basso in Mi bemolle che si ripete per l'intera durata del brano — quattro note, quasi sempre le stesse, con variazioni minime. È una tecnica derivata dal funk e dal krautrock tedesco degli anni Settanta: il basso non come strumento melodico ma come elemento ipnotico, un loop che ancora tutto il resto. La ripetizione crea una sensazione di urgenza crescente proprio perché non cambia — il mondo intorno si trasforma, ma quella fondamenta rimane immobile.</p>
+                    <p><strong>0:30 — La Batteria Come Motore</strong><br>Phil Selway entra con una ritmica che cita direttamente il funk degli anni Settanta — non il funk levigato della produzione contemporanea, ma qualcosa di più grezzo, con accent sul controtempo e ghost notes (colpi quasi impercettibili) che aumentano la densità senza appesantire il groove. La batteria è registrata con una qualità "secca" — poco riverbero, suono diretto — che la rende fisica e presente.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Caos Pianificato.</span>Il finale del brano — dove gli ottoni esplodono in quello che sembra improvvisazione caotica — fu in realtà meticolosamente orchestrato da Jonny Greenwood. Greenwood scrisse parti separate per ogni strumentista con istruzioni precise su quando e come "uscire" dalla struttura armonica. Il risultato suona come jazz free o come rumore, ma è il prodotto di una partitura scritta. Greenwood aveva studiato composizione contemporanea e applicò tecniche di musica aleatoria controllata — dove il caos è definito entro parametri precisi.</div>
+                    <p><strong>2:00 — Gli Ottoni Come Collasso</strong><br>L'entrata degli ottoni — tromba, trombone, sax — segna il momento in cui il brano perde il controllo, o meglio, simula di perderlo. Ogni strumentista suona nel proprio registro senza coordinarsi con gli altri in modo tradizionale: è una texture di suoni sovrapposti che crea una densità quasi fisica. Nelle cuffie, il panning degli ottoni è distribuito su tutto lo spazio stereo — destra, sinistra, centro — creando la sensazione di essere circondati.</p>
+                    <p><strong>3:50 — Il Ritorno alla Fondamenta</strong><br>Dopo il caos degli ottoni, il basso rimane — sempre uguale, sempre le stesse quattro note. È la struttura portante che non è crollata nonostante tutto quello che ci è successo sopra. Narrativamente, è la risposta del brano alla sua stessa domanda: dopo il collasso collettivo, cosa rimane? La pulsazione di base, il corpo che continua a muoversi.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Registrata dal Vivo.</span>A differenza della maggior parte dei brani di Kid A — costruiti attraverso layers elettronici e editing digitale — The National Anthem fu registrata principalmente dal vivo in studio, con tutti i musicisti presenti contemporaneamente. Il produttore Nigel Godrich posizionò i microfoni in modo insolito, catturando il suono dell'intera stanza invece di isolare ogni strumento. Quella qualità "spaziale" che si percepisce nel mix non è riverbero artificiale aggiunto in post-produzione: è l'acustica reale dello studio.</div>
+                `,
+                en: `
+                    <h3>The National Anthem</h3>
+                    <p><strong>0:00 — The Bassline as Obsessive Foundation</strong><br>Colin Greenwood builds an E-flat bassline that repeats for the entire duration of the track — four notes, almost always the same, with minimal variations. It's a technique derived from funk and German krautrock of the seventies: the bass not as a melodic instrument but as a hypnotic element, a loop that anchors everything else. The repetition creates a feeling of growing urgency precisely because it doesn't change — the world around transforms, but that foundation remains immobile.</p>
+                    <p><strong>0:30 — The Drums as Engine</strong><br>Phil Selway enters with a rhythm that directly quotes seventies funk — not the polished funk of contemporary production, but something rawer, with accents on the offbeat and ghost notes (almost imperceptible hits) that increase density without weighing down the groove. The drums are recorded with a "dry" quality — little reverb, direct sound — that makes them physical and present.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Planned Chaos.</span>The finale of the track — where the brass explodes into what sounds like chaotic improvisation — was actually meticulously orchestrated by Jonny Greenwood. Greenwood wrote separate parts for each instrumentalist with precise instructions on when and how to "exit" the harmonic structure. The result sounds like free jazz or noise, but it's the product of a written score. Greenwood had studied contemporary composition and applied techniques of controlled aleatory music — where chaos is defined within precise parameters.</div>
+                    <p><strong>2:00 — The Brass as Collapse</strong><br>The entrance of the brass — trumpet, trombone, sax — marks the moment when the song loses control, or rather, simulates losing it. Each instrumentalist plays in their own register without coordinating with others in a traditional way: it's a texture of overlapping sounds that creates an almost physical density. In headphones, the panning of the brass is distributed across the entire stereo space — right, left, center — creating the sensation of being surrounded.</p>
+                    <p><strong>3:50 — The Return to the Foundation</strong><br>After the chaos of the brass, the bass remains — always the same, always the same four notes. It's the load-bearing structure that hasn't collapsed despite everything that happened above it. Narratively, it's the song's answer to its own question: after collective collapse, what remains? The basic pulse, the body that continues to move.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Recorded Live.</span>Unlike most tracks on Kid A — built through electronic layers and digital editing — The National Anthem was recorded primarily live in the studio, with all musicians present simultaneously. Producer Nigel Godrich positioned microphones unusually, capturing the sound of the entire room instead of isolating each instrument. That "spatial" quality perceived in the mix is not artificial reverb added in post-production: it's the real acoustics of the studio.</div>
+                `
+            },
+            "how-to-disappear-completely": {
+                it: `
+                    <h3>How to Disappear Completely</h3>
+                    <p><strong>0:00 — L'Orchestrazione Come Paesaggio</strong><br>Jonny Greenwood arrangiò le parti orchestrali di questo brano ispirandosi esplicitamente alle tecniche di Krzysztof Penderecki — compositore polacco del Novecento noto per l'uso di cluster di archi (molte note vicine suonate simultaneamente) che producono un suono teso, dissonante, quasi fisicamente scomodo. Gli archi non suonano melodie: suonano texture, atmosfere, pressioni.</p>
+                    <p><strong>0:30 — La Chitarra Acustica Come Centro</strong><br>Thom Yorke suona una chitarra acustica con un picking pattern — note singole invece di accordi — in open tuning (accordatura aperta, dove le corde a vuoto formano già un accordo). Questa tecnica produce un suono più "aperto" e risonante rispetto all'accordatura standard, con armonici naturali che si prolungano. È il centro sonoro del brano — tutto il resto orbita intorno a questa chitarra.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Tecnica di Sopravvivenza di Yorke.</span>Yorke ha raccontato che la frase centrale del brano — l'idea di convincersi di non essere presenti in un luogo mentre ci si trova fisicamente — era una tecnica reale che aveva sviluppato durante i concerti più stressanti del tour di OK Computer. Quando l'ansia da palcoscenico diventava insostenibile, si ripeteva mentalmente che non stava succedendo, che non era lì. Il brano è la trascrizione musicale di questa tecnica dissociativa.</div>
+                    <p><strong>1:45 — Il Crescendo degli Archi</strong><br>A metà brano gli archi iniziano a costruire verso un climax usando quella tecnica di Penderecki: i violini si muovono cromaticamente verso l'alto (semitono per semitono) mentre i violoncelli scendono, creando una tensione che non risolve mai in modo tradizionale ma semplicemente si espande fino a diventare insostenibile — e poi si ritira.</p>
+                    <p><strong>3:30 — Il Silenzio Come Strumento</strong><br>Negli ultimi minuti del brano ci sono pause — momenti di silenzio quasi completo tra le frasi orchestrali — che nel mix vengono lasciate intatte senza fill sonori. Il silenzio non è assenza: è presenza di qualcosa che non ha suono. Tecnicamente, Nigel Godrich mantenne il rumore di fondo naturale dello studio durante queste pause invece di tagliarlo digitalmente — si sente appena, come un respiro.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Ispirazione di Scott Walker.</span>Jonny Greenwood ha citato Scott Walker — cantante americano diventato uno degli sperimentatori più radicali della musica occidentale del dopoguerra — come influenza diretta sull'orchestrazione di questo brano. Walker aveva sviluppato un uso degli archi come elemento di terrore e spaesamento invece che di romanticismo. Greenwood applicò quella lezione a un contesto rock, creando qualcosa che non apparteneva né all'uno né all'altro genere.</div>
+                `,
+                en: `
+                    <h3>How to Disappear Completely</h3>
+                    <p><strong>0:00 — Orchestration as Landscape</strong><br>Jonny Greenwood arranged the orchestral parts for this song explicitly inspired by the techniques of Krzysztof Penderecki — a 20th-century Polish composer known for using string clusters (many close notes played simultaneously) that produce a tense, dissonant, almost physically uncomfortable sound. The strings don't play melodies: they play textures, atmospheres, pressures.</p>
+                    <p><strong>0:30 — The Acoustic Guitar as Center</strong><br>Thom Yorke plays an acoustic guitar with a picking pattern — single notes instead of chords — in open tuning (where the open strings already form a chord). This technique produces a more "open" and resonant sound than standard tuning, with natural harmonics that sustain. It is the sonic center of the song — everything else orbits around this guitar.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Yorke's Survival Technique.</span>Yorke recounted that the central phrase of the song — the idea of convincing oneself not to be present in a place while physically there — was a real technique he had developed during the most stressful concerts of the OK Computer tour. When stage anxiety became unbearable, he would mentally repeat that it wasn't happening, that he wasn't there. The song is the musical transcription of this dissociative technique.</div>
+                    <p><strong>1:45 — The String Crescendo</strong><br>Halfway through, the strings begin building toward a climax using Penderecki's technique: violins move chromatically upward (semitone by semitone) while cellos descend, creating a tension that never resolves in a traditional way but simply expands until it becomes unsustainable — and then retreats.</p>
+                    <p><strong>3:30 — Silence as Instrument</strong><br>In the last minutes of the song there are pauses — moments of almost complete silence between orchestral phrases — that are left intact in the mix without sonic fills. Silence is not absence: it's the presence of something without sound. Technically, Nigel Godrich kept the natural background noise of the studio during these pauses instead of cutting it digitally — you can just hear it, like a breath.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Scott Walker's Inspiration.</span>Jonny Greenwood cited Scott Walker — an American singer who became one of the most radical experimenters in post-war Western music — as a direct influence on the orchestration of this song. Walker had developed a use of strings as an element of terror and disorientation rather than romanticism. Greenwood applied that lesson to a rock context, creating something that belonged to neither genre.</div>
+                `
+            },
+            "treefingers": {
+                it: `
+                    <h3>Treefingers</h3>
+                    <p><strong>0:00 — La Chitarra Come Non-Chitarra</strong><br>Il brano è costruito interamente da un campione di chitarra elettrica di Ed O'Brien, processato attraverso una catena di effetti — delay, reverse reverb, pitch shifting — fino a renderlo irriconoscibile come chitarra. Quello che si sente è un suono continuo, senza attacco e senza decadimento netti, che si trasforma lentamente nel corso del brano come un oggetto visto da angolazioni diverse.</p>
+                    <p><strong>0:30 — Il Reverse Reverb</strong><br>La tecnica principale usata su questo brano è il reverse reverb: si registra un suono, si aggiunge il riverbero, si inverte il nastro in modo che l'eco arrivi prima della nota invece che dopo. Il risultato è quella qualità "che cresce verso" tipica di certi paesaggi sonori ambient — la sensazione che il suono stia arrivando da lontano prima ancora di essere stato prodotto.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Brian Eno Come Modello.</span>Treefingers è il brano di Kid A più direttamente debitore al lavoro di Brian Eno — in particolare agli album ambient degli anni Settanta come Ambient 1: Music for Airports (1978). Eno aveva teorizzato una musica che potesse essere ascoltata attivamente o ignorata come suono ambientale, che avesse la stessa relazione con il silenzio della luce con il buio. La band era fan esplicita di Eno, e questo brano è quasi un omaggio dichiarato a quella tradizione.</div>
+                    <p><strong>1:30 — L'Evoluzione Graduale</strong><br>Il brano cambia — ma così lentamente che è quasi impossibile indicare il momento del cambiamento. Nuovi layer si aggiungono con un fade-in così graduale che vengono percepiti non come "entrata" ma come "emersione", come qualcosa che era già lì ma non si sentiva. Questa tecnica — comune nella musica minimalista e nell'ambient — produce un ascolto quasi meditativo.</p>
+                    <p><strong>3:00 — La Funzione Strutturale nell'Album</strong><br>Treefingers non è solo un brano — è una pausa respiratoria. La sua posizione al centro dell'album (tra Optimistic e How to Disappear Completely nelle versioni live, e tra How to Disappear e Optimistic nel disco) crea uno spazio di decompressione dopo la densità della prima metà. È un intermezzo nel senso compositivo del termine: un momento che serve alla struttura dell'intero.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Titolo Senza Significato Ovvio.</span>Ed O'Brien, autore del materiale sonoro del brano, non ha mai spiegato pubblicamente il significato del titolo. "Treefingers" — tre dita — rimane uno dei titoli più enigmatici del catalogo Radiohead. Alcune interpretazioni lo collegano a tecniche di chitarra fingerpicking; altre lo leggono come riferimento al modo in cui O'Brien manipolava fisicamente i controlli degli effetti durante la registrazione. La band non ha mai confermato né smentito nessuna lettura.</div>
+                `,
+                en: `
+                    <h3>Treefingers</h3>
+                    <p><strong>0:00 — The Guitar as Non-Guitar</strong><br>The track is built entirely from an electric guitar sample by Ed O'Brien, processed through a chain of effects — delay, reverse reverb, pitch shifting — until it becomes unrecognizable as a guitar. What you hear is a continuous sound, with no attack and no clear decay, that slowly transforms throughout the track like an object seen from different angles.</p>
+                    <p><strong>0:30 — Reverse Reverb</strong><br>The main technique used on this track is reverse reverb: you record a sound, add reverb, reverse the tape so that the echo arrives before the note instead of after. The result is that "growing towards" quality typical of certain ambient soundscapes — the sensation that the sound is arriving from afar before it has even been produced.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Brian Eno as Model.</span>Treefingers is the track on Kid A most directly indebted to the work of Brian Eno — particularly his ambient albums of the seventies like Ambient 1: Music for Airports (1978). Eno had theorized music that could be actively listened to or ignored as environmental sound, having the same relationship with silence as light has with darkness. The band were explicit fans of Eno, and this track is almost a declared homage to that tradition.</div>
+                    <p><strong>1:30 — Gradual Evolution</strong><br>The track changes — but so slowly that it's almost impossible to pinpoint the moment of change. New layers are added with such a gradual fade-in that they are perceived not as an "entrance" but as an "emergence," as something that was already there but wasn't heard. This technique — common in minimalist and ambient music — produces an almost meditative listening experience.</p>
+                    <p><strong>3:00 — Structural Function in the Album</strong><br>Treefingers is not just a track — it's a breathing pause. Its position in the center of the album (between Optimistic and How to Disappear Completely in live versions, and between How to Disappear and Optimistic on the record) creates a space for decompression after the density of the first half. It's an interlude in the compositional sense of the term: a moment that serves the structure of the whole.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Title Without Obvious Meaning.</span>Ed O'Brien, author of the track's sonic material, has never publicly explained the meaning of the title. "Treefingers" — three fingers — remains one of the most enigmatic titles in the Radiohead catalog. Some interpretations link it to fingerpicking guitar techniques; others read it as a reference to the way O'Brien physically manipulated effect controls during recording. The band has never confirmed or denied any reading.</div>
+                `
+            },
+            "optimistic": {
+                it: `
+                    <h3>Optimistic</h3>
+                    <p><strong>0:00 — Il Ritorno della Chitarra</strong><br>Dopo quattro brani senza rock tradizionale, una chitarra elettrica entra con un riff. Non è il ritorno trionfale di un linguaggio abbandonato — è più sottile: il riff è storto, leggermente fuori squadra, con una qualità quasi malata. Jonny Greenwood suona con una tecnica di picking irregolare che produce note che sembrano "scivolare" invece di attaccare nettamente. È rock, ma rock che ha passato troppo tempo in spazi chiusi.</p>
+                    <p><strong>0:20 — La Batteria Come Ancora</strong><br>Phil Selway costruisce un groove che è il più vicino al rock tradizionale dell'intero album — quattro quarti, charleston regolare, rullante sul 2 e sul 4. Ma anche qui c'è qualcosa di leggermente "off": i fill di batteria cadono in punti inaspettati, come qualcuno che inciampa su un marciapiede che conosce a memoria. La familiarità del formato amplifica le piccole irregolarità invece di nasconderle.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Compromesso Come Strategia.</span>Optimistic fu in parte una risposta alle pressioni della casa discografica e del management, che avevano espresso preoccupazione per la totale assenza di elementi rock nei brani registrati fino a quel momento. La band non tornò al rock di OK Computer — ma trovò un punto di incontro che manteneva l'estetica di Kid A pur usando strumenti e strutture più riconoscibili. Yorke descrisse il processo come "scrivere una canzone pop attraverso un filtro che la rende irriconoscibile come tale."</div>
+                    <p><strong>1:30 — Il Testo Come Biologia</strong><br>Le immagini del testo — dinosauri, grandi animali, moshe — usano il linguaggio della biologia e dell'evoluzione per descrivere dinamiche sociali e politiche. Yorke canta queste immagini con una qualità quasi documentaristica, distaccata, come un narratore che osserva invece di partecipare. Vocalmente il brano è tra i più "normali" dell'album — voce pulita, poco processata — e questa chiarezza contrasta con l'oscurità delle immagini.</p>
+                    <p><strong>2:45 — Il Bridge Strumentale</strong><br>Un momento in cui tutte le chitarre si moltiplicano — overdubs sovrapposti in panning diversi — creando una texture densa che occupa tutto lo spazio stereo. Non è un assolo nel senso tradizionale: è una saturazione, un momento in cui il suono diventa così denso da perdere dettaglio e diventare texture. Poi si ritira, e il groove originale riprende come se nulla fosse successo.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Titolo Irrisolto.</span>La parola "optimistic" nel titolo e nel testo non viene mai usata in modo direttamente positivo — è sempre qualificata, messa in discussione, circondata da immagini di predazione e sopravvivenza. Yorke ha detto in interviste dell'epoca che l'ottimismo che intendeva non era l'ottimismo come emozione ma come postura — la decisione di continuare a muoversi in assenza di ragioni convincenti per farlo. Un ottimismo che sa di essere infondato ma lo sceglie comunque.</div>
+                `,
+                en: `
+                    <h3>Optimistic</h3>
+                    <p><strong>0:00 — The Return of the Guitar</strong><br>After four tracks without traditional rock, an electric guitar enters with a riff. It's not the triumphant return of an abandoned language — it's subtler: the riff is crooked, slightly off-kilter, with an almost sick quality. Jonny Greenwood plays with an irregular picking technique that produces notes that seem to "slide" rather than attack cleanly. It's rock, but rock that has spent too much time in enclosed spaces.</p>
+                    <p><strong>0:20 — The Drums as Anchor</strong><br>Phil Selway builds a groove that is the closest to traditional rock on the entire album — four-four time, regular hi-hat, snare on 2 and 4. But here too there's something slightly "off": the drum fills fall in unexpected places, like someone stumbling on a sidewalk they know by heart. The familiarity of the format amplifies the small irregularities instead of hiding them.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Compromise as Strategy.</span>Optimistic was partly a response to pressure from the record label and management, who had expressed concern about the total absence of rock elements in the tracks recorded up to that point. The band didn't return to the rock of OK Computer — but found a meeting point that maintained the aesthetic of Kid A while using more recognizable instruments and structures. Yorke described the process as "writing a pop song through a filter that makes it unrecognizable as such."</div>
+                    <p><strong>1:30 — The Lyrics as Biology</strong><br>The images in the lyrics — dinosaurs, big animals, flies — use the language of biology and evolution to describe social and political dynamics. Yorke sings these images with an almost documentary, detached quality, like a narrator observing instead of participating. Vocally, the track is among the most "normal" on the album — clean voice, little processing — and this clarity contrasts with the darkness of the images.</p>
+                    <p><strong>2:45 — The Instrumental Bridge</strong><br>A moment where all the guitars multiply — overdubs superimposed with different panning — creating a dense texture that occupies all the stereo space. It's not a solo in the traditional sense: it's a saturation, a moment where the sound becomes so dense it loses detail and becomes texture. Then it retreats, and the original groove resumes as if nothing had happened.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Unresolved Title.</span>The word "optimistic" in the title and lyrics is never used in a directly positive way — it's always qualified, questioned, surrounded by images of predation and survival. Yorke said in interviews at the time that the optimism he meant was not optimism as an emotion but as a posture — the decision to keep moving in the absence of convincing reasons to do so. An optimism that knows it is unfounded but chooses itself anyway.</div>
+                `
+            },
+            "in-limbo": {
+                it: `
+                    <h3>In Limbo</h3>
+                    <p><strong>0:00 — La Texture Come Disorientamento</strong><br>Il brano apre con una chitarra in open tuning processata attraverso delay multipli — echi sovrapposti che creano una texture fluida e senza centro di gravità evidente. Non c'è una tonalità chiaramente stabilita nelle prime battute: il suono fluttua tra possibilità armoniche diverse senza scegliere nessuna. Questa ambiguità tonale è la traduzione sonora del titolo — nessun posto dove stare, nessun posto dove andare.</p>
+                    <p><strong>0:30 — Il Ritmo Che Scivola</strong><br>La sezione ritmica — basso e batteria — entra con un pattern che sembra regolare ma non lo è del tutto. Ci sono micro-variazioni nel timing che impediscono al groove di "bloccarsi" nella sensazione di sicurezza che un ritmo stabile normalmente produce. È una tecnica che i produttori chiamano "humanization" nel senso opposto: invece di aggiungere imperfezioni umane a una base programmata, qui le imperfezioni sono deliberate e precise.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Struttura Nascosta.</span>In Limbo ha una struttura armonica insolita che molti ascoltatori non percepiscono consciamente ma sentono come "qualcosa che non torna": le frasi melodiche finiscono su note che non sono la tonica della tonalità principale. Ogni frase sembra stare per arrivare da qualche parte e poi devia. Jonny Greenwood descrisse questo effetto come "musica che non riesce a trovare casa" — una traduzione strutturale del testo invece che illustrativa.</div>
+                    <p><strong>1:45 — La Voce Come Strumento Melodico</strong><br>In questo brano Yorke usa la voce in modo più melodico rispetto ad altri brani dell'album — frasi più lunghe, meno frammentate, con un arco melodico riconoscibile. Ma la melodia stessa è costruita su intervalli insoliti — salti di settima, tritoni — che la rendono difficile da memorizzare e da cantare. È una melodia che esiste ma non vuole essere trattenuta.</p>
+                    <p><strong>3:00 — La Chiusura Aperta</strong><br>Il brano si chiude senza risoluzione armonica — l'ultimo accordo non è la tonica, non è il "ritorno a casa" che la struttura armonica occidentale tradizionale ci addestra ad aspettare. Rimane sospeso, e poi il silenzio. È la stessa struttura del titolo: né dentro né fuori, né finito né continuato.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Brano Più Trascurato.</span>In Limbo è spesso citato dai musicisti e dai critici specializzati come il brano di Kid A più sottovalutato dal grande pubblico — eclissato dai brani più "accessibili" come Optimistic o più celebri come Idioteque. La sua complessità armonica e ritmica richiede ascolti multipli per rivelare la sua struttura interna, e quella difficoltà di accesso è parte del suo carattere.</div>
+                `,
+                en: `
+                    <h3>In Limbo</h3>
+                    <p><strong>0:00 — Texture as Disorientation</strong><br>The track opens with an open-tuned guitar processed through multiple delays — overlapping echoes creating a fluid texture with no clear center of gravity. There's no clearly established key in the first bars: the sound floats between different harmonic possibilities without choosing any. This tonal ambiguity is the sonic translation of the title — nowhere to be, nowhere to go.</p>
+                    <p><strong>0:30 — The Slipping Rhythm</strong><br>The rhythm section — bass and drums — enters with a pattern that seems regular but isn't quite. There are micro-variations in timing that prevent the groove from "locking in" to the feeling of security that a stable rhythm normally produces. It's a technique producers call "humanization" in reverse: instead of adding human imperfections to a programmed base, here the imperfections are deliberate and precise.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Hidden Structure.</span>In Limbo has an unusual harmonic structure that many listeners don't consciously perceive but feel as "something off": melodic phrases end on notes that aren't the tonic of the main key. Every phrase seems about to arrive somewhere and then deviates. Jonny Greenwood described this effect as "music that can't find home" — a structural translation of the lyrics rather than illustrative.</div>
+                    <p><strong>1:45 — The Voice as Melodic Instrument</strong><br>In this track, Yorke uses his voice in a more melodic way compared to other tracks on the album — longer phrases, less fragmented, with a recognizable melodic arc. But the melody itself is built on unusual intervals — seventh leaps, tritones — that make it difficult to memorize and sing. It's a melody that exists but doesn't want to be retained.</p>
+                    <p><strong>3:00 — The Open Ending</strong><br>The track closes without harmonic resolution — the last chord is not the tonic, not the "return home" that traditional Western harmonic structure trains us to expect. It remains suspended, and then silence. It's the same structure as the title: neither in nor out, neither finished nor continued.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Most Overlooked Track.</span>In Limbo is often cited by musicians and specialized critics as the most underrated track on Kid A by the general public — eclipsed by more "accessible" tracks like Optimistic or more famous ones like Idioteque. Its harmonic and rhythmic complexity requires multiple listens to reveal its internal structure, and that difficulty of access is part of its character.</div>
+                `
+            },
+            "idioteque": {
+                it: `
+                    <h3>Idioteque</h3>
+                    <p><strong>0:00 — Il Campionamento Come Fondamenta</strong><br>Il beat di apertura è costruito su un campionamento da una composizione di musica concreta degli anni Sessanta — Paul Lansky e Arthur Kreiger — che Jonny Greenwood aveva trovato in una raccolta di musica elettroacustica sperimentale. Il campionamento viene tagliato, loopato e processato fino a diventare qualcosa di completamente diverso dalla fonte originale: un ritmo frammentato che combina un kick drum sintetico con pattern di alta frequenza che suonano sia artificiali che organici.</p>
+                    <p><strong>0:20 — Il Sintetizzatore Come Urgenza</strong><br>Sopra il beat entra un sintetizzatore — presumibilmente un Ondes Martenot, strumento elettronico degli anni Trenta che Jonny Greenwood usava regolarmente e che produce un suono unico, tra il violino e il theremin — che suona una linea melodica breve e ripetuta. La ripetizione crea l'effetto ipnotico tipico della musica techno e dance, ma la qualità timbrica del sintetizzatore è troppo aliena per essere comfort music.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Pavimento del Ghiaccio.</span>Il testo del brano fu scritto da Yorke leggendo materiale scientifico sullo scioglimento dei ghiacci polari e sulle proiezioni catastrofiche del cambiamento climatico — argomento marginale nel dibattito mainstream del 2000, centrale vent'anni dopo. Le immagini del ghiaccio che cede, delle donne e dei bambini evacuati, delle risorse finite — erano nel 2000 preoccupazioni di nicchia. Yorke le portò dentro una canzone dance come atto deliberato di cortocircuito: il contenuto del brano è incompatibile con la sua forma, e quella incompatibilità è il punto.</div>
+                    <p><strong>1:30 — La Voce Come Elemento Ritmico</strong><br>Yorke canta con una qualità sillabica e ritmica — le parole sono spezzate in modo da funzionare come elementi percussivi oltre che melodici. Alcune frasi sono quasi rappate nel ritmo, anche se il tono rimane cantato. Questa ibridazione tra canto e ritmo parlato anticipa tecniche che il R&B e l'elettronica avrebbero sviluppato ampiamente nel decennio successivo.</p>
+                    <p><strong>2:30 — La Costruzione Verso il Caos</strong><br>Negli ultimi due minuti il brano costruisce attraverso l'aggiunta progressiva di elementi — nuovi layer di sintetizzatore, variazioni nel beat, moltiplicazione delle voci di Yorke in armonie brevi e sovrapposte — verso un climax che non è una risoluzione ma un'intensificazione. La musica non si calma: si interrompe, come se il nastro fosse tagliato.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Performance Live Come Sfida.</span>Idioteque divenne uno0 dei brani più attesi nei concerti di Radiohead del periodo 2001-2008. La sfida tecnica era replicare la complessità del beat programmato con musicisti in carne e ossa: Phil Selway sviluppò una tecnica di batteria specifica per questo brano, con pattern di hi-hat che imitavano la frammentazione del campionamento originale. Le versioni live sono spesso più intense dell'originale in studio proprio perché quella frammentazione viene suonata con la fisicità di un corpo umano invece che con la precisione di un sequencer.</div>
+                `,
+                en: `
+                    <h3>Idioteque</h3>
+                    <p><strong>0:00 — Sampling as Foundation</strong><br>The opening beat is built on a sample from a concrete music composition from the sixties — Paul Lansky and Arthur Kreiger — that Jonny Greenwood had found in a collection of experimental electroacoustic music. The sample is cut, looped, and processed until it becomes something completely different from the original source: a fragmented rhythm combining a synthetic kick drum with high-frequency patterns that sound both artificial and organic.</p>
+                    <p><strong>0:20 — The Synthesizer as Urgency</strong><br>Above the beat enters a synthesizer — presumably an Ondes Martenot, an electronic instrument from the thirties that Jonny Greenwood used regularly and which produces a unique sound, between violin and theremin — playing a short, repeated melodic line. The repetition creates the hypnotic effect typical of techno and dance music, but the timbral quality of the synthesizer is too alien for comfort music.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Ice Floor.</span>The lyrics were written by Yorke while reading scientific material about melting polar ice and catastrophic projections of climate change — a marginal topic in mainstream debate in 2000, central twenty years later. The images of ice giving way, women and children evacuated, finite resources — were niche concerns in 2000. Yorke brought them into a dance song as a deliberate act of short-circuit: the content of the song is incompatible with its form, and that incompatibility is the point.</div>
+                    <p><strong>1:30 — The Voice as Rhythmic Element</strong><br>Yorke sings with a syllabic and rhythmic quality — words are broken to function as percussive elements as well as melodic ones. Some phrases are almost rapped in rhythm, even though the tone remains sung. This hybridization between singing and spoken rhythm anticipates techniques that R&B and electronic music would develop extensively in the following decade.</p>
+                    <p><strong>2:30 — Building Toward Chaos</strong><br>In the last two minutes, the song builds through the progressive addition of elements — new synthesizer layers, variations in the beat, multiplication of Yorke's voices in brief, overlapping harmonies — toward a climax that is not a resolution but an intensification. The music doesn't calm down: it stops, as if the tape were cut.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Live Performance as Challenge.</span>Idioteque became one of the most anticipated tracks in Radiohead's concerts of the 2001-2008 period. The technical challenge was to replicate the complexity of the programmed beat with flesh-and-blood musicians: Phil Selway developed a specific drumming technique for this track, with hi-hat patterns that imitated the fragmentation of the original sample. Live versions are often more intense than the studio original precisely because that fragmentation is played with the physicality of a human body rather than the precision of a sequencer.</div>
+                `
+            },
+            "morning-bell": {
+                it: `
+                    <h3>Morning Bell</h3>
+                    <p><strong>0:00 — Il Piano Preparato</strong><br>L'apertura è affidata a un piano con una qualità timbrica insolita — suoni smorzati, quasi percussivi, che suggeriscono un piano "preparato" (tecnica sviluppata da John Cage in cui oggetti fisici vengono inseriti tra le corde del pianoforte per alterarne il timbro) o un piano elettrico processato. Le note singole cadono nel silenzio con una qualità quasi a gocce d'acqua — irregolare, imprevedibile.</p>
+                    <p><strong>0:20 — Il Ritmo Claudicante</strong><br>La sezione ritmica entra con un groove che "zoppica" — non nel senso di essere mal suonato, ma nel senso che il pattern ha una struttura asimmetrica che crea una sensazione di disequilibrio costante. È simile a certi ritmi delle tradizioni musicali balcaniche e del Medio Oriente, dove i tempi dispari (come 7/8 o 5/4) producono una pulsazione che il corpo sente come "quasi regolare" senza mai potersi appoggiare completamente.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Versione Alternativa.</span>Morning Bell esiste in due versioni nel catalogo Radiohead: quella di Kid A e una versione completamente diversa nell'album Amnesiac (2001), intitolata Morning Bell/Amnesiac. Le due versioni usano lo stesso materiale melodico e testuale ma con arrangiamenti così diversi da sembrare canzoni separate. Yorke ha descritto le due versioni come "la stessa situazione vista da due stati d'umore opposti" — una tecnica compositiva che trasforma il materiale melodico in un contenitore flessibile per stati emotivi diversi.</div>
+                    <p><strong>1:15 — La Voce Come Dissociazione</strong><br>Il testo usa imperativo e terza persona in modo instabile — chi parla, a chi, di chi? Yorke canta questo testo con una qualità distaccata, quasi burocratica nelle strofe, che contrasta con i momenti di improvvisa intensità nei ritornelli. Vocalmente il brano si muove tra registro controllato e aperture improvvise verso l'acuto senza crescendo preparatorio — salti che il corpo percepisce come sussulti.</p>
+                    <p><strong>2:20 — Il Climax Strumentale</strong><br>Verso la fine del brano tutti gli elementi si densificano simultaneamente — chitarre, tastiere, batteria — in un climax che non è trionfale ma ansioso, come la sensazione fisica del panico. Non c'è catarsi: l'intensità si accumula e poi cade di colpo, lasciando spazio a un finale quasi spoliato.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Testo Come Scena Legale.</span>Molti commentatori hanno letto il testo di Morning Bell come la descrizione di una separazione coniugale e di una disputa per la custodia — il vocabolario della divisione dei beni, la frase più inquietante del brano che riguarda il bambino. Yorke non ha mai confermato questa lettura, ma ha ammesso che il testo nasce da un posto di "disgregazione domestica" senza specificare se autobiografica o immaginata. L'ambiguità è strutturale, non accidentale.</div>
+                `,
+                en: `
+                    <h3>Morning Bell</h3>
+                    <p><strong>0:00 — The Prepared Piano</strong><br>The opening is entrusted to a piano with an unusual timbral quality — muffled, almost percussive sounds, suggesting a "prepared" piano (a technique developed by John Cage where physical objects are inserted between the piano strings to alter the timbre) or a processed electric piano. Single notes fall into silence with an almost water-drop quality — irregular, unpredictable.</p>
+                    <p><strong>0:20 — The Limping Rhythm</strong><br>The rhythm section enters with a groove that "limps" — not in the sense of being badly played, but in the sense that the pattern has an asymmetrical structure creating a feeling of constant imbalance. It's similar to certain rhythms from Balkan and Middle Eastern musical traditions, where odd time signatures (like 7/8 or 5/4) produce a pulse that the body feels as "almost regular" without ever being able to fully lean on it.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Alternate Version.</span>Morning Bell exists in two versions in the Radiohead catalog: the one on Kid A and a completely different version on the album Amnesiac (2001), titled Morning Bell/Amnesiac. The two versions use the same melodic and textual material but with arrangements so different they seem like separate songs. Yorke described the two versions as "the same situation seen from two opposite moods" — a compositional technique that transforms melodic material into a flexible container for different emotional states.</div>
+                    <p><strong>1:15 — The Voice as Dissociation</strong><br>The lyrics use imperative and third person in an unstable way — who is speaking, to whom, about whom? Yorke sings this text with a detached, almost bureaucratic quality in the verses, which contrasts with moments of sudden intensity in the choruses. Vocally, the track moves between controlled register and sudden openings toward high notes without preparatory crescendo — leaps that the body perceives as jolts.</p>
+                    <p><strong>2:20 — The Instrumental Climax</strong><br>Toward the end, all elements thicken simultaneously — guitars, keyboards, drums — in a climax that is not triumphant but anxious, like the physical sensation of panic. There is no catharsis: intensity accumulates and then falls suddenly, leaving space for an almost stripped finale.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Lyrics as Legal Scene.</span>Many commentators have read the lyrics of Morning Bell as the description of a marital separation and custody dispute — the vocabulary of asset division, the most disturbing phrase concerning the child. Yorke has never confirmed this reading, but has admitted that the lyrics come from a place of "domestic disintegration" without specifying whether autobiographical or imagined. The ambiguity is structural, not accidental.</div>
+                `
+            },
+            "motion-picture-soundtrack": {
+                it: `
+                    <h3>Motion Picture Soundtrack</h3>
+                    <p><strong>0:00 — L'Arpa Come Soglia</strong><br>Il brano apre con un'arpa — strumento acustico reale, suonato tradizionalmente — che suona arpeggi ascendenti. È il suono più "classico" e meno sperimentale dell'intero album, e quella classicità è la prima sorpresa: dopo tutto quello che è venuto prima, Kid A chiude con qualcosa che suona come musica da film degli anni Quaranta o come accompagnamento a una scena celestiale di un vecchio cartone animato.</p>
+                    <p><strong>0:30 — L'Organo Come Spazio</strong><br>Un organo Hammond — o qualcosa che ci assomiglia — entra con accordi tenuti che riempiono le frequenze medie e basse, creando una risonanza che dà al brano la sua qualità quasi liturgica. L'organo è suonato con una dinamica molto controllata, senza i crescendo drammatici tipici del suo uso nel rock. È un organo da chiesa piccola, non da cattedrale.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Influenza del Cinema.</span>Il titolo non è casuale: Yorke scrisse questo brano pensando esplicitamente alle colonne sonore dei vecchi film in bianco e nero — in particolare alle musiche di Bernard Herrmann per i film di Hitchcock e alle partiture orchestrali del cinema classico americano. Quella qualità "da scena finale" che il brano ha — la sensazione di chiusura, di crediti che scorrono — è un effetto cercato e costruito deliberatamente come epilogo non solo del brano ma dell'intero album.</div>
+                    <p><strong>1:30 — Il Silenzio Inserito</strong><br>A metà brano c'è una pausa — diversi secondi di silenzio quasi completo prima che la musica riprenda. Nel CD originale questo silenzio era abbastanza lungo da far credere agli ascoltatori che il disco fosse finito. È una scelta di produzione che gioca con le aspettative del formato: il disco non è finito, ma vuole che tu pensi che lo sia, per rendere il ritorno della musica ancora più significativo.</p>
+                    <p><strong>2:00 — Le Voci Sintetiche</strong><br>Nel finale entrano voci — ma non voci umane registrate: sono voci sintetizzate, generate da un software di sintesi vocale. Il risultato è qualcosa che riconosciamo come "voci che cantano" ma che non appartiene a nessuna gola umana. È la chiusura del cerchio aperto con il vocoder di Everything in Its Right Place: l'album inizia con una voce umana resa artificiale e finisce con una voce artificiale che imita l'umano.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: I Due Minuti di Silenzio Nascosti.</span>Dopo la fine apparente del brano — e dell'album — nel CD originale ci sono circa due minuti di silenzio seguiti da una brevissima traccia nascosta: un frammento di musica quasi inudibile che la maggior parte degli ascoltatori non ha mai sentito. Era una pratica comune negli album rock degli anni Novanta — le cosiddette "hidden tracks" — ma qui assume un significato diverso: è qualcosa che esiste senza voler essere trovato, musica che preferisce rimanere nell'ombra. L'ultimo gesto di un album che aveva fatto del nascondimento uno dei suoi temi centrali.</div>
+                `,
+                en: `
+                    <h3>Motion Picture Soundtrack</h3>
+                    <p><strong>0:00 — The Harp as Threshold</strong><br>The track opens with a harp — a real acoustic instrument, traditionally played — playing ascending arpeggios. It's the most "classical" and least experimental sound on the entire album, and that classicism is the first surprise: after everything that came before, Kid A closes with something that sounds like film music from the forties or accompaniment to a celestial scene from an old cartoon.</p>
+                    <p><strong>0:30 — The Organ as Space</strong><br>A Hammond organ — or something resembling it — enters with sustained chords filling the mid and low frequencies, creating a resonance that gives the track its almost liturgical quality. The organ is played with very controlled dynamics, without the dramatic crescendos typical of its use in rock. It's a small church organ, not a cathedral one.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Influence of Cinema.</span>The title is not accidental: Yorke wrote this song explicitly thinking of soundtracks from old black and white films — particularly Bernard Herrmann's music for Hitchcock films and the orchestral scores of classic American cinema. That "final scene" quality the song has — the feeling of closure, of credits rolling — is an effect sought and deliberately constructed as an epilogue not only for the track but for the entire album.</div>
+                    <p><strong>1:30 — The Inserted Silence</strong><br>In the middle of the song there's a pause — several seconds of almost complete silence before the music resumes. On the original CD, this silence was long enough to make listeners think the album was finished. It's a production choice that plays with the expectations of the format: the album isn't finished, but wants you to think it is, to make the return of the music even more significant.</p>
+                    <p><strong>2:00 — The Synthetic Voices</strong><br>In the finale, voices enter — but not recorded human voices: they are synthesized voices, generated by speech synthesis software. The result is something we recognize as "singing voices" but that doesn't belong to any human throat. It's the closing of the circle opened with the vocoder in Everything in Its Right Place: the album begins with a human voice made artificial and ends with an artificial voice imitating the human.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Hidden Two Minutes of Silence.</span>After the apparent end of the track — and the album — on the original CD there are about two minutes of silence followed by a very brief hidden track: a fragment of almost inaudible music that most listeners have never heard. It was a common practice in nineties rock albums — so-called "hidden tracks" — but here it takes on a different meaning: it's something that exists without wanting to be found, music that prefers to remain in the shadows. The last gesture of an album that had made concealment one of its central themes.</div>
+                `
+            }
+        };
+
+        let mobileGalleryInterval;
+        let currentImgIndex = 0;
+
+        function startMobileGallery() {
+            const images = document.querySelectorAll('.band-gallery .flip-card');
+            if (images.length === 0) return;
+
+            function updateGallery() {
+                if (window.innerWidth <= 900) {
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                    images[currentImgIndex].classList.add('mobile-active');
+                    currentImgIndex = (currentImgIndex + 1) % images.length;
+                }
+            }
+
+            if (window.innerWidth <= 900) {
+                updateGallery();
+                if (!mobileGalleryInterval) {
+                    mobileGalleryInterval = setInterval(updateGallery, 5000);
+                }
+            }
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth <= 900) {
+                    if (!mobileGalleryInterval) {
+                        updateGallery();
+                        mobileGalleryInterval = setInterval(updateGallery, 5000);
+                    }
+                } else {
+                    clearInterval(mobileGalleryInterval);
+                    mobileGalleryInterval = null;
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderPlaylist();
+            startMobileGallery();
+            
+            const trackList = document.getElementById('tracklist');
+            if(trackList) trackList.scrollTop = 0;
+        });
+
+        // GESTIONE CAMBIO LINGUA GLOBALE
+        function setGlobalLang(lang) {
+            document.documentElement.lang = lang;
+            
+            document.querySelectorAll('.global-lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-lang-' + lang).classList.add('active');
+
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentId = ytPlayer ? ytPlayer.getAttribute('data-current-id') : null;
+            
+            if (currentId) {
+                const paraphraseContentHTML = generateParaphraseHTML(currentId);
+                document.getElementById('desktop-lyrics-view').innerHTML = paraphraseContentHTML;
+                document.getElementById('mobile-lyrics-content').innerHTML = paraphraseContentHTML;
+                
+                const guideContent = document.getElementById('guide-content');
+                if (guideData[currentId] && guideData[currentId][lang]) {
+                    guideContent.innerHTML = guideData[currentId][lang];
+                } else {
+                    guideContent.innerHTML = lang === 'it' ? "<p>Guida all'ascolto non disponibile per questo brano.</p>" : "<p>Listening guide not available for this track.</p>";
+                }
+            }
+        }
+
+        // Funzione per generare il blocco HTML della Parafrasi
+        function generateParaphraseHTML(id) {
+            const data = paraphraseData[id] || { en: "Description not available.", it: "Descrizione non disponibile." };
+            const currentLang = document.documentElement.lang;
+
+            return `
+                <div class="lyrics-wrapper" style="padding: 10px 15px;">
+                    <div class="lyrics-content-area">
+                        <div class="lyrics-col eng active" style="width: 100%; white-space: normal;">
+                            <h4 style="margin: 0 0 2px 0; padding: 0; line-height: 1.2;">
+                                <span class="lang-it">Di cosa parla la canzone?</span>
+                                <span class="lang-en">What is this song about?</span>
+                            </h4><div style="white-space: pre-line; font-style: italic; color: #555; margin: 0; padding: 0; line-height: 1.5;">${data[currentLang]}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPlaylist() {
+            const container = document.getElementById('tracklist');
+            let html = '';
+
+            playlist.forEach((track, index) => {
+                html += `
+                    <div class="track-row" id="track-${track.id}" onclick="playTrack('${track.id}', '${track.ytId}', '${track.title.replace(/'/g, "\\'")}', this)">
+                        <div class="track-num">
+                            <span>${index + 1}</span>
+                            <div class="playing-icon">
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                            </div>
+                        </div>
+                        <div class="track-info">
+                            <div class="track-title">${track.title}</div>
+                            <div class="track-artist">Radiohead</div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function playTrack(id, ytId, title, rowElement) {
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentPlayingId = ytPlayer.getAttribute('data-current-id');
+            const currentLang = document.documentElement.lang;
+
+            if (currentPlayingId !== id) {
+                ytPlayer.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`;
+                ytPlayer.setAttribute('data-current-id', id);
+            }
+
+            const rows = document.querySelectorAll('.track-row');
+            rows.forEach(r => r.classList.remove('active'));
+            if(rowElement) rowElement.classList.add('active');
+
+            // Parafrasi
+            const paraphraseContentHTML = generateParaphraseHTML(id);
+            document.getElementById('desktop-lyrics-view').innerHTML = paraphraseContentHTML;
+            document.getElementById('mobile-lyrics-content').innerHTML = paraphraseContentHTML;
+            document.getElementById('tracklist-wrapper').classList.add('lyrics-active');
+            document.getElementById('tracklist').scrollTop = 0;
+
+            // Guida
+            const guideContent = document.getElementById('guide-content');
+            if (guideData[id] && guideData[id][currentLang]) {
+                guideContent.innerHTML = guideData[id][currentLang];
+                const gBox = document.querySelector('.guide-box');
+                if(gBox) gBox.scrollTop = 0;
+            } else {
+                guideContent.innerHTML = currentLang === 'it' ? "<p>Guida all'ascolto non disponibile per questo brano.</p>" : "<p>Listening guide not available for this track.</p>";
+            }
+
+            const guidePanel = document.getElementById('guide-panel');
+            if(guidePanel && !guidePanel.classList.contains('open')) {
+                toggleGuide();
+            }
+        }
+
+        function resetTracklist() {
+            document.getElementById('tracklist-wrapper').classList.remove('lyrics-active');
+        }
+
+        // --- FUNZIONI ACCORDION MASTER ---
+        function toggleLesson() { 
+            const content = document.getElementById('main-content');
+            const videoLayer = document.getElementById('video-layer');
+            const btn = document.getElementById('btn-inizia');
+            const btnTxtIt = document.getElementById('btn-txt-it');
+            const btnTxtEn = document.getElementById('btn-txt-en');
+            const icon = btn.querySelector('.icon-plus');
+            
+            const isOpening = !content.classList.contains('active');
+            
+            if (isOpening) {
+                content.classList.add('active'); 
+                btn.classList.add('active'); 
+                btnTxtIt.textContent = "Chiudi Esperienza"; 
+                btnTxtEn.textContent = "Close Experience";
+                icon.textContent = "×"; 
+                videoLayer.classList.add('video-hidden');
+            } else {
+                content.classList.remove('active'); 
+                btn.classList.remove('active'); 
+                btnTxtIt.textContent = "Inizia Esperienza"; 
+                btnTxtEn.textContent = "Start Experience"; 
+                icon.textContent = "→"; 
+                videoLayer.classList.remove('video-hidden');
+                
+                const ytPlayer = document.getElementById('youtube-player');
+                if(ytPlayer) ytPlayer.src = "about:blank";
+            }
+        }
+
+        function toggleLyricsAccordion() {
+            const panel = document.getElementById('lyrics-panel');
+            const btn = document.getElementById('lyrics-btn');
+            if (panel.classList.contains('open')) { 
+                panel.classList.remove('open'); btn.classList.remove('active'); 
+            } else { 
+                panel.classList.add('open'); btn.classList.add('active'); 
+            }
+        }
+
+        function toggleGuide() {
+            const panel = document.getElementById('guide-panel');
+            const btn = document.getElementById('guide-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleHistory() {
+            const panel = document.getElementById('history-panel');
+            const btn = document.getElementById('history-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleDisclaimer() {
+            const panel = document.getElementById('disclaimer-panel');
+            const btn = document.getElementById('disclaimer-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleMobileTracks() {
+            const trackList = document.getElementById('tracklist');
+            const wrapper = document.getElementById('tracklist-wrapper');
+            const trigger = document.querySelector('.mobile-track-trigger');
+            if (trackList.classList.contains('mobile-open')) {
+                trackList.classList.remove('mobile-open'); wrapper.classList.remove('opened'); wrapper.classList.add('closed'); trigger.classList.remove('active');
+            } else {
+                trackList.classList.add('mobile-open'); wrapper.classList.remove('closed'); wrapper.classList.add('opened'); trigger.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

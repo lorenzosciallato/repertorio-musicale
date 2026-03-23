@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cannonball Adderley Quintet | Audio Repertoire</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- VARIABILI & RESET --- */
+        :root {
+            --bg-color: #f0f0f2;
+            --paper-color: #fdfbf7;
+            --ink-color: #1a1a1a;
+            --accent-color: #375a7f;
+            --pop-yellow: #ffee00;
+            --font-title: 'Abril Fatface', cursive;
+            --font-body: 'Inter', sans-serif;
+            --hover-row: rgba(55, 90, 127, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: var(--font-body);
+            color: var(--ink-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px;
+            width: 100%;
+            overflow-x: hidden; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- MULTILINGUA CSS LOGIC --- */
+        html[lang="it"] .lang-en { display: none !important; }
+        html[lang="en"] .lang-it { display: none !important; }
+
+        /* --- BACKGROUND --- */
+        .video-background-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden;
+            background: #e0e0e5; 
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .video-foreground {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; transition: opacity 0.8s ease; opacity: 1;
+        }
+
+        .video-foreground img.bg-image {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.1; 
+            filter: grayscale(100%) sepia(1) hue-rotate(190deg) contrast(1.2);
+            mix-blend-mode: multiply;
+        }
+
+        .video-hidden { opacity: 0; }
+
+        /* --- HEADER --- */
+        header { text-align: center; margin-top: 3rem; margin-bottom: 1rem; padding: 0 1rem; position: relative; z-index: 4; }
+        
+        .main-logo-text {
+            font-family: var(--font-title);
+            font-size: 3.5rem;
+            color: var(--ink-color);
+            margin: 0 auto;
+            line-height: 1.1;
+        }
+
+        .subtitle-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .subtitle {
+            font-family: var(--font-body); font-size: 1.5rem; color: var(--accent-color); font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 4px;
+        }
+
+        .global-lang-switch {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .global-lang-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 4px;
+            color: #888;
+            transition: all 0.3s;
+        }
+        
+        .global-lang-btn.active {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        /* --- CONTENITORE PRINCIPALE --- */
+        .content-card {
+            background: var(--paper-color); padding: 3rem; margin: 0 auto;
+            width: 90%; max-width: 1200px; position: relative;
+            border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); z-index: 4;
+            margin-bottom: 2rem; margin-top: 2rem;
+        }
+        @media (max-width: 600px) { 
+            .content-card { padding: 1.5rem; width: 95%; margin-top: 1rem; } 
+            .main-logo-text { font-size: 2.2rem; }
+            .subtitle { font-size: 1.2rem; letter-spacing: 2px; }
+            .global-lang-btn { padding: 5px 10px; font-size: 0.8rem; }
+        }
+
+        /* --- ACCORDION GENERALE --- */
+        .accordion-item { margin-bottom: 1rem; border-bottom: none; }
+        
+        .master-header {
+            background: transparent; border: 2px solid var(--accent-color); border-radius: 8px;
+            padding: 15px 20px; justify-content: center; font-size: 1.5rem; 
+            color: var(--accent-color); width: 100%; margin-bottom: 1rem;
+            cursor: pointer; display: flex; align-items: center; font-family: var(--font-title);
+            transition: all 0.3s ease;
+        }
+        .master-header:hover { background: rgba(55, 90, 127, 0.1); }
+        .master-header .icon-plus { margin-left: 15px; font-family: var(--font-body); font-weight: 300; transition: transform 0.3s; }
+
+        .accordion-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, opacity 0.5s;
+            padding: 0; opacity: 0;
+        }
+        .accordion-content.active { max-height: 20000px; opacity: 1; padding-top: 2rem; }
+        .master-header.active .icon-plus { transform: rotate(90deg); }
+
+        /* --- LAYOUT PLAYER --- */
+        .playlist-layout {
+            display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; align-items: start; margin-bottom: 2rem;
+        }
+        @media (max-width: 900px) { .playlist-layout { grid-template-columns: 1fr; } }
+
+        /* --- AUDIO PLAYER CONTAINER --- */
+        .player-wrapper {
+            position: sticky; top: 20px; background: #fff; border-radius: 12px;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 10; border: 1px solid #eee;
+        }
+
+        .youtube-container { 
+            position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #000; 
+        }
+        .youtube-container iframe { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; 
+        }
+
+        /* --- TRACKLIST E MESSAGGI --- */
+        .tracklist-column { display: flex; flex-direction: column; }
+
+        .scroll-disclaimer {
+            font-size: 0.85rem; color: #665500; margin-bottom: 12px; font-style: italic; text-align: center; 
+            background-color: rgba(255, 238, 0, 0.2); border: 2px dashed #e6c200; padding: 10px; border-radius: 8px; width: 100%;
+        }
+        .msg-desktop { display: block; }
+        .msg-mobile { display: none; }
+        
+        .mobile-track-trigger {
+            display: none; width: 100%; background: #fff; border: 2px dashed #ddd; border-radius: 8px;
+            padding: 12px 20px; font-family: var(--font-title); font-size: 1.2rem; color: var(--accent-color);
+            justify-content: space-between; align-items: center; cursor: pointer; margin-top: 10px; margin-bottom: 10px; transition: all 0.3s;
+        }
+        .mobile-track-trigger:hover { background: #fdfdfd; border-color: var(--accent-color); }
+        .mobile-track-trigger.active { background: #f0f4f8; border-style: solid; border-color: var(--accent-color); }
+        .trigger-arrow { transition: transform 0.3s; font-size: 1rem; }
+        .mobile-track-trigger.active .trigger-arrow { transform: rotate(180deg); }
+
+        .tracklist-container { 
+            width: 100%; max-height: 500px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #ccc #f0f0f2;
+            padding-right: 5px; transition: max-height 0.5s ease-out, opacity 0.5s;
+        }
+        .tracklist-container::-webkit-scrollbar { width: 6px; }
+        .tracklist-container::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+
+        .track-row {
+            display: grid; grid-template-columns: 40px 1fr 40px; padding: 12px 10px; border-bottom: 1px solid rgba(0,0,0,0.05);
+            cursor: pointer; transition: background 0.2s, padding-left 0.2s; border-radius: 6px; align-items: center;
+        }
+        .track-row:hover { background-color: var(--hover-row); padding-left: 15px; }
+        .track-row.active { background-color: var(--hover-row); border-left: 4px solid var(--accent-color); }
+
+        .track-num { font-size: 0.9rem; color: #888; font-weight: 700; }
+        .track-row.active .track-num { display: none; }
+        .track-row.active .playing-icon { display: inline-block; }
+        
+        .playing-icon { display: none; width: 14px; height: 14px; position: relative; }
+        .bar { background: var(--accent-color); bottom: 0; position: absolute; width: 3px; animation: sound 0ms -800ms linear infinite alternate; }
+        .bar:nth-child(1) { left: 0px; height: 10px; animation-duration: 474ms; }
+        .bar:nth-child(2) { left: 5px; height: 6px; animation-duration: 433ms; }
+        .bar:nth-child(3) { left: 10px; height: 12px; animation-duration: 407ms; }
+        @keyframes sound { 0% { opacity: .35; height: 3px; } 100% { opacity: 1; height: 14px; } }
+
+        .track-info { display: flex; flex-direction: column; }
+        .track-title { font-weight: 700; font-size: 1rem; color: var(--ink-color); }
+        .track-row.active .track-title { color: var(--accent-color); }
+        .track-artist { font-size: 0.85rem; color: #666; }
+
+        /* --- ACCORDIONS COMUNI (Guida, Storia) --- */
+        .guide-accordion-wrapper { margin-top: 1rem; border-top: 1px solid #eee; }
+        .guide-trigger {
+            background: #fff; border: 2px dashed #ddd; border-radius: 8px; width: 100%; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s; margin-top: 1rem;
+        }
+        .guide-trigger:hover { border-color: var(--accent-color); background: #fdfdfd; }
+        .guide-trigger.active { border-color: var(--accent-color); background: #f0f4f8; border-style: solid; }
+        .guide-trigger span { font-family: var(--font-title); font-size: 1.4rem; color: var(--accent-color); }
+        .guide-arrow { font-size: 1.2rem; transition: transform 0.3s; color: var(--accent-color); }
+        .guide-trigger.active .guide-arrow { transform: rotate(180deg); }
+
+        .guide-panel { max-height: 0; overflow: hidden; transition: max-height 0.6s ease-out, opacity 0.5s; opacity: 0; background: #fff; border-radius: 0 0 8px 8px; }
+        .guide-panel.open { max-height: 80000px; opacity: 1; padding: 20px 0; }
+
+        .guide-grid { display: grid; grid-template-columns: 2fr 1.5fr; gap: 2rem; align-items: start; }
+        .guide-box { background: #fff; padding: 1rem 0; max-height: 600px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--accent-color) #f0f0f2; padding-right: 15px; }
+        .guide-box::-webkit-scrollbar { width: 8px; }
+        .guide-box::-webkit-scrollbar-thumb { background-color: var(--accent-color); border-radius: 10px; }
+        
+        .guide-content p { margin-bottom: 1rem; font-size: 1rem; color: #333; }
+        .guide-content strong { color: var(--accent-color); font-weight: 900; }
+
+        .curiosity-box { background: #fffcf0; border-left: 4px solid var(--pop-yellow); padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0; font-size: 0.95rem; font-style: italic; color: #554; }
+        .curiosity-label { font-weight: bold; font-style: normal; color: #d4a000; text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 5px; }
+
+        /* --- FLIP CARDS CHIRURGICHE --- */
+        .flip-card {
+            perspective: 1000px;
+            cursor: pointer;
+            width: 100%;
+            display: block;
+            margin-bottom: 15px;
+        }
+        .wiki-figure .flip-card { margin-bottom: 0; } 
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-card-front, .flip-card-back {
+            width: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        
+        .flip-card-front {
+            position: relative;
+            height: auto;
+            z-index: 2;
+        }
+        
+        .flip-card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: var(--accent-color);
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .flip-card-back strong { color: var(--pop-yellow); font-family: var(--font-title); font-size: 1.1rem; margin-bottom: 5px; line-height: 1.2; }
+        .flip-card-back small { font-size: 0.85rem; opacity: 0.9; }
+
+        .flip-card-front img, .flip-card-back { border-radius: inherit; }
+        
+        .band-gallery .flip-card-front, .band-gallery .flip-card-back {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .wiki-figure .flip-card-front, .wiki-figure .flip-card-back {
+            border-radius: 4px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #ccc;
+        }
+        .wiki-figure .flip-card-back { border: none; }
+
+        .gallery-img, .wiki-img { display: block; width: 100%; height: auto; object-fit: cover; }
+        .wiki-img { filter: sepia(0.1) contrast(1.05); transition: all 0.3s; border: none; box-shadow: none; border-radius: 0; }
+        .gallery-img { border: none; box-shadow: none; border-radius: 0; }
+        .flip-card-front:hover .wiki-img { filter: none; }
+
+        /* --- STILE GALLERIA IMMAGINI --- */
+        .band-gallery { display: flex; flex-direction: column; gap: 20px; max-height: 650px; overflow-y: auto; padding-right: 10px; }
+        .band-gallery::-webkit-scrollbar { width: 4px; }
+        .band-gallery::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
+        .band-gallery .flip-card { height: auto; margin-bottom: 0; }
+
+        /* --- STILE WIKI / STORIA --- */
+        .wiki-content { font-family: 'Inter', sans-serif; color: #333; line-height: 1.7; padding: 0 10px; text-align: justify; }
+        .wiki-title { font-family: var(--font-title); color: var(--accent-color); font-size: 1.4rem; margin-top: 10px; margin-bottom: 5px; letter-spacing: 1px; }
+        .wiki-subtitle { font-weight: 900; color: #d4a000; text-transform: uppercase; font-size: 0.85rem; margin-top: 40px; margin-bottom: 10px; clear: both; }
+        .wiki-divider { border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); margin: 30px 0; clear: both; }
+        .wiki-figure { margin: 15px 0; width: 100%; }
+        .wiki-figure figcaption { font-size: 0.75rem; color: #666; font-style: italic; text-align: center; margin-top: 5px; display: block; }
+        .wiki-gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 30px 0 40px 0; }
+        .wiki-gallery-grid .wiki-figure { height: 100%; margin: 0; }
+        .wiki-gallery-grid .wiki-img { height: 100%; object-fit: cover; }
+
+        .btn-close-bottom { width: 100%; padding: 12px; margin-top: 15px; background: #fff; border: 1px solid #ddd; color: var(--accent-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; font-weight: 700; transition: background 0.3s; text-align: center; }
+        .btn-close-bottom:hover { background: #f0f4f8; border-color: var(--accent-color); }
+        .track-close-desktop-hidden { display: none; }
+
+        @media (min-width: 901px) {
+            .wiki-figure.right { float: right; width: 40%; margin-left: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.left { float: left; width: 40%; margin-right: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.full { clear: both; width: 100%; margin: 30px 0; }
+            .wiki-chapter::after { content: ""; display: table; clear: both; }
+        }
+
+        @media (max-width: 900px) {
+            .msg-desktop { display: none !important; }
+            .msg-mobile { display: block !important; text-align: center; }
+            .guide-grid { grid-template-columns: 1fr; }
+            .band-gallery { display: block; order: -1; max-height: none; overflow: hidden; padding-right: 0; margin-bottom: 10px; }
+            
+            .band-gallery .flip-card { display: none; animation: fadeInSlide 0.5s ease-in-out; margin-bottom: 0; }
+            .band-gallery .flip-card.mobile-active { display: block; }
+            
+            @keyframes fadeInSlide { from { opacity: 0; } to { opacity: 1; } }
+            .wiki-gallery-grid { grid-template-columns: 1fr; gap: 20px; }
+            .mobile-track-trigger { display: flex; } 
+            .tracklist-wrapper.opened .track-close-desktop-hidden { display: block; }
+            .tracklist-container { max-height: 0; overflow: hidden; opacity: 0; }
+            .tracklist-container.mobile-open { max-height: 5000px; overflow-y: visible; opacity: 1; margin-bottom: 1rem; }
+            .tracklist-wrapper.closed .scroll-disclaimer { display: none; }
+            .tracklist-wrapper.opened .scroll-disclaimer { display: block; }
+            .guide-box { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-background-wrapper" id="bg-wrapper">
+        <div class="video-foreground" id="video-layer">
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774209025/sfondo_revx3u.webp" alt="Cannonball Adderley Background" class="bg-image">
+        </div>
+        <div class="video-filter-overlay"></div>
+    </div>
+
+    <header>
+        <h1 class="main-logo-text">Cannonball Adderley Quintet</h1>
+        <div class="subtitle-wrapper">
+            <div class="subtitle">
+                <span class="lang-it">Repertorio</span>
+                <span class="lang-en">Repertoire</span>
+            </div>
+            <div class="global-lang-switch">
+                <button id="btn-lang-it" class="global-lang-btn active" onclick="setGlobalLang('it')">ITA</button>
+                <button id="btn-lang-en" class="global-lang-btn" onclick="setGlobalLang('en')">ENG</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-card">
+        
+        <div class="accordion-item">
+            <button class="master-header" id="btn-inizia" onclick="toggleLesson()">
+                <span id="btn-text">
+                    <span class="lang-it" id="btn-txt-it">Inizia Esperienza</span>
+                    <span class="lang-en" id="btn-txt-en">Start Experience</span>
+                </span> 
+                <span class="icon-plus">→</span>
+            </button>
+            
+            <div class="accordion-content" id="main-content">
+                
+                <div class="playlist-layout">
+                    <div class="player-wrapper" id="player-wrapper-ui">
+                        <div class="youtube-container">
+                            <iframe id="youtube-player" src="about:blank" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+                    </div>
+
+                    <div class="tracklist-column tracklist-wrapper closed" id="tracklist-wrapper">
+                        
+                        <button class="mobile-track-trigger" onclick="toggleMobileTracks()">
+                            <span>
+                                <span class="lang-it">Brani</span>
+                                <span class="lang-en">Tracks</span>
+                            </span>
+                            <span class="trigger-arrow">▼</span>
+                        </button>
+
+                        <div class="scroll-disclaimer msg-desktop">
+                            <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere l'intera lista di brani</span>
+                            <span class="lang-en">Use your keyboard or mouse wheel to scroll through the full tracklist</span>
+                        </div>
+                        <div class="scroll-disclaimer msg-mobile">
+                            <span class="lang-it">Clicca e scorri per vedere l'intera lista di brani</span>
+                            <span class="lang-en">Tap and scroll to see the full tracklist</span>
+                        </div>
+
+                        <div class="tracklist-container" id="tracklist">
+                            </div>
+                        
+                        <button class="btn-close-bottom track-close-desktop-hidden" onclick="toggleMobileTracks()">
+                            <span class="lang-it">↑ Chiudi Lista Brani</span>
+                            <span class="lang-en">↑ Close Tracklist</span>
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper">
+                    <button class="guide-trigger" id="guide-btn" onclick="toggleGuide()">
+                        <span>
+                            <span class="lang-it">Guida all'Ascolto & Curiosità</span>
+                            <span class="lang-en">Listening Guide & Trivia</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="guide-panel">
+                        <div class="guide-grid">
+                            <div>
+                                <div class="guide-box">
+                                    <div id="guide-content" class="guide-content">
+                                        <p style="text-align:center; color:#888; margin-top:50px;">
+                                            <span class="lang-it">Seleziona un brano dalla playlist per visualizzare qui i dettagli.</span>
+                                            <span class="lang-en">Select a track from the playlist to view details here.</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="scroll-disclaimer msg-desktop" style="margin-top: 10px;">
+                                    <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere la guida</span>
+                                    <span class="lang-en">Use your keyboard or mouse wheel to scroll through the guide</span>
+                                </div>
+                            </div>
+
+                            <div class="band-gallery">
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774209007/1_eiyjq2.jpg" alt="Cannonball Adderley"></div>
+                                        <div class="flip-card-back"><strong>Cannonball Adderley</strong><small>Source: bing.net</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774209007/2_xpqman.jpg" alt="Mercy Mercy Mercy"></div>
+                                        <div class="flip-card-back"><strong>Mercy Mercy Mercy</strong><small>Source: udiscovermusic.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774209006/3_gkom87.jpg" alt="Live Performance"></div>
+                                        <div class="flip-card-back"><strong>Live Performance</strong><small>Source: radiofrance.fr</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774209008/4_vgjnzz.jpg" alt="Vinyl Record"></div>
+                                        <div class="flip-card-back"><strong>Vinyl Record</strong><small>Source: jazzcollector.b-cdn.net</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774209005/5_quyh7z.png" alt="Portrait"></div>
+                                        <div class="flip-card-back"><strong>Portrait</strong><small>Source: gonzai.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774209005/6_gks9dl.jpg" alt="Album Cover"></div>
+                                        <div class="flip-card-back"><strong>Album Cover</strong><small>Source: catfish-records.jp</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208990/7_we4n0l.jpg" alt="Quintet"></div>
+                                        <div class="flip-card-back"><strong>The Quintet</strong><small>Source: bing.net</small></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn-close-bottom" onclick="toggleGuide()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Guida</span>
+                            <span class="lang-en">↑ Close Guide</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="history-btn" onclick="toggleHistory()">
+                        <span>
+                            <span class="lang-it">Contesto Storico & Artistico</span>
+                            <span class="lang-en">Historical & Artistic Context</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="history-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 1: Le Origini e i Primi Passi nella Musica</span>
+                                        <span class="lang-en">Chapter 1: Origins and Early Steps in Music</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure full">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208988/8_rchalq.jpg" alt="Julian Edwin Adderley" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Julian Edwin Adderley</span><span class="lang-en">Julian Edwin Adderley</span></strong>
+                                                    <small>Source: npr.org</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </figure>
+
+                                    <p class="lang-it">Julian Edwin Adderley, divenuto celebre in tutto il mondo con il soprannome "Cannonball", nacque il 15 settembre 1928 a Tampa, in Florida. Figlio di un consulente scolastico (anch'egli suonatore di cornetta) e di un'insegnante di scuola elementare, ricevette il suo peculiare appellativo dai compagni di scuola: si trattava infatti di una storpiatura della parola "cannibal", affibbiatagli per via del suo vorace appetito.</p>
+                                    <p class="lang-en">Julian Edwin Adderley, who became famous worldwide with the nickname "Cannonball", was born on September 15, 1928, in Tampa, Florida. The son of a school counselor (also a cornet player) and an elementary school teacher, he received his peculiar nickname from his schoolmates: it was in fact a distortion of the word "cannibal", given to him because of his voracious appetite.</p>
+
+                                    <p class="lang-it">In seguito al trasferimento della famiglia a Tallahassee, dove i genitori avevano ottenuto degli incarichi presso la Florida A&M University, il giovane iniziò a immergersi nell'ambiente musicale locale, arrivando a suonare con Ray Charles nei primi anni '40. Nel 1948 si trasferì nella contea di Broward per studiare musica alla medesima università, diventando poi direttore della banda della Dillard High School di Fort Lauderdale, ruolo che ricoprì fino al 1950. La sua carriera civile subì un'interruzione a causa della Guerra di Corea: arruolato nell'esercito statunitense nel 1950, trascorse il periodo di leva dirigendo la 36esima Army Dance Band.</p>
+                                    <p class="lang-en">Following the family's move to Tallahassee, where his parents had obtained positions at Florida A&M University, the young man began to immerse himself in the local music scene, eventually playing with Ray Charles in the early 1940s. In 1948, he moved to Broward County to study music at the same university, later becoming the band director at Dillard High School in Fort Lauderdale, a role he held until 1950. His civilian career was interrupted by the Korean War: drafted into the US Army in 1950, he spent his enlistment period directing the 36th Army Dance Band.</p>
+                                </div>
+
+                                <hr class="wiki-divider">
+
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 2: L'Esplosione a New York e l'Incontro con Miles Davis</span>
+                                        <span class="lang-en">Chapter 2: The Explosion in New York and the Meeting with Miles Davis</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208989/9_ys5jvi.png" alt="With Miles Davis" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Con Miles Davis</span><span class="lang-en">With Miles Davis</span></strong>
+                                                    <small>Source: ahomeplate.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </figure>
+
+                                    <p class="lang-it">Il vero spartiacque della sua carriera coincise con il trasferimento a New York nel 1955, motivato dalla volontà di intraprendere studi post-laurea nei conservatori della città. Il suo ingresso nell'élite del jazz fu fulmineo e dal sapore leggendario: una sera di quell'anno si presentò al Café Bohemia con il suo sassofono e fu invitato a salire sul palco al posto del sassofonista titolare di Oscar Pettiford, giunto in ritardo.</p>
+                                    <p class="lang-en">The real watershed of his career coincided with his move to New York in 1955, motivated by the desire to undertake postgraduate studies in the city's conservatories. His entry into the jazz elite was lightning fast and had a legendary flavor: one evening that year he showed up at the Café Bohemia with his saxophone and was invited on stage to replace Oscar Pettiford's regular saxophonist, who was running late.</p>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208988/10_vijrwy.jpg" alt="Capitol Live Cover" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Capitol Live Cover</span><span class="lang-en">Capitol Live Cover</span></strong>
+                                                    <small>Source: mzstatic.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </figure>
+                                    
+                                    <p class="lang-it">L'eco di quell'esibizione fu tale che l'ambiente jazzistico newyorkese lo salutò immediatamente come l'erede di Charlie Parker. Dopo aver formato un gruppo insieme al fratello Nat, trombettista, e aver firmato con l'etichetta Savoy, il suo stile profondamente radicato nel blues attirò l'attenzione di Miles Davis. Entrò a far parte del celebre gruppo di Davis nell'ottobre del 1957, contribuendo in modo determinante a dischi fondamentali della storia della musica come Milestones (1958) e Kind of Blue (1959). In quello stesso fecondo periodo, lo stesso Davis prese parte all'epocale album solista di Adderley, Somethin' Else, registrato nel 1958.</p>
+                                    <p class="lang-en">The echo of that performance was such that the New York jazz scene immediately hailed him as the heir to Charlie Parker. After forming a group with his trumpet-playing brother Nat and signing with the Savoy label, his style—deeply rooted in the blues—caught the attention of Miles Davis. He joined Davis's celebrated group in October 1957, making a decisive contribution to fundamental records in music history such as Milestones (1958) and Kind of Blue (1959). During that same fertile period, Davis himself took part in Adderley's epochal solo album, Somethin' Else, recorded in 1958.</p>
+                                </div>
+
+                                <hr class="wiki-divider">
+
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 3: Maturità Artistica, Successo Multimediale ed Eredità</span>
+                                        <span class="lang-en">Chapter 3: Artistic Maturity, Multimedia Success, and Legacy</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208988/11_d0m6oa.jpg" alt="Cannonball & Nat" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Cannonball & Nat</span><span class="lang-en">Cannonball & Nat</span></strong>
+                                                    <small>Source: pinterest.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </figure>
+
+                                    <p class="lang-it">Lasciata la formazione di Davis, Adderley decise di riprendere in mano la propria leadership riunendosi al fratello Nat per formare un nuovo quintetto, in seguito ampliato a sestetto, che nel corso del tempo avrebbe ospitato musicisti del calibro di Joe Zawinul, Yusef Lateef e Charles Lloyd. Nel 1962 si unì in matrimonio con l'attrice Olga James.</p>
+                                    <p class="lang-en">Having left Davis's lineup, Adderley decided to resume his leadership by reuniting with his brother Nat to form a new quintet, later expanded to a sextet, which over time would host musicians of the caliber of Joe Zawinul, Yusef Lateef, and Charles Lloyd. In 1962, he married actress Olga James.</p>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208988/12_jrg5la.jpg" alt="Final Portrait" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Ritratto finale</span><span class="lang-en">Final Portrait</span></strong>
+                                                    <small>Source: pinterest.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </figure>
+
+                                    <p class="lang-it">La consacrazione commerciale definitiva arrivò nel 1966 con il singolo "Mercy, Mercy, Mercy": il brano, dalle marcate tinte soul jazz e composto dal fido Zawinul, fu un clamoroso successo capace di imporsi trasversalmente anche nelle classifiche pop e R&B. Verso la fine degli anni '60, Adderley si dimostrò recettivo ai cambiamenti musicali in atto, lasciando che il suo stile assorbisse l'influenza del neonato jazz elettrico, come testimoniato dall'uscita di dischi quali Accent on Africa (1968) e The Price You Got to Pay to Be Free (1970).</p>
+                                    <p class="lang-en">The definitive commercial consecration arrived in 1966 with the single "Mercy, Mercy, Mercy": the track, with marked soul-jazz overtones and composed by his trusted Zawinul, was a resounding success capable of imposing itself transversally even in the pop and R&B charts. Toward the end of the 1960s, Adderley proved receptive to the musical changes underway, allowing his style to absorb the influence of the newborn electric jazz, as evidenced by the release of records such as Accent on Africa (1968) and The Price You Got to Pay to Be Free (1970).</p>
+
+                                    <p class="lang-it">La sua statura di artista a tutto tondo lo portò a sconfinare in altri media: la sua esibizione al Monterey Jazz Festival del 1970 fu immortalata nel thriller psicologico Brivido nella notte (Play Misty for Me) di Clint Eastwood nel 1971, e nel 1975 apparve persino come attore in un episodio della serie televisiva Kung Fu. La sua parabola si interruppe bruscamente nell'estate del 1975: colpito a luglio da un ictus causato da un'emorragia cerebrale, Julian "Cannonball" Adderley si spense l'8 agosto in un ospedale di Gary, nell'Indiana, a soli 46 anni. Sepolto a Tallahassee, la sua statura di gigante del jazz fu immediatamente cristallizzata con l'inserimento, avvenuto quello stesso anno, nella DownBeat Jazz Hall of Fame.</p>
+                                    <p class="lang-en">His stature as an all-around artist led him to cross over into other media: his performance at the 1970 Monterey Jazz Festival was immortalized in Clint Eastwood's 1971 psychological thriller Play Misty for Me, and in 1975 he even appeared as an actor in an episode of the television series Kung Fu. His trajectory was abruptly interrupted in the summer of 1975: struck in July by a stroke caused by a cerebral hemorrhage, Julian "Cannonball" Adderley passed away on August 8 in a hospital in Gary, Indiana, at only 46 years of age. Buried in Tallahassee, his stature as a jazz giant was immediately crystallized with his induction, which occurred that same year, into the DownBeat Jazz Hall of Fame.</p>
+                                </div>
+
+                            </div>
+                        </div>
+                        
+                        <button class="btn-close-bottom" onclick="toggleHistory()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Storia</span>
+                            <span class="lang-en">↑ Close History</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="disclaimer-btn" onclick="toggleDisclaimer()">
+                        <span>
+                            <span class="lang-it">Disclaimer & Note Legali</span>
+                            <span class="lang-en">Disclaimer & Legal Notes</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="disclaimer-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                <h3 class="wiki-title lang-it">Disclaimer e Diritto di Citazione</h3>
+                                <h3 class="wiki-title lang-en">Disclaimer & Fair Use</h3>
+                                
+                                <p class="lang-it">I contenuti multimediali presenti in questa pagina (immagini e video) sono utilizzati esclusivamente per finalità didattiche, critiche e di approfondimento culturale, in conformità con l'Art. 70 della Legge 633/41 (Diritto di citazione e riproduzione per uso didattico o scientifico). L'utilizzo non ha alcuno scopo di lucro e mira a valorizzare l'opera dell'artista e dei relativi autori, citati puntualmente tramite la funzione interattiva sulle singole immagini.<br><br>Qualora i detentori dei diritti d'autore ritenessero inappropriata la pubblicazione o desiderassero la rimozione di specifici contenuti, possono scrivere all'indirizzo: <strong>lorenzo.sciallato@gmail.com</strong>. Provvederò all'immediata rimozione del materiale segnalato.</p>
+                                
+                                <p class="lang-en">The multimedia contents on this page (images and videos) are used exclusively for educational, critical, and cultural purposes, in accordance with international Fair Use principles and national copyright laws. This project is strictly non-commercial and aims to provide historical and artistic context, with full credit given to authors and sources via the interactive photo-flip feature.<br><br>If you are a copyright holder and object to the use of any material, or would like to request its removal, please contact: <strong>lorenzo.sciallato@gmail.com</strong>. Any disputed content will be removed immediately upon request.</p>
+
+                                <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 25px 0;">
+
+                                <p class="lang-it" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Pagina creata con l'assistenza di software di intelligenza artificiale generativa, unendo cura umana e supporto tecnologico per l'apprendimento e la divulgazione culturale.</p>
+                                <p class="lang-en" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Page created with the assistance of generative artificial intelligence software, combining human curation and technological support for educational and cultural dissemination.</p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleDisclaimer()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Disclaimer</span>
+                            <span class="lang-en">↑ Close Disclaimer</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const playlist = [
+            { id: "fun", title: "Fun", ytId: "bRv9T06Gk74" },
+            { id: "games", title: "Games", ytId: "gY_focPmSYs" },
+            { id: "mercy", title: "Mercy, Mercy, Mercy", ytId: "W9mYN0Tkoik" },
+            { id: "sticks", title: "Sticks", ytId: "9XCYYCyI99w" },
+            { id: "hippodelphia", title: "Hippodelphia", ytId: "RVFtrlgzDBU" },
+            { id: "sack_o_woe", title: "Sack O' Woe", ytId: "gteFzyLpvAQ" }
+        ];
+
+        const guideData = {
+            "fun": {
+                it: `
+                    <h3>Fun</h3>
+                    <p><strong>0:00 - L'Esplosione del Groove:</strong> Il brano non perde tempo e parte subito con un'energia travolgente. Il sax di Cannonball e la cornetta di Nat suonano la melodia principale perfettamente all'unisono. È il classico "soul-jazz": una musica complessa ma pensata per arrivare dritta alla pancia e far muovere la testa.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il finto "Club".</span> L'album da cui è tratto il brano si intitola Live at "The Club", ma in realtà è stato registrato in uno studio di Hollywood! Per ricreare l'atmosfera calda e informale di un locale, il produttore invitò amici e allestì un open bar: i rumori del pubblico, le urla e i tintinnii dei bicchieri che senti sono verissimi.</div>
+                    <p><strong>1:15 - L'Assolo di Cannonball (Sax):</strong> Quando Cannonball prende il suo assolo, non fa un semplice sfoggio di tecnica fredda. Usa il linguaggio del blues per creare un suono caldo, corposo e ricco di sfumature, trasmettendo una sensazione di gioia pura e contagiosa.</p>
+                    <p><strong>4:30 - Il Tocco di Zawinul (Pianoforte):</strong> Il pianoforte prende il centro della scena. Joe Zawinul sceglie di non riempire ogni spazio, usando accordi aperti che danno respiro al brano. Crea una sorta di "sospensione" che alleggerisce l'atmosfera prima della volata finale.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Nessun trucco, tutta intesa.</span> All'epoca non c'erano computer per correggere gli errori. L'incredibile amalgama e i cambi di volume che senti sono frutto unicamente della pura intesa visiva e musicale tra i membri del gruppo che suonavano insieme nella stessa stanza.</div>
+                    <p><strong>7:10 - Il Botta e Risposta (Fours):</strong> Il brano si avvia alla conclusione con una vivace sfida musicale. Fiati e batteria si alternano in un veloce "botta e risposta" (in gergo fours, scambi di quattro battute), portando l'energia al massimo storico prima della chiusura.</p>
+                `,
+                en: `
+                    <h3>Fun</h3>
+                    <p><strong>0:00 - The Groove Explosion:</strong> The track doesn't waste time and starts immediately with overwhelming energy. Cannonball's sax and Nat's cornet play the main melody perfectly in unison. It's classic "soul-jazz": complex music designed to hit you right in the gut and make your head nod.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Fake "Club".</span> The album this track is taken from is titled Live at "The Club", but in reality, it was recorded in a Hollywood studio! To recreate the warm, informal atmosphere of a venue, the producer invited friends and set up an open bar: the audience noises, the shouts, and the clinking of glasses you hear are completely real.</div>
+                    <p><strong>1:15 - Cannonball's Solo (Sax):</strong> When Cannonball takes his solo, he doesn't just show off cold technique. He uses the language of the blues to create a warm, full-bodied sound rich in nuances, conveying a feeling of pure and contagious joy.</p>
+                    <p><strong>4:30 - Zawinul's Touch (Piano):</strong> The piano takes center stage. Joe Zawinul chooses not to fill every space, using open chords that give the track room to breathe. He creates a sort of "suspension" that lightens the atmosphere before the final sprint.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: No tricks, all intuition.</span> At the time, there were no computers to correct mistakes. The incredible blend and volume changes you hear are solely the result of pure visual and musical intuition between the group members playing together in the same room.</div>
+                    <p><strong>7:10 - The Call and Response (Fours):</strong> The track heads towards its conclusion with a lively musical challenge. Horns and drums alternate in a fast "call and response" (known as trading fours), pushing the energy to an all-time high before the close.</p>
+                `
+            },
+            "games": {
+                it: `
+                    <h3>Games</h3>
+                    <p><strong>0:00 - Il Gioco Ritmico Iniziale:</strong> L'introduzione è volutamente ingannevole per l'orecchio. Il basso tiene un tempo dritto e rassicurante, ma gli altri strumenti suonano con accenti sfalsati. È un "gioco" di incastri che crea una bella tensione, pronta a sciogliersi solo quando tutto il gruppo entra finalmente nel ritmo principale.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Sfida tra fratelli.</span> "Games" (non a caso, "Giochi") è stata scritta da Nat Adderley. Spesso Nat componeva melodie e ritmi un po' più intricati proprio per testare e "sfidare" bonariamente le capacità di improvvisazione del fratello maggiore Cannonball sul palco.</div>
+                    <p><strong>1:45 - Il Calore della Cornetta:</strong> Inizia l'assolo di Nat. Ascolta bene il timbro: usa una cornetta, non una classica tromba. Essendo costruita diversamente, la cornetta ha un suono naturalmente più scuro, rotondo e avvolgente. Suonando molto vicino al microfono, Nat ottiene un suono intimo ma di grande presenza.</p>
+                    <p><strong>3:50 - Il Basso in Primo Piano:</strong> Il gruppo esegue un "drop" dinamico perfetto: tutti abbassano drasticamente il volume per lasciare spazio al contrabbasso di Vic Gaskin. Non c'erano amplificatori moderni: quello che senti è il suono nudo e crudo del legno e il rumore fisico delle dita che pizzicano le corde, che dà un sapore molto ruvido e autentico al momento.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Prove generali per il futuro.</span> In "Games" Joe Zawinul suona ancora il pianoforte acustico, ma è proprio durante queste storiche sessioni che inizierà a sperimentare dal vivo con i pianoforti elettrici, cambiando per sempre le regole del jazz e aprendo la strada a quel suono che diventerà poi noto come "fusion".</div>
+                    <p><strong>6:00 - Il Gran Finale:</strong> Il tema principale torna con tutta la forza possibile. La band suona così forte e con tale intensità che l'audio sembra quasi "grattare" un po': è la pura energia acustica che spinge al limite le apparecchiature di registrazione dell'epoca.</p>
+                `,
+                en: `
+                    <h3>Games</h3>
+                    <p><strong>0:00 - The Initial Rhythmic Game:</strong> The introduction is intentionally deceptive to the ear. The bass holds a straight, reassuring beat, but the other instruments play with staggered accents. It's an interlocking "game" that creates a nice tension, ready to melt away only when the whole group finally drops into the main rhythm.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: A Challenge Between Brothers.</span> "Games" was written by Nat Adderley. Nat often composed slightly more intricate melodies and rhythms specifically to test and good-naturedly "challenge" his older brother Cannonball's improvisational skills on stage.</div>
+                    <p><strong>1:45 - The Warmth of the Cornet:</strong> Nat's solo begins. Listen closely to the timbre: he uses a cornet, not a classic trumpet. Being built differently, the cornet has a naturally darker, rounder, and more enveloping sound. By playing very close to the microphone, Nat achieves an intimate yet highly present tone.</p>
+                    <p><strong>3:50 - The Bass in the Foreground:</strong> The group executes a perfect dynamic "drop": everyone drastically lowers their volume to make room for Vic Gaskin's double bass. There were no modern amplifiers: what you hear is the raw, naked sound of the wood and the physical noise of fingers plucking the strings, giving a very rough and authentic flavor to the moment.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Dress Rehearsals for the Future.</span> In "Games", Joe Zawinul still plays the acoustic piano, but it is precisely during these historic sessions that he will begin experimenting live with electric pianos, forever changing the rules of jazz and paving the way for the sound that would later become known as "fusion".</div>
+                    <p><strong>6:00 - The Grand Finale:</strong> The main theme returns with all possible force. The band plays so loudly and with such intensity that the audio almost seems to "scratch" a little: it is pure acoustic energy pushing the recording equipment of the time to its limits.</p>
+                `
+            },
+            "mercy": {
+                it: `
+                    <h3>Mercy, Mercy, Mercy</h3>
+                    <p><strong>0:00 - L'Atmosfera Gospel:</strong> Il brano si apre con le note calde, avvolgenti e inconfondibili del pianoforte elettrico Wurlitzer suonato da Joe Zawinul. Fin dai primissimi accordi, sembra di essere stati trasportati in una chiesa del sud degli Stati Uniti. Il ritmo è lento, rassicurante e quasi ipnotico.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Un successo inaspettato.</span> Questo brano, scritto proprio dal pianista Joe Zawinul, divenne un successo pop clamoroso, raggiungendo i primissimi posti delle classifiche americane di Billboard. Un evento rarissimo – e quasi irripetibile – per un brano strumentale jazz!</div>
+                    <p><strong>1:30 - Il "Sermone" Musicale:</strong> Quando entrano i fiati (sax e cornetta), non fanno acrobazie per dimostrare quanto sono bravi. Suonano una melodia semplice, corale e memorabile, quasi come se la stessero cantando. È come se stessero tenendo un "sermone" musicale alla congregazione, e il pubblico infatti risponde con esclamazioni di approvazione.</p>
+                    <p><strong>3:00 - L'Anima del Soul:</strong> Durante il suo assolo, Cannonball Adderley fa "parlare" il suo sassofono come se fosse la voce di un cantante soul. Utilizza lunghe pause, respiri profondi e note volutamente "sporche" e trascinate per trasmettere emozione pura. Qui il sentimento conta molto più della velocità.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La rivoluzione elettrica.</span> Joe Zawinul fu uno dei primissimi a osare l'uso del pianoforte elettrico in un contesto jazz acustico. Il suono morbido ma leggermente vibrante del suo strumento diede a "Mercy, Mercy, Mercy" quel sapore R&B che lo rese irresistibile anche per chi non aveva mai ascoltato jazz in vita sua.</div>
+                `,
+                en: `
+                    <h3>Mercy, Mercy, Mercy</h3>
+                    <p><strong>0:00 - The Gospel Atmosphere:</strong> The track opens with the warm, enveloping, and unmistakable notes of the Wurlitzer electric piano played by Joe Zawinul. From the very first chords, it feels as if you've been transported to a church in the southern United States. The rhythm is slow, reassuring, and almost hypnotic.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: An Unexpected Success.</span> This track, written by pianist Joe Zawinul himself, became a massive pop hit, reaching the very top of the American Billboard charts. A very rare—and almost unrepeatable—event for an instrumental jazz song!</div>
+                    <p><strong>1:30 - The Musical "Sermon":</strong> When the horns (sax and cornet) enter, they don't perform acrobatics to show how good they are. They play a simple, choral, and memorable melody, almost as if they were singing it. It's as if they are delivering a musical "sermon" to the congregation, and the audience indeed responds with exclamations of approval.</p>
+                    <p><strong>3:00 - The Soul of Soul:</strong> During his solo, Cannonball Adderley makes his saxophone "speak" as if it were the voice of a soul singer. He uses long pauses, deep breaths, and intentionally "dirty" and slurred notes to convey pure emotion. Here, feeling matters far more than speed.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Electric Revolution.</span> Joe Zawinul was one of the very first to dare using the electric piano in an acoustic jazz context. The soft yet slightly vibrating sound of his instrument gave "Mercy, Mercy, Mercy" that R&B flavor that made it irresistible even to those who had never listened to jazz in their lives.</div>
+                `
+            },
+            "sticks": {
+                it: `
+                    <h3>Sticks</h3>
+                    <p><strong>0:00 - Un Ritmo Contagioso:</strong> "Sticks" parte subito con un ritmo secco, deciso e incalzante. La sezione ritmica costruisce un "tappeto" musicale solidissimo e incredibilmente ballabile, che strizza prepotentemente l'occhio al funk e alla musica popolare dell'epoca.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Musica per il corpo e per la mente.</span> Cannonball Adderley credeva fermamente che il jazz non dovesse mai diventare una musica d'élite per soli intellettuali. Per lui, doveva rimanere radicata nella cultura popolare, accessibile, divertente e capace di far muovere il pubblico. "Sticks" è la perfetta incarnazione di questa filosofia.</div>
+                    <p><strong>1:15 - Una Conversazione Rilassata:</strong> Durante le improvvisazioni, i musicisti si prendono tutto il tempo necessario. Non c'è fretta o ansia di riempire i vuoti. Sembra di assistere a una chiacchierata rilassata tra vecchi amici. Si percepisce la fiducia totale: ogni strumento ascolta l'altro e lascia spazio, senza mai pestarsi i piedi.</p>
+                    <p><strong>3:40 - La Spinta dalla Retrovia:</strong> Ascolta come il batterista guida l'intero gruppo in questo segmento. Usa i piatti e il rullante non solo per scandire il tempo in modo impeccabile, ma per "spingere" letteralmente i solisti, alzando il volume e la tensione emotiva esattamente nei momenti in cui la melodia ne ha più bisogno.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La magia del "finto" live, parte 2.</span> Come per gli altri brani, l'incredibile energia da concerto che senti in "Sticks" è stata catturata artificialmente nello studio della Capitol Records. Furono necessarie diverse take (ripetizioni della canzone), ma l'entusiasmo del pubblico "invitato" allo studio rimase genuino e festoso dal primo all'ultimo ciak, complice anche l'open bar!</div>
+                `,
+                en: `
+                    <h3>Sticks</h3>
+                    <p><strong>0:00 - A Contagious Rhythm:</strong> "Sticks" starts right away with a sharp, decisive, and pressing rhythm. The rhythm section builds a rock-solid and incredibly danceable musical "carpet" that winks heavily at the funk and popular music of the time.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Music for the Body and the Mind.</span> Cannonball Adderley firmly believed that jazz should never become an elite music solely for intellectuals. For him, it had to remain rooted in popular culture, accessible, fun, and capable of moving the audience. "Sticks" is the perfect embodiment of this philosophy.</div>
+                    <p><strong>1:15 - A Relaxed Conversation:</strong> During the improvisations, the musicians take all the time they need. There is no rush or anxiety to fill the voids. It feels like witnessing a relaxed chat between old friends. You can perceive total trust: each instrument listens to the other and leaves space, without ever stepping on each other's toes.</p>
+                    <p><strong>3:40 - The Push from the Backline:</strong> Listen to how the drummer drives the entire group in this segment. He uses the cymbals and snare not just to keep impeccable time, but to literally "push" the soloists, raising the volume and emotional tension exactly when the melody needs it most.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Magic of the "Fake" Live, Part 2.</span> As with the other tracks, the incredible concert energy you hear in "Sticks" was artificially captured in the Capitol Records studio. Several takes were necessary, but the enthusiasm of the "invited" audience in the studio remained genuine and festive from the first to the last take, undoubtedly aided by the open bar!</div>
+                `
+            },
+            "hippodelphia": {
+                it: `
+                    <h3>Hippodelphia</h3>
+                    <p><strong>0:00 - Un Groove Misterioso e Sofisticato:</strong> Il brano non aggredisce l'ascoltatore, ma lo avvolge. Basso e batteria creano un tappeto ritmico dondolante, mentre il pianoforte introduce un'atmosfera quasi notturna e misteriosa prima dell'ingresso elegante dei fiati. È un jazz dal sapore decisamente "cool".</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Una città "giusta".</span> Il titolo "Hippodelphia" è un brillante gioco di parole ideato da Joe Zawinul (l'autore del brano). Unisce la parola "Hip" (alla moda, aggiornato, "giusto") alla città di Philadelphia, celebre all'epoca per avere uno dei pubblici jazz più attenti, esigenti e calorosi d'America.</div>
+                    <p><strong>2:15 - Il Pianoforte che Respira:</strong> Durante il suo assolo, Zawinul fa qualcosa di magico: suona con i silenzi. Invece di riempire ogni istante con una cascata di note, lascia che gli accordi risuonino nell'aria, creando un senso di attesa e di grande respiro. L'emozione qui nasce da ciò che non viene suonato.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Prove per rivoluzioni future.</span> Questo brano, con le sue atmosfere un po' rarefatte e sospese, è il ponte perfetto per capire cosa succederà di lì a poco nella carriera di Zawinul. Queste intuizioni sonore lo porteranno infatti a collaborare con Miles Davis, scrivendo pagine fondamentali del jazz-rock.</div>
+                    <p><strong>4:30 - Il Calore dei Fiati:</strong> Dopo il clima riflessivo del pianoforte, Cannonball e Nat rientrano portando una sferzata di energia blues. Il trucco di magia di questo brano è proprio il contrasto: la mente fredda e calcolatrice del pianoforte contro il cuore caldo e pulsante dei sassofoni.</p>
+                `,
+                en: `
+                    <h3>Hippodelphia</h3>
+                    <p><strong>0:00 - A Mysterious and Sophisticated Groove:</strong> The track doesn't attack the listener; it envelops them. Bass and drums create a swaying rhythmic carpet, while the piano introduces an almost nocturnal and mysterious atmosphere before the elegant entrance of the horns. It is jazz with a decidedly "cool" flavor.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: A "Hip" City.</span> The title "Hippodelphia" is a brilliant pun coined by Joe Zawinul (the song's author). It combines the word "Hip" (fashionable, up-to-date, "cool") with the city of Philadelphia, famous at the time for having one of the most attentive, demanding, and warm jazz audiences in America.</div>
+                    <p><strong>2:15 - The Breathing Piano:</strong> During his solo, Zawinul does something magical: he plays with silences. Instead of filling every moment with a cascade of notes, he lets the chords resonate in the air, creating a sense of anticipation and a deep breath. The emotion here is born from what is not played.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Rehearsals for Future Revolutions.</span> This track, with its somewhat rarefied and suspended atmospheres, is the perfect bridge to understand what would happen shortly thereafter in Zawinul's career. These sonic intuitions would lead him to collaborate with Miles Davis, writing fundamental pages of jazz-rock.</div>
+                    <p><strong>4:30 - The Warmth of the Horns:</strong> After the reflective climate of the piano, Cannonball and Nat return, bringing a surge of blues energy. The magic trick of this song is precisely the contrast: the cold, calculating mind of the piano against the warm, beating heart of the saxophones.</p>
+                `
+            },
+            "sack_o_woe": {
+                it: `
+                    <h3>Sack O' Woe</h3>
+                    <p><strong>0:00 - Il Richiamo Irresistibile:</strong> Non servono presentazioni, il brano parte con un riff che cattura immediatamente. È puro, semplice e viscerale R&B suonato da strumenti jazz. I fiati suonano all'unisono con una pacca e una sicurezza che ti fanno venire voglia di battere il piede a tempo fin dai primissimi secondi.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Esorcizzare la tristezza.</span> "Sack O' Woe" si può tradurre come "Un sacco di guai" o "Un mucchio di dispiaceri". Era un vero cavallo di battaglia per il gruppo, ma il bello è che la musica fa esattamente l'opposto del titolo: usa l'energia e il ritmo scatenato per allontanare ogni malinconia.</div>
+                    <p><strong>1:50 - Il Raccontastorie:</strong> L'assolo di Cannonball qui è un capolavoro di espressività. Usa note sporche, piega i suoni (i famosi bending) e fa letteralmente "ringhiare" il sassofono. Sembra davvero di ascoltare una persona che racconta una storia avvincente e concitata a un gruppo di amici al bar.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'energia circolare.</span> Ascolta bene in sottofondo durante i momenti più intensi degli assoli: sentirai il "pubblico" del finto club che incita i musicisti con degli "Yeah!". Cannonball adorava questa interazione; si nutriva di quelle grida per spingere la sua improvvisazione sempre più in alto, creando un ciclo continuo di energia tra chi suonava e chi ascoltava.</div>
+                    <p><strong>4:10 - Ritorno a Casa:</strong> Il gruppo riporta in primo piano il tema principale, ma questa volta suonato con ancora più spavalderia e volume rispetto all'inizio. Chiudono il brano – e l'album – in modo serrato e precisissimo, lasciando l'ascoltatore carico di energia.</p>
+                `,
+                en: `
+                    <h3>Sack O' Woe</h3>
+                    <p><strong>0:00 - The Irresistible Call:</strong> No introduction needed, the track starts with a riff that captures you immediately. It's pure, simple, and visceral R&B played by jazz instruments. The horns play in unison with a punch and confidence that makes you want to tap your foot to the beat from the very first seconds.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Exorcising Sadness.</span> "Sack O' Woe" translates to exactly that: a bag of troubles or sorrows. It was a true warhorse for the group, but the beauty of it is that the music does exactly the opposite of the title: it uses energy and a wild rhythm to chase away any melancholy.</div>
+                    <p><strong>1:50 - The Storyteller:</strong> Cannonball's solo here is a masterpiece of expressiveness. He uses dirty notes, bends the sounds, and literally makes the saxophone "growl". It truly feels like listening to a person telling a gripping and excited story to a group of friends at a bar.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Circular Energy.</span> Listen closely in the background during the most intense moments of the solos: you will hear the "audience" of the fake club cheering the musicians on with "Yeah!"s. Cannonball loved this interaction; he fed off those shouts to push his improvisation higher and higher, creating a continuous cycle of energy between those playing and those listening.</div>
+                    <p><strong>4:10 - Coming Home:</strong> The group brings the main theme back to the forefront, but this time played with even more swagger and volume than at the beginning. They close the track—and the album—in a tight and incredibly precise manner, leaving the listener charged with energy.</p>
+                `
+            }
+        };
+
+        let mobileGalleryInterval;
+        let currentImgIndex = 0;
+
+        function startMobileGallery() {
+            const images = document.querySelectorAll('.band-gallery .flip-card');
+            if (images.length === 0) return;
+
+            function updateGallery() {
+                if (window.innerWidth <= 900) {
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                    images[currentImgIndex].classList.add('mobile-active');
+                    currentImgIndex = (currentImgIndex + 1) % images.length;
+                }
+            }
+
+            if (window.innerWidth <= 900) {
+                updateGallery();
+                if (!mobileGalleryInterval) {
+                    mobileGalleryInterval = setInterval(updateGallery, 5000);
+                }
+            }
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth <= 900) {
+                    if (!mobileGalleryInterval) {
+                        updateGallery();
+                        mobileGalleryInterval = setInterval(updateGallery, 5000);
+                    }
+                } else {
+                    clearInterval(mobileGalleryInterval);
+                    mobileGalleryInterval = null;
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderPlaylist();
+            startMobileGallery();
+            
+            const trackList = document.getElementById('tracklist');
+            if(trackList) trackList.scrollTop = 0;
+        });
+
+        // GESTIONE CAMBIO LINGUA GLOBALE
+        function setGlobalLang(lang) {
+            document.documentElement.lang = lang;
+            
+            document.querySelectorAll('.global-lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-lang-' + lang).classList.add('active');
+
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentId = ytPlayer ? ytPlayer.getAttribute('data-current-id') : null;
+            
+            if (currentId) {
+                const guideContent = document.getElementById('guide-content');
+                if (guideData[currentId] && guideData[currentId][lang]) {
+                    guideContent.innerHTML = guideData[currentId][lang];
+                }
+            }
+        }
+
+        function renderPlaylist() {
+            const container = document.getElementById('tracklist');
+            let html = '';
+
+            playlist.forEach((track, index) => {
+                html += `
+                    <div class="track-row" id="track-${track.id}" onclick="playTrack('${track.id}', '${track.ytId}', '${track.title.replace(/'/g, "\\'")}', this)">
+                        <div class="track-num">
+                            <span>${index + 1}</span>
+                            <div class="playing-icon">
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                            </div>
+                        </div>
+                        <div class="track-info">
+                            <div class="track-title">${track.title}</div>
+                            <div class="track-artist">Cannonball Adderley Quintet</div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function playTrack(id, ytId, title, rowElement) {
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentPlayingId = ytPlayer.getAttribute('data-current-id');
+            const currentLang = document.documentElement.lang;
+
+            if (currentPlayingId !== id) {
+                ytPlayer.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`;
+                ytPlayer.setAttribute('data-current-id', id);
+            }
+
+            const rows = document.querySelectorAll('.track-row');
+            rows.forEach(r => r.classList.remove('active'));
+            if(rowElement) rowElement.classList.add('active');
+
+            // Guida
+            const guideContent = document.getElementById('guide-content');
+            if (guideData[id] && guideData[id][currentLang]) {
+                guideContent.innerHTML = guideData[id][currentLang];
+                const gBox = document.querySelector('.guide-box');
+                if(gBox) gBox.scrollTop = 0;
+            } else {
+                guideContent.innerHTML = currentLang === 'it' ? "<p>Guida all'ascolto non disponibile.</p>" : "<p>Listening guide not available.</p>";
+            }
+
+            const guidePanel = document.getElementById('guide-panel');
+            if(guidePanel && !guidePanel.classList.contains('open')) {
+                toggleGuide();
+            }
+        }
+
+        // --- FUNZIONI ACCORDION MASTER ---
+        function toggleLesson() { 
+            const content = document.getElementById('main-content');
+            const videoLayer = document.getElementById('video-layer');
+            const btn = document.getElementById('btn-inizia');
+            const btnTxtIt = document.getElementById('btn-txt-it');
+            const btnTxtEn = document.getElementById('btn-txt-en');
+            const icon = btn.querySelector('.icon-plus');
+            
+            const isOpening = !content.classList.contains('active');
+            
+            if (isOpening) {
+                content.classList.add('active'); 
+                btn.classList.add('active'); 
+                btnTxtIt.textContent = "Chiudi Esperienza"; 
+                btnTxtEn.textContent = "Close Experience";
+                icon.textContent = "×"; 
+                videoLayer.classList.add('video-hidden');
+            } else {
+                content.classList.remove('active'); 
+                btn.classList.remove('active'); 
+                btnTxtIt.textContent = "Inizia Esperienza"; 
+                btnTxtEn.textContent = "Start Experience"; 
+                icon.textContent = "→"; 
+                videoLayer.classList.remove('video-hidden');
+                
+                const ytPlayer = document.getElementById('youtube-player');
+                if(ytPlayer) ytPlayer.src = "about:blank";
+            }
+        }
+
+        function toggleGuide() {
+            const panel = document.getElementById('guide-panel');
+            const btn = document.getElementById('guide-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleHistory() {
+            const panel = document.getElementById('history-panel');
+            const btn = document.getElementById('history-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleDisclaimer() {
+            const panel = document.getElementById('disclaimer-panel');
+            const btn = document.getElementById('disclaimer-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleMobileTracks() {
+            const trackList = document.getElementById('tracklist');
+            const wrapper = document.getElementById('tracklist-wrapper');
+            const trigger = document.querySelector('.mobile-track-trigger');
+            if (trackList.classList.contains('mobile-open')) {
+                trackList.classList.remove('mobile-open'); wrapper.classList.remove('opened'); wrapper.classList.add('closed'); trigger.classList.remove('active');
+            } else {
+                trackList.classList.add('mobile-open'); wrapper.classList.remove('closed'); wrapper.classList.add('opened'); trigger.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

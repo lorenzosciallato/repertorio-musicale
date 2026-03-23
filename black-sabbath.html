@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Black Sabbath | Audio Repertoire</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- VARIABILI & RESET --- */
+        :root {
+            --bg-color: #f0f0f2;
+            --paper-color: #fdfbf7;
+            --ink-color: #1a1a1a;
+            --accent-color: #375a7f;
+            --pop-yellow: #ffee00;
+            --font-title: 'Abril Fatface', cursive;
+            --font-body: 'Inter', sans-serif;
+            --hover-row: rgba(55, 90, 127, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: var(--font-body);
+            color: var(--ink-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px;
+            width: 100%;
+            overflow-x: hidden; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- MULTILINGUA CSS LOGIC --- */
+        html[lang="it"] .lang-en { display: none !important; }
+        html[lang="en"] .lang-it { display: none !important; }
+
+        /* --- BACKGROUND --- */
+        .video-background-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden;
+            background: #e0e0e5; 
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .video-foreground {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; transition: opacity 0.8s ease; opacity: 1;
+        }
+
+        .video-foreground img.bg-image {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.1; 
+            filter: grayscale(100%) sepia(1) hue-rotate(190deg) contrast(1.2);
+            mix-blend-mode: multiply;
+        }
+
+        .video-hidden { opacity: 0; }
+
+        /* --- HEADER --- */
+        header { text-align: center; margin-top: 3rem; margin-bottom: 1rem; padding: 0 1rem; position: relative; z-index: 4; }
+        
+        .main-logo {
+            max-width: 90%; width: 350px; height: auto;
+            display: block; margin: 0 auto;
+        }
+
+        .subtitle-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .subtitle {
+            font-family: var(--font-body); font-size: 1.5rem; color: var(--accent-color); font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 4px;
+        }
+
+        .global-lang-switch {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .global-lang-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 4px;
+            color: #888;
+            transition: all 0.3s;
+        }
+        
+        .global-lang-btn.active {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        /* --- CONTENITORE PRINCIPALE --- */
+        .content-card {
+            background: var(--paper-color); padding: 3rem; margin: 0 auto;
+            width: 90%; max-width: 1200px; position: relative;
+            border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); z-index: 4;
+            margin-bottom: 2rem; margin-top: 2rem;
+        }
+        @media (max-width: 600px) { 
+            .content-card { padding: 1.5rem; width: 95%; margin-top: 1rem; } 
+            .main-logo { width: 280px; }
+            .subtitle { font-size: 1.2rem; letter-spacing: 2px; }
+            .global-lang-btn { padding: 5px 10px; font-size: 0.8rem; }
+        }
+
+        /* --- ACCORDION GENERALE --- */
+        .accordion-item { margin-bottom: 1rem; border-bottom: none; }
+        
+        .master-header {
+            background: transparent; border: 2px solid var(--accent-color); border-radius: 8px;
+            padding: 15px 20px; justify-content: center; font-size: 1.5rem; 
+            color: var(--accent-color); width: 100%; margin-bottom: 1rem;
+            cursor: pointer; display: flex; align-items: center; font-family: var(--font-title);
+            transition: all 0.3s ease;
+        }
+        .master-header:hover { background: rgba(55, 90, 127, 0.1); }
+        .master-header .icon-plus { margin-left: 15px; font-family: var(--font-body); font-weight: 300; transition: transform 0.3s; }
+
+        .accordion-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, opacity 0.5s;
+            padding: 0; opacity: 0;
+        }
+        .accordion-content.active { max-height: 20000px; opacity: 1; padding-top: 2rem; }
+        .master-header.active .icon-plus { transform: rotate(90deg); }
+
+        /* --- LAYOUT PLAYER --- */
+        .playlist-layout {
+            display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; align-items: start; margin-bottom: 2rem;
+        }
+        @media (max-width: 900px) { .playlist-layout { grid-template-columns: 1fr; } }
+
+        /* --- AUDIO PLAYER CONTAINER --- */
+        .player-wrapper {
+            position: sticky; top: 20px; background: #fff; border-radius: 12px;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 10; border: 1px solid #eee;
+        }
+
+        .youtube-container { 
+            position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #000; 
+        }
+        .youtube-container iframe { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; 
+        }
+
+        /* --- TRACKLIST E MESSAGGI --- */
+        .tracklist-column { display: flex; flex-direction: column; }
+
+        .scroll-disclaimer {
+            font-size: 0.85rem; color: #665500; margin-bottom: 12px; font-style: italic; text-align: center; 
+            background-color: rgba(255, 238, 0, 0.2); border: 2px dashed #e6c200; padding: 10px; border-radius: 8px; width: 100%;
+        }
+        .msg-desktop { display: block; }
+        .msg-mobile { display: none; }
+        
+        .mobile-track-trigger {
+            display: none; width: 100%; background: #fff; border: 2px dashed #ddd; border-radius: 8px;
+            padding: 12px 20px; font-family: var(--font-title); font-size: 1.2rem; color: var(--accent-color);
+            justify-content: space-between; align-items: center; cursor: pointer; margin-top: 10px; margin-bottom: 10px; transition: all 0.3s;
+        }
+        .mobile-track-trigger:hover { background: #fdfdfd; border-color: var(--accent-color); }
+        .mobile-track-trigger.active { background: #f0f4f8; border-style: solid; border-color: var(--accent-color); }
+        .trigger-arrow { transition: transform 0.3s; font-size: 1rem; }
+        .mobile-track-trigger.active .trigger-arrow { transform: rotate(180deg); }
+
+        .tracklist-container { 
+            width: 100%; max-height: 500px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #ccc #f0f0f2;
+            padding-right: 5px; transition: max-height 0.5s ease-out, opacity 0.5s;
+        }
+        .tracklist-container::-webkit-scrollbar { width: 6px; }
+        .tracklist-container::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+
+        .track-row {
+            display: grid; grid-template-columns: 40px 1fr 40px; padding: 12px 10px; border-bottom: 1px solid rgba(0,0,0,0.05);
+            cursor: pointer; transition: background 0.2s, padding-left 0.2s; border-radius: 6px; align-items: center;
+        }
+        .track-row:hover { background-color: var(--hover-row); padding-left: 15px; }
+        .track-row.active { background-color: var(--hover-row); border-left: 4px solid var(--accent-color); }
+
+        .track-num { font-size: 0.9rem; color: #888; font-weight: 700; }
+        .track-row.active .track-num { display: none; }
+        .track-row.active .playing-icon { display: inline-block; }
+        
+        .playing-icon { display: none; width: 14px; height: 14px; position: relative; }
+        .bar { background: var(--accent-color); bottom: 0; position: absolute; width: 3px; animation: sound 0ms -800ms linear infinite alternate; }
+        .bar:nth-child(1) { left: 0px; height: 10px; animation-duration: 474ms; }
+        .bar:nth-child(2) { left: 5px; height: 6px; animation-duration: 433ms; }
+        .bar:nth-child(3) { left: 10px; height: 12px; animation-duration: 407ms; }
+        @keyframes sound { 0% { opacity: .35; height: 3px; } 100% { opacity: 1; height: 14px; } }
+
+        .track-info { display: flex; flex-direction: column; }
+        .track-title { font-weight: 700; font-size: 1rem; color: var(--ink-color); }
+        .track-row.active .track-title { color: var(--accent-color); }
+        .track-artist { font-size: 0.85rem; color: #666; }
+
+        /* --- STILI TESTI (LYRICS) TOGGLE E PULSANTI --- */
+        .btn-back-tracks {
+            display: none; width: 100%; padding: 8px; margin-bottom: 10px; background: var(--pop-yellow); border: none;
+            color: var(--ink-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; font-weight: 900; transition: background 0.3s; text-align: center;
+        }
+        .btn-back-tracks:hover { background: #e6d600; }
+
+        .desktop-lyrics-view { display: none; }
+        
+        .lyrics-wrapper { background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .lyrics-toggle { display: flex; gap: 10px; margin-bottom: 15px; justify-content: center; }
+        
+        .flag-btn { 
+            background: #f0f0f2; border: 2px solid #ddd; border-radius: 6px; padding: 8px 15px; 
+            font-size: 1rem; cursor: pointer; transition: all 0.3s; color: var(--ink-color); 
+        }
+        .flag-btn:hover { background: #e8e8e8; }
+        .flag-btn.active { 
+            background: #fff; border-color: var(--accent-color); font-weight: bold; 
+            color: var(--accent-color); box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+        }
+
+        .lyrics-content-area { max-height: 350px; overflow-y: auto; scrollbar-width: thin; padding-right: 5px; }
+        .lyrics-content-area::-webkit-scrollbar { width: 6px; }
+        .lyrics-content-area::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+        
+        .lyrics-col { display: none; white-space: pre-wrap; color: #333; font-size: 0.9rem; }
+        .lyrics-col.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        .lyrics-col h4 { color: var(--accent-color); margin-bottom: 10px; font-family: var(--font-title); font-size: 1.1rem; }
+        .lyrics-col.ita { font-style: italic; color: #555; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* GESTIONE LOGICA DESKTOP (Mostra Lyrics, Nascondi Lista) */
+        @media (min-width: 901px) {
+            .tracklist-wrapper.lyrics-active #tracklist { display: none; }
+            .tracklist-wrapper.lyrics-active #desktop-lyrics-view { display: block; }
+            .tracklist-wrapper.lyrics-active #btn-back-tracks { display: block; }
+            .tracklist-wrapper.lyrics-active .msg-desktop { display: none; }
+            .mobile-lyrics-accordion { display: none; } 
+        }
+
+        /* GESTIONE LOGICA MOBILE */
+        @media (max-width: 900px) {
+            .tracklist-wrapper.lyrics-active #desktop-lyrics-view { display: none !important; }
+            .tracklist-wrapper.lyrics-active #btn-back-tracks { display: none !important; }
+            
+            /* Su mobile l'accordion dei testi è visibile */
+            .mobile-lyrics-accordion { display: block; margin-top: 1rem; border-top: 1px solid #eee; }
+        }
+
+        /* --- ACCORDIONS COMUNI (Guida, Storia, Mobile Lyrics) --- */
+        .guide-accordion-wrapper { margin-top: 1rem; border-top: 1px solid #eee; }
+        .guide-trigger {
+            background: #fff; border: 2px dashed #ddd; border-radius: 8px; width: 100%; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s; margin-top: 1rem;
+        }
+        .guide-trigger:hover { border-color: var(--accent-color); background: #fdfdfd; }
+        .guide-trigger.active { border-color: var(--accent-color); background: #f0f4f8; border-style: solid; }
+        .guide-trigger span { font-family: var(--font-title); font-size: 1.4rem; color: var(--accent-color); }
+        .guide-arrow { font-size: 1.2rem; transition: transform 0.3s; color: var(--accent-color); }
+        .guide-trigger.active .guide-arrow { transform: rotate(180deg); }
+
+        .guide-panel { max-height: 0; overflow: hidden; transition: max-height 0.6s ease-out, opacity 0.5s; opacity: 0; background: #fff; border-radius: 0 0 8px 8px; }
+        .guide-panel.open { max-height: 80000px; opacity: 1; padding: 20px 0; }
+
+        .guide-grid { display: grid; grid-template-columns: 2fr 1.5fr; gap: 2rem; align-items: start; }
+        .guide-box { background: #fff; padding: 1rem 0; max-height: 600px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--accent-color) #f0f0f2; padding-right: 15px; }
+        .guide-box::-webkit-scrollbar { width: 8px; }
+        .guide-box::-webkit-scrollbar-thumb { background-color: var(--accent-color); border-radius: 10px; }
+        
+        .guide-content p { margin-bottom: 1rem; font-size: 1rem; color: #333; }
+        .guide-content strong { color: var(--accent-color); font-weight: 900; }
+
+        .curiosity-box { background: #fffcf0; border-left: 4px solid var(--pop-yellow); padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0; font-size: 0.95rem; font-style: italic; color: #554; }
+        .curiosity-label { font-weight: bold; font-style: normal; color: #d4a000; text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 5px; }
+
+        /* --- FLIP CARDS CHIRURGICHE --- */
+        .flip-card {
+            perspective: 1000px;
+            cursor: pointer;
+            width: 100%;
+            display: block;
+            margin-bottom: 15px;
+        }
+        .wiki-figure .flip-card { margin-bottom: 0; } /* Reset dentro al testo */
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-card-front, .flip-card-back {
+            width: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        
+        /* Il front detta l'altezza del blocco in modo naturale */
+        .flip-card-front {
+            position: relative;
+            height: auto;
+            z-index: 2;
+        }
+        
+        /* Il back si sovrappone esattamente e si adatta all'altezza */
+        .flip-card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: var(--accent-color);
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .flip-card-back strong { color: var(--pop-yellow); font-family: var(--font-title); font-size: 1.1rem; margin-bottom: 5px; line-height: 1.2; }
+        .flip-card-back small { font-size: 0.85rem; opacity: 0.9; }
+
+        /* Applica i bordi arrotondati alle facce, l'immagine li erediterà */
+        .flip-card-front img, .flip-card-back { border-radius: inherit; }
+        
+        .band-gallery .flip-card-front, .band-gallery .flip-card-back {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .wiki-figure .flip-card-front, .wiki-figure .flip-card-back {
+            border-radius: 4px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #ccc;
+        }
+        .wiki-figure .flip-card-back { border: none; }
+
+        /* Immagini base */
+        .gallery-img, .wiki-img { display: block; width: 100%; height: auto; object-fit: cover; }
+        .wiki-img { filter: sepia(0.1) contrast(1.05); transition: all 0.3s; border: none; box-shadow: none; border-radius: 0; }
+        .gallery-img { border: none; box-shadow: none; border-radius: 0; }
+        .flip-card-front:hover .wiki-img { filter: none; }
+
+        /* --- STILE GALLERIA IMMAGINI --- */
+        .band-gallery { display: flex; flex-direction: column; gap: 20px; max-height: 650px; overflow-y: auto; padding-right: 10px; }
+        .band-gallery::-webkit-scrollbar { width: 4px; }
+        .band-gallery::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
+        .band-gallery .flip-card { height: auto; margin-bottom: 0; }
+
+        /* --- STILE WIKI / STORIA --- */
+        .wiki-content { font-family: 'Inter', sans-serif; color: #333; line-height: 1.7; padding: 0 10px; text-align: justify; }
+        .wiki-title { font-family: var(--font-title); color: var(--accent-color); font-size: 1.4rem; margin-top: 10px; margin-bottom: 5px; letter-spacing: 1px; }
+        .wiki-subtitle { font-weight: 900; color: #d4a000; text-transform: uppercase; font-size: 0.85rem; margin-top: 40px; margin-bottom: 10px; clear: both; }
+        .wiki-divider { border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); margin: 30px 0; clear: both; }
+        .wiki-figure { margin: 15px 0; width: 100%; }
+        .wiki-figure figcaption { font-size: 0.75rem; color: #666; font-style: italic; text-align: center; margin-top: 5px; display: block; }
+        .wiki-gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 30px 0 40px 0; }
+        .wiki-gallery-grid .wiki-figure { height: 100%; margin: 0; }
+        .wiki-gallery-grid .wiki-img { height: 100%; object-fit: cover; }
+
+        .btn-close-bottom { width: 100%; padding: 12px; margin-top: 15px; background: #fff; border: 1px solid #ddd; color: var(--accent-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; font-weight: 700; transition: background 0.3s; text-align: center; }
+        .btn-close-bottom:hover { background: #f0f4f8; border-color: var(--accent-color); }
+        .track-close-desktop-hidden { display: none; }
+
+        @media (min-width: 901px) {
+            .wiki-figure.right { float: right; width: 40%; margin-left: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.left { float: left; width: 40%; margin-right: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.full { clear: both; width: 100%; margin: 30px 0; }
+            .wiki-chapter::after { content: ""; display: table; clear: both; }
+        }
+
+        @media (max-width: 900px) {
+            .msg-desktop { display: none !important; }
+            .msg-mobile { display: block !important; text-align: center; }
+            .guide-grid { grid-template-columns: 1fr; }
+            .band-gallery { display: block; order: -1; max-height: none; overflow: hidden; padding-right: 0; margin-bottom: 10px; }
+            
+            /* Gestione Flip Card Slider su mobile */
+            .band-gallery .flip-card { display: none; animation: fadeInSlide 0.5s ease-in-out; margin-bottom: 0; }
+            .band-gallery .flip-card.mobile-active { display: block; }
+            
+            @keyframes fadeInSlide { from { opacity: 0; } to { opacity: 1; } }
+            .wiki-gallery-grid { grid-template-columns: 1fr; gap: 20px; }
+            .mobile-track-trigger { display: flex; } 
+            .tracklist-wrapper.opened .track-close-desktop-hidden { display: block; }
+            .tracklist-container { max-height: 0; overflow: hidden; opacity: 0; }
+            .tracklist-container.mobile-open { max-height: 5000px; overflow-y: visible; opacity: 1; margin-bottom: 1rem; }
+            .tracklist-wrapper.closed .scroll-disclaimer { display: none; }
+            .tracklist-wrapper.opened .scroll-disclaimer { display: block; }
+            .guide-box { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+            /* INTERVENTO CHIRURGICO: rimuovo lo scroll annidato dei lyrics su mobile */
+            .lyrics-content-area { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-background-wrapper" id="bg-wrapper">
+        <div class="video-foreground" id="video-layer">
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208423/sfondo_zawzz2.jpg" alt="Black Sabbath Background" class="bg-image">
+        </div>
+        <div class="video-filter-overlay"></div>
+    </div>
+
+    <header>
+        <h1>
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208423/logo_tq5tbe.png" alt="Black Sabbath Logo" class="main-logo">
+        </h1>
+        <div class="subtitle-wrapper">
+            <div class="subtitle">
+                <span class="lang-it">Repertorio</span>
+                <span class="lang-en">Full Repertoire</span>
+            </div>
+            <div class="global-lang-switch">
+                <button id="btn-lang-it" class="global-lang-btn active" onclick="setGlobalLang('it')">ITA</button>
+                <button id="btn-lang-en" class="global-lang-btn" onclick="setGlobalLang('en')">ENG</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-card">
+        
+        <div class="accordion-item">
+            <button class="master-header" id="btn-inizia" onclick="toggleLesson()">
+                <span id="btn-text">
+                    <span class="lang-it" id="btn-txt-it">Inizia Esperienza</span>
+                    <span class="lang-en" id="btn-txt-en">Start Experience</span>
+                </span> 
+                <span class="icon-plus">→</span>
+            </button>
+            
+            <div class="accordion-content" id="main-content">
+                
+                <div class="playlist-layout">
+                    <div class="player-wrapper" id="player-wrapper-ui">
+                        <div class="youtube-container">
+                            <iframe id="youtube-player" src="about:blank" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+                    </div>
+
+                    <div class="tracklist-column tracklist-wrapper closed" id="tracklist-wrapper">
+                        
+                        <button class="mobile-track-trigger" onclick="toggleMobileTracks()">
+                            <span>
+                                <span class="lang-it">Brani</span>
+                                <span class="lang-en">Tracks</span>
+                            </span>
+                            <span class="trigger-arrow">▼</span>
+                        </button>
+
+                        <div class="scroll-disclaimer msg-desktop">
+                            <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere l'intera lista di brani</span>
+                            <span class="lang-en">Use your keyboard or mouse wheel to scroll through the full tracklist</span>
+                        </div>
+                        <div class="scroll-disclaimer msg-mobile">
+                            <span class="lang-it">Clicca e scorri per vedere l'intera lista di brani</span>
+                            <span class="lang-en">Tap and scroll to see the full tracklist</span>
+                        </div>
+
+                        <button class="btn-back-tracks" id="btn-back-tracks" onclick="resetTracklist()">
+                            <span class="lang-it">← Torna alla lista brani</span>
+                            <span class="lang-en">← Back to tracklist</span>
+                        </button>
+
+                        <div class="desktop-lyrics-view" id="desktop-lyrics-view">
+                            </div>
+
+                        <div class="tracklist-container" id="tracklist">
+                            </div>
+                        
+                        <button class="btn-close-bottom track-close-desktop-hidden" onclick="toggleMobileTracks()">
+                            <span class="lang-it">↑ Chiudi Lista Brani</span>
+                            <span class="lang-en">↑ Close Tracklist</span>
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper mobile-lyrics-accordion" style="border-top: none;">
+                    <button class="guide-trigger" id="lyrics-btn" onclick="toggleLyricsAccordion()">
+                        <span>
+                            <span class="lang-it">Parafrasi</span>
+                            <span class="lang-en">Paraphrase</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="lyrics-panel">
+                        <div class="guide-box" style="max-height: none; overflow: visible;">
+                            <div id="mobile-lyrics-content">
+                                <p style="text-align:center; color:#888; margin-top:30px; margin-bottom:30px;">
+                                    <span class="lang-it">Seleziona un brano dalla playlist per visualizzare la parafrasi.</span>
+                                    <span class="lang-en">Select a track from the playlist to view the paraphrase.</span>
+                                </p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleLyricsAccordion()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Parafrasi</span>
+                            <span class="lang-en">↑ Close Paraphrase</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper">
+                    <button class="guide-trigger" id="guide-btn" onclick="toggleGuide()">
+                        <span>
+                            <span class="lang-it">Guida all'Ascolto & Curiosità</span>
+                            <span class="lang-en">Listening Guide & Trivia</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="guide-panel">
+                        <div class="guide-grid">
+                            <div>
+                                <div class="guide-box">
+                                    <div id="guide-content" class="guide-content">
+                                        <p style="text-align:center; color:#888; margin-top:50px;">
+                                            <span class="lang-it">Seleziona un brano dalla playlist per visualizzare qui i dettagli.</span>
+                                            <span class="lang-en">Select a track from the playlist to view details here.</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="scroll-disclaimer msg-desktop" style="margin-top: 10px;">
+                                    <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere la guida</span>
+                                    <span class="lang-en">Use your keyboard or mouse wheel to scroll through the guide</span>
+                                </div>
+                            </div>
+
+                            <div class="band-gallery">
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208423/1_wpgtmu.jpg" alt="Black Sabbath Gallery 1"></div>
+                                        <div class="flip-card-back"><strong>Black Sabbath</strong><small>Source: pinterest.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208424/2_s1wohv.jpg" alt="Black Sabbath Gallery 2"></div>
+                                        <div class="flip-card-back"><strong>Live Action</strong><small>Source: futurecdn.net</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208423/3_iq0qxl.jpg" alt="Black Sabbath Gallery 3"></div>
+                                        <div class="flip-card-back"><strong>1975 Era</strong><small>Source: cloudinary.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208423/4_ufb0kg.avif" alt="Black Sabbath Gallery 4"></div>
+                                        <div class="flip-card-back"><strong>Birmingham Roots</strong><small>Source: birminghammail.co.uk</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208422/5_gijpw3.jpg" alt="Black Sabbath Gallery 5"></div>
+                                        <div class="flip-card-back"><strong>Band Portrait</strong><small>Source: womansworld.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208422/6_beijg2.webp" alt="Black Sabbath Gallery 6"></div>
+                                        <div class="flip-card-back"><strong>Classic Lineup</strong><small>Source: thisdayinmusic.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208422/7_gn1irj.jpg" alt="Black Sabbath Gallery 7"></div>
+                                        <div class="flip-card-back"><strong>Vintage Poster</strong><small>Source: bravoposters.com</small></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn-close-bottom" onclick="toggleGuide()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Guida</span>
+                            <span class="lang-en">↑ Close Guide</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="history-btn" onclick="toggleHistory()">
+                        <span>
+                            <span class="lang-it">Contesto Storico & Artistico</span>
+                            <span class="lang-en">Historical & Artistic Context</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="history-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">1. Le Origini e la Nascita del Nome (1968-1969)</span>
+                                        <span class="lang-en">1. Origins and the Birth of the Name (1968-1969)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208422/8_qda0ad.jpg" alt="La band nel 1970" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">La band nel 1970</span><span class="lang-en">The band in 1970</span></strong>
+                                                    <small>Source: bing.net</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">La band nel 1970</span>
+                                            <span class="lang-en">The band in 1970</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Il nucleo embrionale della band si forma nel 1968 ad Aston, un quartiere industriale di Birmingham. Tony Iommi (chitarra) e Bill Ward (batteria), reduci dall'esperienza nei Mythology, uniscono le forze con John "Ozzy" Osbourne, un ex compagno di scuola e rivale di Iommi che aveva pubblicato un annuncio in un negozio di dischi. Al gruppo si aggiungono Geezer Butler e Jimmy Phillips, provenienti dai Rare Breed.</p>
+                                    <p class="lang-en">The embryonic core of the band formed in 1968 in Aston, an industrial district of Birmingham. Tony Iommi (guitar) and Bill Ward (drums), fresh from their experience in Mythology, joined forces with John "Ozzy" Osbourne, a former schoolmate and rival of Iommi who had placed an ad in a record shop. Geezer Butler and Jimmy Phillips, coming from the Rare Breed, joined the group.</p>
+                                    
+                                    <p class="lang-it">Inizialmente battezzata Polka Tulk Blues Band e successivamente Earth, la formazione sperimenta un repertorio prevalentemente blues. Tuttavia, a causa di un caso di omonimia con un altro gruppo, la band decide di cambiare nome. L'ispirazione definitiva giunge da Geezer Butler, appassionato di letteratura horror: basandosi sul titolo inglese del film di Mario Bava I tre volti della paura (1963), intitolato appunto Black Sabbath, scrive una canzone omonima che diventerà il nuovo vessillo del gruppo. Questo passaggio segna una transizione fondamentale: dal blues tradizionale verso sonorità inedite, cupe e pesanti, che li vedranno riconosciuti come pionieri dell'heavy metal.</p>
+                                    <p class="lang-en">Initially named the Polka Tulk Blues Band and later Earth, the lineup experimented with a predominantly blues repertoire. However, due to sharing a name with another group, the band decided to change it. The definitive inspiration came from Geezer Butler, a fan of horror literature: based on the English title of the Mario Bava film Black Sabbath (1963), he wrote a song of the same name that would become the group's new banner. This step marks a fundamental transition: from traditional blues to unprecedented, dark, and heavy sounds that would see them recognized as pioneers of heavy metal.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">2. L'Era Classica e l'Invenzione del Sound (1970-1971)</span>
+                                        <span class="lang-en">2. The Classic Era and the Invention of the Sound (1970-1971)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208424/9_avglo4.jpg" alt="Esordio Black Sabbath" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Album di Esordio</span><span class="lang-en">Debut Album</span></strong>
+                                                    <small>Source: snmc.io</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">L'esordio omonimo del 13 febbraio 1970: l'estetica occulta e il suono del "tritono" che hanno dato i natali all'heavy metal</span>
+                                            <span class="lang-en">The eponymous debut of February 13, 1970: the occult aesthetics and the sound of the "tritone" that gave birth to heavy metal</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Il 13 febbraio 1970 esce l'album d'esordio, Black Sabbath, sotto l'etichetta Vertigo. Il disco riscuote un successo immediato, raggiungendo l'ottavo posto nelle classifiche britanniche grazie a brani come The Wizard e N.I.B.. Musicalmente, la band introduce il celebre "tritono" (o Triade del Diavolo) nella traccia omonima, un intervallo dissonante bandito nel Medioevo come diabolus in musica, che conferisce al sound un'aura oscura e disorientante.</p>
+                                    <p class="lang-en">On February 13, 1970, their debut album, Black Sabbath, was released under the Vertigo label. The record achieved immediate success, reaching eighth place in the British charts thanks to tracks like The Wizard and N.I.B. Musically, the band introduced the famous "tritone" (or Devil's Triad) in the title track, a dissonant interval banned in the Middle Ages as diabolus in musica, which gives the sound a dark and disorienting aura.</p>
+                                    
+                                    <p class="lang-it">Nello stesso anno, il successo viene consolidato da Paranoid, considerato ancora oggi il loro apice commerciale (primo nelle classifiche inglesi). Brani come War Pigs (una critica alla politica bellica) e Iron Man mostrano testi più maturi che spaziano dalla cronaca sociale alla fantascienza.</p>
+                                    <p class="lang-en">In the same year, their success was consolidated by Paranoid, still considered their commercial peak today (number one in the UK charts). Tracks like War Pigs (a critique of war politics) and Iron Man showcase more mature lyrics ranging from social commentary to science fiction.</p>
+
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208422/10_trf7i4.jpg" alt="Tony Iommi" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>Tony Iommi</strong>
+                                                    <small>Source: futurecdn.net</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Tony Iommi e la sua iconica Gibson SG durante le sessioni di Vol. 4.</span>
+                                            <span class="lang-en">Tony Iommi and his iconic Gibson SG during the Vol. 4 sessions.</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Nel 1971, con Master of Reality, la band definisce i canoni del doom metal. In questo periodo, Tony Iommi introduce una rivoluzione tecnica: a causa di un incidente sul lavoro che gli mutilò le punte delle dita, inizia a suonare con la chitarra accordata in Do diesis (tre semitoni sotto la norma) per ridurre la tensione delle corde e utilizzare protesi fatte in casa. Questa pratica del downtuning, adottata anche da Butler al basso, genera un suono massiccio e profondo che diverrà uno standard del genere.</p>
+                                    <p class="lang-en">In 1971, with Master of Reality, the band defined the canons of doom metal. During this period, Tony Iommi introduced a technical revolution: due to a workplace accident that severed the tips of his fingers, he began playing with his guitar tuned down to C-sharp (three semitones below normal) to reduce string tension and use homemade prosthetics. This practice of downtuning, also adopted by Butler on bass, generated a massive, deep sound that would become a standard of the genre.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">3. Sperimentazioni e Crisi (1972-1979)</span>
+                                        <span class="lang-en">3. Experimentation and Crisis (1972-1979)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208422/11_sbzuln.jpg" alt="Ozzy Osbourne giovane" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>Ozzy Osbourne</strong>
+                                                    <small>Source: axs.tv</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Ozzy Osbourne durante l'epoca d'oro e turbolenta dei primi anni '70.</span>
+                                            <span class="lang-en">Ozzy Osbourne during the golden and turbulent era of the early 70s.</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Tra il 1972 e il 1975, i Black Sabbath esplorano nuove direzioni artistiche. Black Sabbath Vol. 4 (1972) introduce contaminazioni di rock progressivo, evidenti nella ballata Changes. Sabbath Bloody Sabbath (1973) prosegue su questa scia, vedendo la collaborazione di Rick Wakeman degli Yes alle tastiere.</p>
+                                    <p class="lang-en">Between 1972 and 1975, Black Sabbath explored new artistic directions. Black Sabbath Vol. 4 (1972) introduced progressive rock contaminations, evident in the ballad Changes. Sabbath Bloody Sabbath (1973) continued this trend, seeing the collaboration of Rick Wakeman of Yes on keyboards.</p>
+                                    
+                                    <p class="lang-it">Tuttavia, il successo è accompagnato da gravi problemi di tossicodipendenza che affliggono tutti i membri, in particolare Osbourne e Ward. In questo periodo, la creatività dei Black Sabbath si intrecciava con una spirale di eccessi; come ammesso dallo stesso cantante, i membri del gruppo fecero uso quotidiano di LSD per due anni consecutivi.</p>
+                                    <p class="lang-en">However, this success was accompanied by severe drug addiction problems affecting all members, particularly Osbourne and Ward. During this period, Black Sabbath's creativity was intertwined with a spiral of excess; as admitted by the singer himself, band members used LSD daily for two consecutive years.</p>
+                                    
+                                    <p class="lang-it">Dopo il variegato Sabotage (1975) e i meno fortunati Technical Ecstasy (1976) e Never Say Die! (1978) — caratterizzati dall'uso di orchestre e sintetizzatori — le tensioni interne diventano insostenibili. Nel 1979, Ozzy Osbourne viene definitivamente licenziato a causa del suo abuso incontrollato di alcol e droghe.</p>
+                                    <p class="lang-en">After the varied Sabotage (1975) and the less fortunate Technical Ecstasy (1976) and Never Say Die! (1978) — characterized by the use of orchestras and synthesizers — internal tensions became unbearable. In 1979, Ozzy Osbourne was permanently fired due to his uncontrolled abuse of alcohol and drugs.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">4. La Successione e l'Instabilità (1980-1995)</span>
+                                        <span class="lang-en">4. Succession and Instability (1980-1995)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208422/12_gq7vrr.webp" alt="Ronnie James Dio" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>Ronnie James Dio</strong>
+                                                    <small>Source: kerrangcdn.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Ronnie James Dio: la voce epica che dal 1980 ha rigenerato il gruppo con Heaven and Hell. A lui si deve la diffusione del gesto delle corna come simbolo universale del metal.</span>
+                                            <span class="lang-en">Ronnie James Dio: the epic voice that regenerated the group in 1980 with Heaven and Hell. He is credited with popularizing the "devil horns" gesture as a universal symbol of metal.</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">La band rinasce momentaneamente con l'arrivo di Ronnie James Dio. L'album Heaven and Hell (1980) è un trionfo di vendite e critica, introducendo uno stile più epico e tecnico. È in questo periodo che Dio rende popolare il gesto delle "corna", appreso dalla nonna per scongiurare il malocchio, che diventerà il simbolo universale dell'heavy metal.</p>
+                                    <p class="lang-en">The band was momentarily reborn with the arrival of Ronnie James Dio. The album Heaven and Hell (1980) was a triumph in sales and criticism, introducing a more epic and technical style. It was during this period that Dio popularized the "devil horns" hand gesture, learned from his grandmother to ward off the evil eye, which would become the universal symbol of heavy metal.</p>
+                                    
+                                    <p class="lang-it">Dopo l'uscita di Dio nel 1982 e un breve capitolo con Ian Gillan dei Deep Purple (nell'album Born Again, 1983), la band entra in un lungo periodo di instabilità. Tony Iommi rimane l'unico componente originale in diverse pubblicazioni, collaborando con vari vocalist tra cui Glenn Hughes e, stabilmente per alcuni anni, Tony Martin.</p>
+                                    <p class="lang-en">After Dio's departure in 1982 and a brief chapter with Ian Gillan of Deep Purple (on the album Born Again, 1983), the band entered a long period of instability. Tony Iommi remained the sole original member across various releases, collaborating with various vocalists including Glenn Hughes and, steadily for several years, Tony Martin.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">5. Reunion e il Tour Finale (1997-2025)</span>
+                                        <span class="lang-en">5. Reunion and the Final Tour (1997-2025)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure full">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774208421/13_i6nlvj.jpg" alt="Back to the Beginning" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Formazione Originale</span><span class="lang-en">Original Lineup</span></strong>
+                                                    <small>Source: ytimg.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Back to the Beginning: L'ultima storica esibizione della formazione originale il 5 luglio 2025 al Villa Park di Birmingham.</span>
+                                            <span class="lang-en">Back to the Beginning: The final historic performance of the original lineup on July 5, 2025 at Villa Park in Birmingham.</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">A partire dal 1997, la formazione originale (Osbourne, Iommi, Butler, Ward) torna a riunirsi periodicamente per tour mondiali e la pubblicazione dell'album dal vivo Reunion. Nel 2006, i Black Sabbath vengono finalmente introdotti nella Rock and Roll Hall of Fame.</p>
+                                    <p class="lang-en">Starting in 1997, the original lineup (Osbourne, Iommi, Butler, Ward) reunited periodically for world tours and the release of the live album Reunion. In 2006, Black Sabbath was finally inducted into the Rock and Roll Hall of Fame.</p>
+
+                                    <p class="lang-it">Nel 2011 viene annunciata la registrazione dell'ultimo album in studio con Osbourne, intitolato 13 (pubblicato nel 2013), che debutta al primo posto nelle classifiche mondiali nonostante l'assenza di Bill Ward alla batteria per divergenze contrattuali. Tra il 2016 e il 2017 la band tiene il tour d'addio The End, culminato con l'ultimo concerto nella città natale di Birmingham il 4 febbraio 2017.</p>
+                                    <p class="lang-en">In 2011, the recording of their final studio album with Osbourne was announced, titled 13 (released in 2013), which debuted at number one on charts worldwide despite the absence of Bill Ward on drums due to contractual disputes. Between 2016 and 2017, the band held their farewell tour, The End, culminating in their final concert in their hometown of Birmingham on February 4, 2017.</p>
+
+                                    <p class="lang-it">Inaspettatamente, il 5 luglio 2025, la formazione storica si riunisce un'ultima volta per il concerto di beneficenza Back to the Beginning al Villa Park di Birmingham. Solo diciassette giorni dopo, il 22 luglio 2025, la famiglia annuncia la scomparsa di Ozzy Osbourne, segnando la fine definitiva della parabola storica della band.</p>
+                                    <p class="lang-en">Unexpectedly, on July 5, 2025, the historic lineup reunited one last time for the "Back to the Beginning" charity concert at Villa Park in Birmingham. Just seventeen days later, on July 22, 2025, his family announced the passing of Ozzy Osbourne, marking the definitive end of the band's historic trajectory.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleHistory()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Storia</span>
+                            <span class="lang-en">↑ Close History</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="disclaimer-btn" onclick="toggleDisclaimer()">
+                        <span>
+                            <span class="lang-it">Disclaimer & Note Legali</span>
+                            <span class="lang-en">Disclaimer & Legal Notes</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="disclaimer-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                <h3 class="wiki-title lang-it">Disclaimer e Diritto di Citazione</h3>
+                                <h3 class="wiki-title lang-en">Disclaimer & Fair Use</h3>
+                                
+                                <p class="lang-it">I contenuti multimediali presenti in questa pagina (immagini e video) sono utilizzati esclusivamente per finalità didattiche, critiche e di approfondimento culturale, in conformità con l'Art. 70 della Legge 633/41 (Diritto di citazione e riproduzione per uso didattico o scientifico). L'utilizzo non ha alcuno scopo di lucro e mira a valorizzare l'opera dell'artista e dei relativi autori, citati puntualmente tramite la funzione interattiva sulle singole immagini.<br><br>Qualora i detentori dei diritti d'autore ritenessero inappropriata la pubblicazione o desiderassero la rimozione di specifici contenuti, possono scrivere all'indirizzo: <strong>lorenzo.sciallato@gmail.com</strong>. Provvederò all'immediata rimozione del materiale segnalato.</p>
+                                
+                                <p class="lang-en">The multimedia contents on this page (images and videos) are used exclusively for educational, critical, and cultural purposes, in accordance with international Fair Use principles and national copyright laws. This project is strictly non-commercial and aims to provide historical and artistic context, with full credit given to authors and sources via the interactive photo-flip feature.<br><br>If you are a copyright holder and object to the use of any material, or would like to request its removal, please contact: <strong>lorenzo.sciallato@gmail.com</strong>. Any disputed content will be removed immediately upon request.</p>
+
+                                <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 25px 0;">
+
+                                <p class="lang-it" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Pagina creata con l'assistenza di software di intelligenza artificiale generativa, unendo cura umana e supporto tecnologico per l'apprendimento e la divulgazione culturale.</p>
+                                <p class="lang-en" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Page created with the assistance of generative artificial intelligence software, combining human curation and technological support for educational and cultural dissemination.</p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleDisclaimer()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Disclaimer</span>
+                            <span class="lang-en">↑ Close Disclaimer</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const playlist = [
+            { id: "war_pigs", title: "War Pigs", ytId: "rmleuQP5owA" },
+            { id: "paranoid", title: "Paranoid", ytId: "5mvnvM5YjVU" },
+            { id: "planet_caravan", title: "Planet Caravan", ytId: "JWY-0kWcoos" },
+            { id: "iron_man", title: "Iron Man", ytId: "WYgJmSz5Gtk" },
+            { id: "electric_funeral", title: "Electric Funeral", ytId: "4aJT2p2_pDk" },
+            { id: "hand_of_doom", title: "Hand of Doom", ytId: "wb2KIlo87y4" },
+            { id: "rat_salad", title: "Rat Salad", ytId: "AwB5WVLWEU8" },
+            { id: "fairies_wear_boots", title: "Fairies Wear Boots", ytId: "VLBfPSS-x5U" }
+        ];
+
+        // PARAPHRASE DATA
+        const paraphraseData = {
+            "war_pigs": {
+                it: `I potenti radunano i loro eserciti come streghe intorno al fuoco, trafficando in morte con la disinvoltura di chi non pagherà mai il conto. Generali e politici muovono i poveri come pedoni su una scacchiera invisibile, al sicuro nei loro palazzi mentre i campi si riempiono di corpi. Ma la canzone non si ferma alla denuncia umana: porta tutto davanti a un tribunale più alto. Il giorno del giudizio arriva, e quei maiali di guerra che hanno costruito le loro fortune sul sangue altrui si ritrovano a ginocchia piegate davanti a qualcosa che non si può corrompere né intimidire. La chitarra di Iommi apre come una sirena d'allarme nucleare — non è musica per danzare, è musica per svegliarsi.`,
+                en: `The powerful gather their armies like witches around a fire, trafficking in death with the ease of those who will never pay the bill. Generals and politicians move the poor like pawns on an invisible chessboard, safe in their palaces while the fields fill with bodies. But the song does not stop at human indictment: it brings everything before a higher tribunal. Judgment day arrives, and those war pigs who built their fortunes on the blood of others find themselves on bended knee before something that cannot be bribed or intimidated. Iommi's guitar opens like a nuclear air-raid siren — this is not music for dancing, it is music for waking up.`
+            },
+            "paranoid": {
+                it: `Un grido breve e senza ornamenti dalla profondità di una mente che non riesce a trovare pace. Il cantante non capisce perché non prova quello che gli altri sembrano provare così facilmente: la felicità gli sfugge come sabbia tra le dita, e anche quando qualcuno gli tende la mano, lui non sa come afferrarla davvero. Non è un lamento melodrammatico — è una constatazione piatta e onesta, quasi clinica, che rende il tutto ancora più inquietante. Due minuti e cinquanta secondi di hard rock che contengono più verità sulla solitudine moderna di molte opere letterarie ben più ambiziose.`,
+                en: `A short, unadorned cry from the depths of a mind that cannot find peace. The singer does not understand why he cannot feel what others seem to feel so easily: happiness slips through his fingers like sand, and even when someone reaches out a hand, he does not know how to truly grasp it. This is not melodramatic lament — it is a flat and honest observation, almost clinical, which makes everything all the more unsettling. Two minutes and fifty seconds of hard rock that contain more truth about modern loneliness than many far more ambitious literary works.`
+            },
+            "planet_caravan": {
+                it: `Il volume scende, il mondo si addormenta, e due esseri fluttuano insieme attraverso lo spazio interstellare. Le stelle scorrono come luci di una città vista dall'alto, i pianeti si trasformano in sfere luminose e silenziose. È una canzone d'amore cosmica, dove la distanza non è un ostacolo ma il palcoscenico stesso della storia. La voce di Ozzy Osbourne, filtrata e lontana, sembra provenire davvero da qualche parte oltre l'atmosfera. Non c'è urgenza, non c'è conflitto: solo il movimento lento e inesorabile attraverso un universo che per una volta non fa paura, perché ci si è in due.`,
+                en: `The volume drops, the world falls asleep, and two beings drift together through interstellar space. Stars stream past like city lights seen from above; planets become luminous and silent spheres. It is a cosmic love song, where distance is not an obstacle but the very stage of the story. Ozzy Osbourne's voice, filtered and remote, seems to come from somewhere truly beyond the atmosphere. There is no urgency, no conflict: only the slow and inexorable movement through a universe that, for once, holds no fear — because there are two of you in it.`
+            },
+            "iron_man": {
+                it: `Un viaggiatore attraversa il tempo per salvare il mondo, ma il viaggio stesso lo trasforma in metallo, lo rende muto e lento e terribile. Torna indietro, nessuno lo riconosce, tutti fuggono da lui come da un mostro. Ed è proprio quell'indifferenza — quella crudeltà inconsapevole degli esseri umani verso ciò che non capiscono — a scatenare la profezia che aveva cercato di impedire. L'Uomo di Ferro diventa il disastro che voleva scongiurare. Il riff di chitarra più pesante della storia del rock non è solo rumore: è il suono di passi metallici su un terreno che cede, il suono di una tragedia che si avvita su se stessa senza via d'uscita.`,
+                en: `A time traveler crosses the ages to save the world, but the journey itself transforms him into metal, rendering him mute and slow and terrible. He returns; no one recognizes him, everyone flees as from a monster. And it is precisely that indifference — that unconscious cruelty of human beings toward what they cannot understand — that triggers the very prophecy he tried to prevent. The Iron Man becomes the disaster he sought to avert. The heaviest guitar riff in rock history is not merely noise: it is the sound of metal footsteps on yielding ground, the sound of a tragedy screwing itself shut with no way out.`
+            },
+            "electric_funeral": {
+                it: `Un'apocalisse nucleare descritta con la precisione allucinata di chi la sta guardando accadere in tempo reale. Il cielo si chiude, la pioggia brucia, le città si dissolvono in silhouette di cenere. Non c'è eroismo, non c'è resistenza: solo la lenta e inesorabile dissoluzione di tutto ciò che l'umanità ha costruito. Il ritmo inizia pesante e strisciante, come la nube radioattiva stessa, poi accelera in un delirio che non è vittoria ma panico. Black Sabbath non propone soluzioni — descrive la conseguenza finale di certe scelte, e lascia l'ascoltatore seduto nel silenzio che segue.`,
+                en: `A nuclear apocalypse described with the hallucinated precision of someone watching it happen in real time. The sky closes in, the rain burns, cities dissolve into silhouettes of ash. There is no heroism, no resistance: only the slow and inexorable dissolution of everything humanity has built. The rhythm begins heavy and crawling, like the radioactive cloud itself, then accelerates into a delirium that is not triumph but panic. Black Sabbath proposes no solutions — it describes the ultimate consequence of certain choices, and leaves the listener sitting in the silence that follows.`
+            },
+            "hand_of_doom": {
+                it: `Una discesa negli inferi costruita nota dopo nota, lenta come la dipendenza che descrive. All'inizio c'è solo curiosità, o forse disperazione — qualcosa che promette di attenuare il dolore del mondo. Poi la mano del destino stringe e non lascia più. La canzone cambia pelle più volte, passando da momenti quasi sospesi e onirici a esplosioni di pura aggressione sonora, specchiando la traiettoria di chi si perde: prima l'euforia, poi il vuoto, poi qualcosa che non ha più nome. È una delle canzoni più lunghe e ambiziose del disco, e anche la più oscura — non nel senso estetico, ma in quello morale.`,
+                en: `A descent into the underworld built note by note, slow as the addiction it describes. At first there is only curiosity, or perhaps despair — something that promises to dull the pain of the world. Then the hand of doom tightens and never lets go. The song changes skin several times, moving from near-suspended, dreamlike moments to explosions of pure sonic aggression, mirroring the trajectory of the lost: first euphoria, then emptiness, then something that no longer has a name. It is one of the longest and most ambitious songs on the record, and also the darkest — not in the aesthetic sense, but in the moral one.`
+            },
+            "rat_salad": {
+                it: `Nessuna parola, nessuna storia da raccontare: solo ritmo puro che dimostra di poter parlare da solo. Bill Ward prende il centro della scena e costruisce un edificio percussivo che è al tempo stesso un omaggio alla tradizione jazz e una dichiarazione di indipendenza del rock pesante. Il titolo assurdo suggerisce qualcosa di caotico e misto, e il pezzo è esattamente questo: una miscela imprevedibile di potenza e precisione, di istinto e tecnica. In un album denso di testi e significati, questo interludio strumentale funziona come una finestra aperta — un momento per respirare prima che il peso torni a schiacciare.`,
+                en: `No words, no story to tell: only pure rhythm demonstrating that it can speak for itself. Bill Ward takes center stage and builds a percussive edifice that is at once a homage to jazz tradition and a declaration of independence for heavy rock. The absurd title suggests something chaotic and mixed, and the track is exactly that: an unpredictable blend of power and precision, of instinct and technique. In an album dense with lyrics and meaning, this instrumental interlude works like an open window — a moment to breathe before the weight returns to press down again.`
+            },
+            "fairies_wear_boots": {
+                it: `Un incontro allucinato con creature del folklore che indossano stivali e ballano — il confine tra il visionario e l'autoironico è volutamente poroso. Il cantante descrive ciò che ha visto a un medico che non gli crede, e la frustrazione di chi sa di aver visto qualcosa di reale ma non riesce a farselo credere da nessuno è il cuore comico e amaro del pezzo. Ma sotto la superficie bizzarra scorre qualcosa di più serio: il tema dell'alterazione della percezione, della realtà che cambia forma a seconda di chi la guarda. Il disco si chiude su questa nota strana e irrisolta, come se Black Sabbath volesse ricordare che nemmeno loro si prendono sempre sul serio quanto sembrano.`,
+                en: `A hallucinatory encounter with folkloric creatures wearing boots and dancing — the boundary between the visionary and the self-ironic is deliberately porous. The singer describes what he has seen to a doctor who does not believe him, and the frustration of one who knows he has witnessed something real but cannot convince anyone is the comic and bitter heart of the track. But beneath the bizarre surface something more serious runs: the theme of altered perception, of reality changing shape depending on who is looking at it. The album closes on this strange and unresolved note, as though Black Sabbath wished to remind us that even they do not always take themselves as seriously as they seem.`
+            }
+        };
+
+        // GUIDA (Completely BILINGUAL)
+        const guideData = {
+            "war_pigs": {
+                it: `
+                    <h3>War Pigs</h3>
+                    <p><strong>0:00 - Manipolazione del Nastro (Varispeed)</strong><br>Ascolta l'intro. La sirena antiaerea non è un semplice campione statico. Nota come la tonalità scenda in modo "gommoso" e irregolare. Questo effetto è ottenuto tramite la manipolazione fisica della velocità del nastro analogico (varispeed o frenando la flangia della bobina a mano). Questo altera il pitch e il tempo simultaneamente, creando un senso di vertigine fisica immediata.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Il Titolo Originale.</strong> Inizialmente il brano si chiamava "Walpurgis". L'etichetta discografica lo considerava troppo "satanico" per il mercato radiofonico. La band accettò di cambiare il testo in una critica alla guerra, ma mantenne la struttura musicale cupa e ritualistica pensata per un sabba.</div>
+                    <p><strong>0:54 - Il "Brown Sound" di Iommi</strong><br>Entra il riff. Tony Iommi non usa distorsori moderni. Il suo suono nasce da una Gibson SG "Monkey" collegata a un Dallas Rangemaster Treble Booster. Nota la saturazione: non è compressa, ma dinamica. Risponde alla forza della plettrata. Se plettra piano è quasi pulito, se plettra forte le valvole dell'amplificatore Laney Supergroup "ruggiscono".</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Dita di Plastica.</strong> Nota la pesantezza del suono nonostante l'accordatura standard. Iommi, avendo perso le punte di medio e anulare in un incidente in fabbrica, usava protesi di plastica fatte in casa e corde sottilissime (da banjo). Per compensare la mancanza di "corpo" delle corde sottili, dovette alzare il volume e il gain degli amplificatori al massimo, inventando di fatto il timbro Heavy Metal.</div>
+                    <p><strong>1:04 - Batteria Jazz e Room Sound</strong><br>Bill Ward non usa il kit come un metronomo rock. Ascolta gli accenti in levare e le ghost notes sul rullante. Tecnicamente, la batteria è registrata con microfoni distanti (room mics), catturando il riverbero naturale della stanza. Nota come la cassa non sia un colpo secco, ma un suono risonante e "di legno".</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Il "Rant" di Ozzy.</strong> Durante le sessioni di registrazione, Ozzy Osbourne era solito improvvisare parole a caso se il testo non era pronto. Molti dei versi iconici di War Pigs sono nati da questi flussi di coscienza registrati su nastro e poi rifiniti da Geezer Butler per dare un senso logico alla narrazione bellica.</div>
+                    <p><strong>2:18 - Panning Estremo e Separazione</strong><br>Quando il brano accelera, nota la separazione stereo (panning). La chitarra è spostata quasi tutta su un lato, mentre il basso occupa il centro/lato opposto. Nel 1970, per evitare che le frequenze basse si impastassero (effetto di mascheramento), si usava separare drasticamente gli strumenti. Questo permette di distinguere chiaramente le linee di basso di Geezer Butler che improvvisano costantemente.</p>
+                `,
+                en: `
+                    <h3>War Pigs</h3>
+                    <p><strong>0:00 - Tape Manipulation (Varispeed)</strong><br>Listen to the intro. The air-raid siren is not a simple static sample. Note how the pitch drops in a "rubbery" and irregular way. This effect is achieved through physical manipulation of the analog tape speed (varispeed or braking the reel flange by hand). This alters the pitch and tempo simultaneously, creating an immediate sense of physical vertigo.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>The Original Title.</strong> Initially, the song was called "Walpurgis". The record label considered it too "satanic" for the radio market. The band agreed to change the lyrics to a critique of war but kept the dark, ritualistic musical structure intended for a sabbath.</div>
+                    <p><strong>0:54 - Iommi's "Brown Sound"</strong><br>The riff enters. Tony Iommi doesn't use modern distortion pedals. His sound comes from a Gibson SG "Monkey" connected to a Dallas Rangemaster Treble Booster. Note the saturation: it's not compressed, but dynamic. It responds to the force of the picking. If he picks softly, it's almost clean; if he picks hard, the tubes of the Laney Supergroup amplifier "roar".</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>Plastic Fingers.</strong> Note the heaviness of the sound despite standard tuning. Iommi, having lost the tips of his middle and ring fingers in a factory accident, used homemade plastic prosthetics and very thin (banjo) strings. To compensate for the lack of "body" in the thin strings, he had to turn up the volume and gain of the amplifiers to the maximum, effectively inventing the Heavy Metal tone.</div>
+                    <p><strong>1:04 - Jazz Drums and Room Sound</strong><br>Bill Ward doesn't use the kit like a rock metronome. Listen to the upbeats and ghost notes on the snare. Technically, the drums are recorded with distant microphones (room mics), capturing the natural reverb of the room. Note how the kick drum is not a dry hit, but a resonant and "wooden" sound.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>Ozzy's "Rant".</strong> During recording sessions, Ozzy Osbourne used to improvise random words if the lyrics weren't ready. Many of the iconic lines in War Pigs were born from these streams of consciousness recorded on tape and later refined by Geezer Butler to make logical sense of the war narrative.</div>
+                    <p><strong>2:18 - Extreme Panning and Separation</strong><br>When the song accelerates, note the stereo separation (panning). The guitar is shifted almost entirely to one side, while the bass occupies the center/opposite side. In 1970, to prevent low frequencies from getting muddy (masking effect), it was common to drastically separate the instruments. This allows you to clearly distinguish Geezer Butler's constantly improvising basslines.</p>
+                `
+            },
+            "paranoid": {
+                it: `
+                    <h3>Paranoid</h3>
+                    <p><strong>0:00 - Downpicking e Palm Muting</strong><br>Osserva la tecnica della mano destra di Iommi. Usa un palm muting (smorzamento delle corde con il palmo sul ponte) molto leggero combinato con plettrate costanti verso il basso (downpicking). Questo riduce il sustain delle note, rendendo il riff percussivo e meccanico.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Il Brano "Riempitivo".</strong> L'intero brano è nato perché mancavano tre minuti per finire l'album. Iommi ha scritto il riff durante la pausa pranzo degli altri membri. Quando sono tornati, lo hanno registrato in pochissimi take. Non avrebbero mai immaginato che un "pezzo scartato" sarebbe diventato il loro più grande successo.</div>
+                    <p><strong>0:12 - Il Mix "Bass-Forward"</strong><br>Entra la voce. Nota una scelta di mixaggio atipica: il basso è alto quasi quanto la chitarra. Geezer Butler doppia il riff nota per nota. Questo crea un effetto psicoacustico di "Muro Sonoro" (Wall of Sound): il tuo orecchio percepisce chitarra e basso non come due strumenti distinti, ma come un'unica entità sonora gigantesca.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Plagio o Ispirazione?</strong> Il riff iniziale è stato spesso paragonato a quello di "Get Down and Get With It" di Slade o a brani dei Led Zeppelin. La band ha sempre negato il plagio consapevole, attribuendo la somiglianza alla semplicità primordiale della struttura blues accelerata tipica di quel periodo a Birmingham.</div>
+                    <p><strong>1:20 - L'Assolo "Dry" (Ring Modulator)</strong><br>L'assolo di chitarra suona come se provenisse da un citofono. È stato registrato con un segnale totalmente "Dry" (senza riverbero) e processato attraverso un Ring Modulator. Questo effetto tronca le code delle note e crea armoniche dissonanti, permettendo alla chitarra di "bucare" il mix denso della ritmica.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Testi dell'Ultimo Minuto.</strong> Ozzy ha cantato il brano leggendo le parole da un foglio scarabocchiato da Geezer Butler pochi secondi prima di entrare nella cabina di registrazione. Nota l'urgenza e la leggera imprecisione ritmica della voce: è il suono di un uomo che sta letteralmente scoprendo la canzone mentre la canta.</div>
+                `,
+                en: `
+                    <h3>Paranoid</h3>
+                    <p><strong>0:00 - Downpicking and Palm Muting</strong><br>Observe Iommi's right-hand technique. He uses a very light palm muting (damping the strings with the palm on the bridge) combined with constant downward picking (downpicking). This reduces the sustain of the notes, making the riff percussive and mechanical.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>The "Filler" Track.</strong> The entire song came about because they were three minutes short of finishing the album. Iommi wrote the riff during the other members' lunch break. When they returned, they recorded it in very few takes. They never imagined that a "throwaway piece" would become their biggest hit.</div>
+                    <p><strong>0:12 - The "Bass-Forward" Mix</strong><br>The vocals enter. Note an atypical mixing choice: the bass is almost as loud as the guitar. Geezer Butler doubles the riff note for note. This creates a psychoacoustic "Wall of Sound" effect: your ear perceives guitar and bass not as two distinct instruments, but as a single gigantic sonic entity.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>Plagiarism or Inspiration?</strong> The opening riff has often been compared to Slade's "Get Down and Get With It" or songs by Led Zeppelin. The band has always denied conscious plagiarism, attributing the similarity to the primordial simplicity of the accelerated blues structure typical of that period in Birmingham.</div>
+                    <p><strong>1:20 - The "Dry" Solo (Ring Modulator)</strong><br>The guitar solo sounds as if it's coming from an intercom. It was recorded with a totally "Dry" signal (without reverb) and processed through a Ring Modulator. This effect cuts off the tails of the notes and creates dissonant harmonics, allowing the guitar to "cut through" the dense rhythmic mix.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>Last-Minute Lyrics.</strong> Ozzy sang the song reading the words from a piece of paper scribbled by Geezer Butler just seconds before entering the recording booth. Note the urgency and slight rhythmic inaccuracy of the voice: it is the sound of a man literally discovering the song as he sings it.</div>
+                `
+            },
+            "planet_caravan": {
+                it: `
+                    <h3>Planet Caravan</h3>
+                    <p><strong>0:00 - La Voce nel Leslie Cabinet</strong><br>La voce di Ozzy è spettrale e liquida. Il trucco? Hanno fatto passare il segnale del microfono attraverso un amplificatore Leslie 122 (solitamente usato per organi). Il Leslie ha un cono che ruota fisicamente: la rotazione crea un effetto Doppler naturale che sposta il suono nello spazio.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>La Calma dopo la Tempesta.</strong> Planet Caravan fu inserita nell'album per dimostrare che i Black Sabbath non erano solo "rumore". La band temeva di essere etichettata troppo presto e voleva mostrare le proprie radici psichedeliche e jazz, influenzate dai dischi di Miles Davis che Geezer Butler ascoltava ossessivamente.</div>
+                    <p><strong>0:15 - Chitarra Jazz Clean</strong><br>Iommi usa qui un suono completamente pulito (Clean), probabilmente usando il pickup al manico della SG e abbassando il tono. Nota l'assenza di compressione: senti le dita scivolare sulle corde e ogni minima variazione di volume.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>L'Errore nei Credits.</strong> Per anni si è creduto che il pianoforte fosse suonato dall'ingegnere del suono Tom Allom. In realtà, è lo stesso Iommi a suonare, cercando di imitare un'atmosfera da jazz club spaziale. Allom si limitò a curare l'equalizzazione per rendere il pianoforte quasi un'ombra sonora.</div>
+                    <p><strong>2:36 - Improvvisazione Modale e Congas</strong><br>Bill Ward suona le congas invece della batteria. Il basso si muove su scale modali (dorico) tipiche del jazz. Nota l'immagine stereo ampia: gli strumenti sembrano fluttuare intorno alla voce centrale, creando una profondità che manca nei brani più aggressivi del disco.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Sessioni Notturne.</strong> Il brano è stato registrato a tarda notte per catturare la stanchezza e la rilassatezza della band. Iommi ha dichiarato che l'obiettivo era creare una canzone che suonasse come "un viaggio nel vuoto", un tema che tornerà spesso nei loro lavori successivi.</div>
+                `,
+                en: `
+                    <h3>Planet Caravan</h3>
+                    <p><strong>0:00 - The Voice in the Leslie Cabinet</strong><br>Ozzy's voice is spectral and liquid. The trick? They ran the microphone signal through a Leslie 122 amplifier (usually used for organs). The Leslie has a cone that physically rotates: the rotation creates a natural Doppler effect that moves the sound in space.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>The Calm After the Storm.</strong> Planet Caravan was included on the album to prove that Black Sabbath wasn't just "noise". The band feared being pigeonholed too early and wanted to show their psychedelic and jazz roots, influenced by the Miles Davis records that Geezer Butler listened to obsessively.</div>
+                    <p><strong>0:15 - Clean Jazz Guitar</strong><br>Iommi uses a completely clean sound here, probably using the neck pickup of the SG and rolling off the tone. Note the absence of compression: you can hear his fingers sliding on the strings and every slight variation in volume.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>The Error in the Credits.</strong> For years it was believed that the piano was played by sound engineer Tom Allom. In reality, it is Iommi himself playing, trying to imitate a space jazz club atmosphere. Allom simply adjusted the equalization to make the piano almost a sonic shadow.</div>
+                    <p><strong>2:36 - Modal Improvisation and Congas</strong><br>Bill Ward plays congas instead of a drum kit. The bass moves on modal scales (Dorian) typical of jazz. Note the wide stereo image: the instruments seem to float around the central voice, creating a depth that is missing in the more aggressive tracks of the record.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>Late-Night Sessions.</strong> The song was recorded late at night to capture the band's fatigue and relaxed state. Iommi stated that the goal was to create a song that sounded like "a journey into the void", a theme that would often return in their later works.</div>
+                `
+            },
+            "iron_man": {
+                it: `
+                    <h3>Iron Man</h3>
+                    <p><strong>0:00 - Il Suono Metallico e il Bend dietro il Capotasto</strong><br>Ascolta quel rumore metallico iniziale. Non è un sintetizzatore: Tony Iommi pizzica le corde della sua Gibson SG dietro il capotasto (sulla paletta) mentre preme sulle corde stesse per variarne la tensione. Questo crea un suono inarmonico che viene poi processato con un riverbero a molla molto corto per dare quel senso di "acciaio".</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>La Voce del Robot.</strong> Per ottenere la voce distorta che dice "I am Iron Man", Ozzy Osbourne non ha usato un pedale. Ha cantato attraverso le pale di un ventilatore di metallo in movimento. Le pale interrompevano il flusso d'aria e il suono, creando quell'effetto di modulazione a scatti che senti nel mix finale.</div>
+                    <p><strong>0:17 - Il Riff Monolitico e il Raddoppio</strong><br>Nota come il riff principale sia suonato all'unisono da chitarra e basso. Tecnicamente, Iommi usa dei power chord (bicordi di quinta) molto carichi di medie. Il segreto della potenza è il double-tracking: la chitarra è stata registrata due volte e le tracce sono state sovrapposte con lievi discrepanze temporali, rendendo il suono "gigante" rispetto a una traccia singola.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Un Titolo Casuale.</strong> Quando Iommi suonò il riff per la prima volta in prova, Ozzy disse che suonava come "un grosso tizio di ferro che cammina" (a big iron bloke walking about). Il titolo "Iron Man" nacque lì, e Geezer Butler scrisse poi il testo fantascientifico basandosi su quella suggestione visiva, senza alcun legame con il supereroe della Marvel.</div>
+                    <p><strong>3:12 - Cambio di Tempo e Drum Fill</strong><br>Il brano vira verso un tempo più veloce. Nota come Bill Ward utilizzi i piatti crash in modo esplosivo per marcare i cambi di sezione. La batteria qui ha un suono molto "asciutto" (dry), con i microfoni posizionati vicini alle pelli (close-miking) per catturare l'attacco immediato necessario per la parte veloce.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>L'incidente dei Master.</strong> Durante il mixaggio di questo brano, ci furono tensioni tra la band e il produttore Rodger Bain. La band voleva un suono più pesante, mentre Bain cercava di mantenere una chiarezza commerciale. Il compromesso fu alzare i medi del basso di Geezer, una scelta tecnica che definì il suono "fangoso ma definito" tipico dell'heavy metal.</div>
+                `,
+                en: `
+                    <h3>Iron Man</h3>
+                    <p><strong>0:00 - The Metallic Sound and Behind-the-Nut Bend</strong><br>Listen to that initial metallic noise. It's not a synthesizer: Tony Iommi plucks the strings of his Gibson SG behind the nut (on the headstock) while pressing on the strings themselves to vary their tension. This creates an inharmonic sound that is then processed with a very short spring reverb to give that sense of "steel".</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>The Robot Voice.</strong> To get the distorted voice saying "I am Iron Man", Ozzy Osbourne didn't use a pedal. He sang through the blades of a moving metal fan. The blades interrupted the airflow and the sound, creating that choppy modulation effect you hear in the final mix.</div>
+                    <p><strong>0:17 - The Monolithic Riff and Doubling</strong><br>Note how the main riff is played in unison by guitar and bass. Technically, Iommi uses power chords very heavy on the mids. The secret to the power is double-tracking: the guitar was recorded twice and the tracks were overlaid with slight timing discrepancies, making the sound "giant" compared to a single track.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>A Random Title.</strong> When Iommi played the riff for the first time in rehearsal, Ozzy said it sounded like "a big iron bloke walking about". The title "Iron Man" was born there, and Geezer Butler later wrote the sci-fi lyrics based on that visual suggestion, with no connection to the Marvel superhero.</div>
+                    <p><strong>3:12 - Tempo Change and Drum Fills</strong><br>The song shifts to a faster tempo. Note how Bill Ward uses the crash cymbals explosively to mark section changes. The drums here have a very "dry" sound, with microphones positioned close to the heads (close-miking) to capture the immediate attack necessary for the fast part.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>The Master Tapes Incident.</strong> During the mixing of this song, there was tension between the band and producer Rodger Bain. The band wanted a heavier sound, while Bain sought to maintain commercial clarity. The compromise was to boost the mids of Geezer's bass, a technical choice that defined the "muddy but defined" sound typical of heavy metal.</div>
+                `
+            },
+            "electric_funeral": {
+                it: `
+                    <h3>Electric Funeral</h3>
+                    <p><strong>0:00 - L'uso del Pedale Wah-Wah come Filtro</strong><br>Ascolta l'intro cupo. Iommi usa un pedale Wah-Wah (modello Vox dell'epoca), ma non lo muove velocemente. Lo usa come un filtro di frequenza statico o a movimento lento per rendere il riff "acido" e soffocato. Nota come il suono sembri "chiudersi" e "aprirsi" ritmicamente, alterando il contenuto armonico della distorsione.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Atmosfere Apocalittiche.</strong> Il testo parla di un olocausto nucleare. Per rendere questa sensazione in studio, la band chiese di spegnere tutte le luci, lasciando solo le spie rosse degli amplificatori e del banco accese. Questo isolamento visivo aiutò Ozzy a trovare quel tono di voce lamentoso e paranoico che senti nella traccia.</div>
+                    <p><strong>1:15 - Distorsione del Basso e Intermodulazione</strong><br>In questa sezione, il basso di Geezer Butler è talmente saturo che inizia a generare distorsione d'intermodulazione. Nota come le note basse sembrino "strappare" il cono dell'altoparlante. Tecnicamente, Butler stava spingendo i suoi cabinet Laney al limite fisico, creando un tappeto sonoro che riempie il vuoto lasciato dalla chitarra durante i passaggi solisti.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Ispirazioni Horror.</strong> La struttura a "salti" del brano (lento-veloce-lento) è ispirata alla dinamica dei film horror della Hammer che i membri della band guardavano ossessivamente. Volevano che la musica avesse lo stesso effetto di un "jump scare": un momento di calma apparente interrotto da un'esplosione di violenza sonora.</div>
+                    <p><strong>2:15 - Sezione Funk-Doom</strong><br>Il brano accelera in un tempo quasi funk, ma distorto. Nota il lavoro di Bill Ward sul charleston: è molto sincopato. La chitarra in questa fase è registrata con un panning molto largo, lasciando il centro del mix completamente libero per la voce di Ozzy, che qui viene processata con un leggero riverbero a piastra (plate reverb) per separarla dal muro di chitarre.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>La Chitarra "Maledetta".</strong> Iommi ha dichiarato che per questo brano cercò il suono più brutto e fastidioso possibile. Usò una regolazione dell'equalizzatore con pochissime alte frequenze e moltissime medie-basse. In termini tecnici, creò un "buco" nelle frequenze della chiarezza per enfatizzare il senso di oppressione del testo.</div>
+                `,
+                en: `
+                    <h3>Electric Funeral</h3>
+                    <p><strong>0:00 - Using the Wah-Wah Pedal as a Filter</strong><br>Listen to the dark intro. Iommi uses a Wah-Wah pedal (a Vox model of the time), but he doesn't rock it back and forth quickly. He uses it as a static or slow-moving frequency filter to make the riff sound "acidic" and choked. Note how the sound seems to rhythmically "close" and "open", altering the harmonic content of the distortion.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>Apocalyptic Atmospheres.</strong> The lyrics describe a nuclear holocaust. To capture this feeling in the studio, the band asked to turn off all the lights, leaving only the red indicator lights of the amplifiers and the mixing board on. This visual isolation helped Ozzy find that wailing and paranoid tone of voice you hear on the track.</div>
+                    <p><strong>1:15 - Bass Distortion and Intermodulation</strong><br>In this section, Geezer Butler's bass is so saturated that it begins to generate intermodulation distortion. Note how the low notes seem to "tear" the speaker cone. Technically, Butler was pushing his Laney cabinets to their physical limit, creating a sonic carpet that fills the void left by the guitar during solo passages.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>Horror Inspirations.</strong> The "jumping" structure of the song (slow-fast-slow) is inspired by the dynamics of the Hammer horror films that band members watched obsessively. They wanted the music to have the same effect as a "jump scare": a moment of apparent calm interrupted by an explosion of sonic violence.</div>
+                    <p><strong>2:15 - Funk-Doom Section</strong><br>The song accelerates into an almost funk-like, but distorted, tempo. Note Bill Ward's hi-hat work: it's highly syncopated. The guitar in this phase is recorded with a very wide panning, leaving the center of the mix completely free for Ozzy's voice, which here is processed with a light plate reverb to separate it from the wall of guitars.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>The "Cursed" Guitar.</strong> Iommi stated that for this song he sought the ugliest, most annoying sound possible. He used an EQ setting with very few high frequencies and a lot of low-mids. In technical terms, he created a "hole" in the clarity frequencies to emphasize the sense of oppression in the lyrics.</div>
+                `
+            },
+            "hand_of_doom": {
+                it: `
+                    <h3>Hand of Doom</h3>
+                    <p><strong>0:00 - Il Bass Line Isolato e il Noise Floor</strong><br>Il brano inizia con una delle linee di basso più famose del rock. Nota il "fruscio" di fondo (noise floor) del nastro analogico che si sente chiaramente nel vuoto iniziale. Il basso ha un tono molto scuro, ottenuto pizzicando le corde vicino al manico anziché al ponte. Questo enfatizza le frequenze fondamentali e taglia gli armonici superiori.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Soldati in Studio.</strong> Il brano tratta della dipendenza da eroina dei soldati americani di ritorno dal Vietnam. La band incontrò diversi militari nelle basi americane in Europa e rimase scioccata dalle loro storie. L'andamento "stanco" e lento dell'inizio del brano vuole mimare tecnicamente l'effetto di ottundimento degli oppiacei.</div>
+                    <p><strong>1:35 - Esplosione di Dinamica (Loudness War Ante-Litteram)</strong><br>Nota lo stacco violento. Passiamo da un volume bassissimo a un'esplosione sonora. In fase di registrazione, questo ha richiesto un uso sapiente dei compressori (probabilmente un Universal Audio 1176) per evitare che il segnale andasse in "clipping" (distorsione digitale o saturazione eccessiva del nastro) senza perdere l'impatto del cambiamento di volume.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>L'Improvvisazione di Bill Ward.</strong> Tutta la parte centrale più veloce non era stata provata. Bill Ward ha ammesso che stavano "seguendo il feeling". Se ascolti bene la batteria, nota dei piccoli cambiamenti di tempo: non è un errore, ma la band che respira insieme, una caratteristica che il metronomo digitale di oggi ha quasi cancellato.</div>
+                    <p><strong>4:20 - L'effetto Slapback Delay sulla voce</strong><br>Verso la fine, sulla voce di Ozzy compare un leggero slapback delay (un'eco molto veloce, circa 80-120ms). Nota come questo dia alla voce un senso di instabilità mentale. Tecnicamente, si otteneva inviando il segnale della voce a una seconda macchina del nastro e registrando il ritardo tra la testina di registrazione e quella di riproduzione.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Cicatrici Sonore.</strong> Iommi usa in questo brano delle posizioni di accordi "aperte" ma trasposte, che creano delle dissonanze chiamate tritoni (l'intervallo del diavolo). Nel 1970, usare il tritone su una sezione ritmica così pesante era considerato quasi avanguardia. La "sporcizia" del suono è accentuata dalle protesi di Iommi, che non gli permettevano di sentire perfettamente la pressione sulle corde, portando a micro-stonature che rendono il brano ancora più inquietante.</div>
+                `,
+                en: `
+                    <h3>Hand of Doom</h3>
+                    <p><strong>0:00 - The Isolated Bass Line and Noise Floor</strong><br>The song begins with one of rock's most famous basslines. Notice the "hiss" (noise floor) of the analog tape that can be clearly heard in the initial emptiness. The bass has a very dark tone, achieved by plucking the strings near the neck rather than the bridge. This emphasizes the fundamental frequencies and cuts the upper harmonics.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>Soldiers in the Studio.</strong> The song is about heroin addiction among American soldiers returning from Vietnam. The band met several servicemen on American bases in Europe and was shocked by their stories. The "tired" and slow pace of the song's beginning technically mimics the numbing effect of opiates.</div>
+                    <p><strong>1:35 - Dynamics Explosion (Pre-Loudness War)</strong><br>Notice the violent break. We go from a very low volume to a sonic explosion. During recording, this required clever use of compressors (probably a Universal Audio 1176) to prevent the signal from "clipping" (digital distortion or excessive tape saturation) without losing the impact of the volume change.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>Bill Ward's Improvisation.</strong> The entire faster middle section hadn't been rehearsed. Bill Ward admitted they were just "following the feeling". If you listen closely to the drums, notice slight tempo changes: it's not a mistake, but the band breathing together, a characteristic that today's digital metronome has almost erased.</div>
+                    <p><strong>4:20 - The Slapback Delay Effect on Vocals</strong><br>Towards the end, a light slapback delay (a very fast echo, about 80-120ms) appears on Ozzy's vocals. Note how this gives the voice a sense of mental instability. Technically, it was achieved by sending the vocal signal to a second tape machine and recording the delay between the recording head and the playback head.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>Sonic Scars.</strong> Iommi uses "open" but transposed chord positions in this song, which create dissonances called tritones (the devil's interval). In 1970, using the tritone over such a heavy rhythm section was considered almost avant-garde. The "dirtiness" of the sound is accentuated by Iommi's prosthetics, which prevented him from feeling the pressure on the strings perfectly, leading to micro-detunings that make the song even more disturbing.</div>
+                `
+            },
+            "rat_salad": {
+                it: `
+                    <h3>Rat Salad</h3>
+                    <p><strong>0:00 - Il Riff "Hard-Bop" e l'Attacco del Rullante</strong><br>Ascolta l'attacco. Il brano parte con un riff strumentale che ricalca le strutture del jazz più aggressivo. Nota il suono del rullante di Bill Ward: è molto teso e risponde con una serie di "rimshots" (colpi in cui la bacchetta colpisce contemporaneamente pelle e cerchio di metallo). Questo conferisce quella secchezza metallica che buca il mix, registrato probabilmente con un singolo microfono dinamico (come uno Shure SM57) posizionato molto vicino al bordo superiore.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Omaggio a Gene Krupa.</strong> Bill Ward non ha mai nascosto che questo brano fosse la sua risposta a "Moby Dick" dei Led Zeppelin. Tuttavia, mentre Bonham puntava sulla potenza pura, Ward voleva omaggiare i grandi batteristi jazz come Gene Krupa e Buddy Rich. Il titolo "Rat Salad" era un termine gergale della band per indicare un miscuglio improvvisato di avanzi, proprio come la struttura del pezzo.</div>
+                    <p><strong>0:55 - L'Assolo di Batteria e il Panning Spaziale</strong><br>Qui entriamo nel cuore dell'assolo. Nota come, in fase di mixaggio, l'ingegnere Tom Allom abbia spostato i vari elementi del kit nel campo stereo. Quando Ward colpisce i tom da sinistra a destra, senti il suono muoversi fisicamente nelle orecchie. Tecnicamente, questo è ottenuto attraverso il panning dei microfoni "overhead" (quelli sopra la testa del batterista), che catturano l'immagine tridimensionale dello strumento.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Niente Click, Solo Istinto.</strong> Nota come il tempo del brano fluttui leggermente. Non c'era un metronomo in cuffia: la velocità è dettata esclusivamente dall'adrenalina di Ward. In alcuni punti l'accelerazione è evidente, ma Geezer Butler riesce a "ancorarsi" al piatto ride di Bill per mantenere la coesione ritmica, un esempio perfetto di telepatia musicale tra basso e batteria.</div>
+                    <p><strong>1:45 - Il Rientro della Chitarra e la Saturazione del Banco</strong><br>Quando Iommi rientra con il riff finale, nota come la sua chitarra sembri quasi "esplodere". Questo accade perché il segnale è talmente forte da mandare in saturazione non solo l'amplificatore, ma probabilmente anche il preamplificatore del banco di missaggio. Nota quella leggera distorsione armonica che avvolge anche le frequenze più alte, rendendo il finale sporco e graffiante.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Uno Strumentale Necessario.</strong> Come per Paranoid, anche questo brano serviva a riempire spazio sul disco. All'epoca, i Black Sabbath suonavano set lunghissimi nei club di Amburgo e avevano bisogno di momenti in cui Ozzy potesse riposare la voce. Rat Salad era il momento del "respiro" per il cantante, trasformato poi in un caposaldo tecnico della batteria rock.</div>
+                `,
+                en: `
+                    <h3>Rat Salad</h3>
+                    <p><strong>0:00 - The "Hard-Bop" Riff and Snare Attack</strong><br>Listen to the attack. The track starts with an instrumental riff that traces the structures of aggressive jazz. Notice the sound of Bill Ward's snare drum: it is very tight and responds with a series of "rimshots" (strikes where the stick hits both the skin and the metal rim simultaneously). This gives that metallic dryness that cuts through the mix, likely recorded with a single dynamic microphone (like a Shure SM57) positioned very close to the top edge.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>Tribute to Gene Krupa.</strong> Bill Ward never hid the fact that this track was his answer to Led Zeppelin's "Moby Dick". However, while Bonham aimed for pure power, Ward wanted to pay homage to great jazz drummers like Gene Krupa and Buddy Rich. The title "Rat Salad" was band slang for an improvised mix of leftovers, just like the song's structure.</div>
+                    <p><strong>0:55 - The Drum Solo and Spatial Panning</strong><br>Here we enter the heart of the solo. Notice how, during the mixing phase, engineer Tom Allom panned the various kit elements across the stereo field. When Ward hits the toms from left to right, you physically hear the sound move in your ears. Technically, this is achieved by panning the "overhead" microphones, which capture the instrument's three-dimensional image.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>No Click Track, Just Instinct.</strong> Note how the song's tempo fluctuates slightly. There was no metronome in the headphones: the speed is dictated solely by Ward's adrenaline. In some spots, the acceleration is obvious, but Geezer Butler manages to "anchor" himself to Bill's ride cymbal to maintain rhythmic cohesion, a perfect example of musical telepathy between bass and drums.</div>
+                    <p><strong>1:45 - The Guitar Re-entry and Console Saturation</strong><br>When Iommi comes back in with the final riff, notice how his guitar seems almost to "explode". This happens because the signal is so strong that it saturates not only the amplifier but probably also the mixing console's preamplifier. Note that slight harmonic distortion that wraps even the higher frequencies, making the ending dirty and scratchy.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>A Necessary Instrumental.</strong> Like Paranoid, this song was also needed to fill space on the record. At the time, Black Sabbath played extremely long sets in Hamburg clubs and needed moments where Ozzy could rest his voice. Rat Salad was the singer's "breathing" moment, later transformed into a technical cornerstone of rock drumming.</div>
+                `
+            },
+            "fairies_wear_boots": {
+                it: `
+                    <h3>Fairies Wear Boots</h3>
+                    <p><strong>0:00 - L'Intro in Volume Swell e Delay</strong><br>Ascolta l'inizio lento. Tony Iommi utilizza la manopola del volume della sua Gibson SG per nascondere l'attacco della plettrata (tecnica del volume swell). Nota l'effetto di riverbero a molla (spring reverb) molto profondo che crea una scia quasi psichedelica. Questo serve a creare un contrasto drammatico con il riff granitico che entrerà poco dopo.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>L'Incontro con gli Skinhead.</strong> Il titolo e il testo non parlano di creature mitologiche. Geezer Butler scrisse il testo dopo che la band ebbe una rissa con un gruppo di skinhead a Birmingham. Gli skinhead indossavano i tipici scarponi (boots) e i Sabbath, per deriderli, iniziarono a chiamarli "fairies" (fate/effeminati). Il brano è essenzialmente il racconto allucinato di uno scontro di strada.</div>
+                    <p><strong>1:08 - Swing e "Walking Bass" Distorto</strong><br>Entra il corpo principale del brano. Nota il basso di Geezer Butler: invece di limitarsi a tenere la tonica, esegue una linea "walking" tipica del blues e del jazz, ma con un suono pesantemente distorto. Questo crea un senso di movimento costante che rende il brano molto più ballabile rispetto alla staticità di Iron Man.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Il Segreto dell'Accordatura.</strong> Se provi a suonare sopra questo brano, nota che l'accordatura è leggermente "crescente" (più alta del normale 440Hz). Questo accadeva spesso nelle registrazioni analogiche: il nastro veniva leggermente accelerato durante il missaggio per dare più brillantezza e velocità al pezzo, alterando impercettibilmente l'accordatura originale degli strumenti.</div>
+                    <p><strong>3:15 - Sovraincisioni di Chitarra Solista</strong><br>Nota come durante l'assolo ci siano più chitarre che si intrecciano. Iommi ha registrato diverse tracce sovrapposte (overdubbing). Una traccia esegue la melodia principale al centro, mentre altre due eseguono piccoli ricami armonici spostati ai lati (hard panning). Questo crea una complessità sonora che suggerisce l'uso di un'intera sezione di fiati, ma fatta solo di corde d'acciaio e valvole.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ:</span><strong>Ozzy e la Sincronia.</strong> Ascolta come Ozzy Osbourne segua quasi ossessivamente la linea della chitarra con la voce. È un marchio di fabbrica dei primi Sabbath: Ozzy non cantava "sopra" la musica, ma "dentro" la musica. Tecnicamente, questo raddoppio (voce + chitarra) rinforza le frequenze medie, rendendo le melodie vocali impossibili da dimenticare anche dopo un solo ascolto.</div>
+                `,
+                en: `
+                    <h3>Fairies Wear Boots</h3>
+                    <p><strong>0:00 - The Volume Swell and Delay Intro</strong><br>Listen to the slow beginning. Tony Iommi uses the volume knob on his Gibson SG to hide the pick attack (volume swell technique). Note the very deep spring reverb effect that creates an almost psychedelic trail. This serves to create a dramatic contrast with the granite riff that will enter shortly after.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>The Encounter with Skinheads.</strong> The title and lyrics are not about mythological creatures. Geezer Butler wrote the lyrics after the band got into a fight with a group of skinheads in Birmingham. The skinheads wore typical boots, and Sabbath, to mock them, started calling them "fairies" (effeminate). The song is essentially a hallucinated tale of a street fight.</div>
+                    <p><strong>1:08 - Swing and Distorted "Walking Bass"</strong><br>The main body of the song enters. Note Geezer Butler's bass: instead of just holding the root note, he plays a "walking" line typical of blues and jazz, but with a heavily distorted sound. This creates a sense of constant movement that makes the song much more danceable compared to the static nature of Iron Man.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>The Tuning Secret.</strong> If you try to play along to this song, notice that the tuning is slightly "sharp" (higher than the standard 440Hz). This often happened in analog recordings: the tape was slightly sped up during mixing to give the track more brightness and speed, imperceptibly altering the original tuning of the instruments.</div>
+                    <p><strong>3:15 - Lead Guitar Overdubs</strong><br>Note how during the solo there are multiple guitars intertwining. Iommi recorded several superimposed tracks (overdubbing). One track plays the main melody in the center, while two others play small harmonic embellishments panned to the sides (hard panning). This creates a sonic complexity that suggests the use of a full horn section, but made entirely of steel strings and vacuum tubes.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA:</span><strong>Ozzy and Synchrony.</strong> Listen to how Ozzy Osbourne almost obsessively follows the guitar line with his voice. It's a hallmark of early Sabbath: Ozzy didn't sing "over" the music, but "inside" the music. Technically, this doubling (vocals + guitar) reinforces the mid frequencies, making the vocal melodies impossible to forget even after a single listen.</div>
+                `
+            }
+        };
+
+        let mobileGalleryInterval;
+        let currentImgIndex = 0;
+
+        function startMobileGallery() {
+            const images = document.querySelectorAll('.band-gallery .flip-card');
+            if (images.length === 0) return;
+
+            function updateGallery() {
+                if (window.innerWidth <= 900) {
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                    images[currentImgIndex].classList.add('mobile-active');
+                    currentImgIndex = (currentImgIndex + 1) % images.length;
+                }
+            }
+
+            if (window.innerWidth <= 900) {
+                updateGallery();
+                if (!mobileGalleryInterval) {
+                    mobileGalleryInterval = setInterval(updateGallery, 5000);
+                }
+            }
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth <= 900) {
+                    if (!mobileGalleryInterval) {
+                        updateGallery();
+                        mobileGalleryInterval = setInterval(updateGallery, 5000);
+                    }
+                } else {
+                    clearInterval(mobileGalleryInterval);
+                    mobileGalleryInterval = null;
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderPlaylist();
+            startMobileGallery();
+            
+            const trackList = document.getElementById('tracklist');
+            if(trackList) trackList.scrollTop = 0;
+        });
+
+        // GESTIONE CAMBIO LINGUA GLOBALE
+        function setGlobalLang(lang) {
+            document.documentElement.lang = lang;
+            
+            document.querySelectorAll('.global-lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-lang-' + lang).classList.add('active');
+
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentId = ytPlayer ? ytPlayer.getAttribute('data-current-id') : null;
+            
+            if (currentId) {
+                const paraphraseContentHTML = generateParaphraseHTML(currentId);
+                document.getElementById('desktop-lyrics-view').innerHTML = paraphraseContentHTML;
+                document.getElementById('mobile-lyrics-content').innerHTML = paraphraseContentHTML;
+                
+                const guideContent = document.getElementById('guide-content');
+                if (guideData[currentId] && guideData[currentId][lang]) {
+                    guideContent.innerHTML = guideData[currentId][lang];
+                }
+            }
+        }
+
+        // Funzione per generare il blocco HTML della Parafrasi
+        function generateParaphraseHTML(id) {
+            const data = paraphraseData[id] || { en: "Description not available.", it: "Descrizione non disponibile." };
+            const currentLang = document.documentElement.lang;
+
+            return `
+                <div class="lyrics-wrapper" style="padding: 10px 15px;">
+                    <div class="lyrics-content-area">
+                        <div class="lyrics-col eng active" style="width: 100%; white-space: normal;">
+                            <h4 style="margin: 0 0 2px 0; padding: 0; line-height: 1.2;">
+                                <span class="lang-it">Di cosa parla la canzone?</span>
+                                <span class="lang-en">What is this song about?</span>
+                            </h4><div style="white-space: pre-line; font-style: italic; color: #555; margin: 0; padding: 0; line-height: 1.5;">${data[currentLang]}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPlaylist() {
+            const container = document.getElementById('tracklist');
+            let html = '';
+
+            playlist.forEach((track, index) => {
+                html += `
+                    <div class="track-row" id="track-${track.id}" onclick="playTrack('${track.id}', '${track.ytId}', '${track.title.replace(/'/g, "\\'")}', this)">
+                        <div class="track-num">
+                            <span>${index + 1}</span>
+                            <div class="playing-icon">
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                            </div>
+                        </div>
+                        <div class="track-info">
+                            <div class="track-title">${track.title}</div>
+                            <div class="track-artist">Black Sabbath</div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function playTrack(id, ytId, title, rowElement) {
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentPlayingId = ytPlayer.getAttribute('data-current-id');
+            const currentLang = document.documentElement.lang;
+
+            if (currentPlayingId !== id) {
+                ytPlayer.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`;
+                ytPlayer.setAttribute('data-current-id', id);
+            }
+
+            const rows = document.querySelectorAll('.track-row');
+            rows.forEach(r => r.classList.remove('active'));
+            if(rowElement) rowElement.classList.add('active');
+
+            // Parafrasi
+            const paraphraseContentHTML = generateParaphraseHTML(id);
+            document.getElementById('desktop-lyrics-view').innerHTML = paraphraseContentHTML;
+            document.getElementById('mobile-lyrics-content').innerHTML = paraphraseContentHTML;
+            document.getElementById('tracklist-wrapper').classList.add('lyrics-active');
+            document.getElementById('tracklist').scrollTop = 0;
+
+            // Guida
+            const guideContent = document.getElementById('guide-content');
+            if (guideData[id] && guideData[id][currentLang]) {
+                guideContent.innerHTML = guideData[id][currentLang];
+                const gBox = document.querySelector('.guide-box');
+                if(gBox) gBox.scrollTop = 0;
+            } else {
+                guideContent.innerHTML = currentLang === 'it' ? "<p>Guida all'ascolto non disponibile.</p>" : "<p>Listening guide not available.</p>";
+            }
+
+            const guidePanel = document.getElementById('guide-panel');
+            if(guidePanel && !guidePanel.classList.contains('open')) {
+                toggleGuide();
+            }
+        }
+
+        function resetTracklist() {
+            document.getElementById('tracklist-wrapper').classList.remove('lyrics-active');
+        }
+
+        // --- FUNZIONI ACCORDION MASTER ---
+        function toggleLesson() { 
+            const content = document.getElementById('main-content');
+            const videoLayer = document.getElementById('video-layer');
+            const btn = document.getElementById('btn-inizia');
+            const btnTxtIt = document.getElementById('btn-txt-it');
+            const btnTxtEn = document.getElementById('btn-txt-en');
+            const icon = btn.querySelector('.icon-plus');
+            
+            const isOpening = !content.classList.contains('active');
+            
+            if (isOpening) {
+                content.classList.add('active'); 
+                btn.classList.add('active'); 
+                btnTxtIt.textContent = "Chiudi Esperienza"; 
+                btnTxtEn.textContent = "Close Experience";
+                icon.textContent = "×"; 
+                videoLayer.classList.add('video-hidden');
+            } else {
+                content.classList.remove('active'); 
+                btn.classList.remove('active'); 
+                btnTxtIt.textContent = "Inizia Esperienza"; 
+                btnTxtEn.textContent = "Start Experience"; 
+                icon.textContent = "→"; 
+                videoLayer.classList.remove('video-hidden');
+                
+                const ytPlayer = document.getElementById('youtube-player');
+                if(ytPlayer) ytPlayer.src = "about:blank";
+            }
+        }
+
+        function toggleLyricsAccordion() {
+            const panel = document.getElementById('lyrics-panel');
+            const btn = document.getElementById('lyrics-btn');
+            if (panel.classList.contains('open')) { 
+                panel.classList.remove('open'); btn.classList.remove('active'); 
+            } else { 
+                panel.classList.add('open'); btn.classList.add('active'); 
+            }
+        }
+
+        function toggleGuide() {
+            const panel = document.getElementById('guide-panel');
+            const btn = document.getElementById('guide-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleHistory() {
+            const panel = document.getElementById('history-panel');
+            const btn = document.getElementById('history-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleDisclaimer() {
+            const panel = document.getElementById('disclaimer-panel');
+            const btn = document.getElementById('disclaimer-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleMobileTracks() {
+            const trackList = document.getElementById('tracklist');
+            const wrapper = document.getElementById('tracklist-wrapper');
+            const trigger = document.querySelector('.mobile-track-trigger');
+            if (trackList.classList.contains('mobile-open')) {
+                trackList.classList.remove('mobile-open'); wrapper.classList.remove('opened'); wrapper.classList.add('closed'); trigger.classList.remove('active');
+            } else {
+                trackList.classList.add('mobile-open'); wrapper.classList.remove('closed'); wrapper.classList.add('opened'); trigger.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

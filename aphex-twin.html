@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aphex Twin | Audio Repertoire</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- VARIABILI & RESET --- */
+        :root {
+            --bg-color: #f0f0f2;
+            --paper-color: #fdfbf7;
+            --ink-color: #1a1a1a;
+            --accent-color: #375a7f;
+            --pop-yellow: #ffee00;
+            --font-title: 'Abril Fatface', cursive;
+            --font-body: 'Inter', sans-serif;
+            --hover-row: rgba(55, 90, 127, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: var(--font-body);
+            color: var(--ink-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px;
+            width: 100%;
+            overflow-x: hidden; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- MULTILINGUA CSS LOGIC --- */
+        html[lang="it"] .lang-en { display: none !important; }
+        html[lang="en"] .lang-it { display: none !important; }
+
+        /* --- BACKGROUND --- */
+        .video-background-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden;
+            background: #e0e0e5; 
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .video-foreground {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; transition: opacity 0.8s ease; opacity: 1;
+        }
+
+        .video-foreground img.bg-image {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.1; 
+            filter: grayscale(100%) sepia(1) hue-rotate(190deg) contrast(1.2);
+            mix-blend-mode: multiply;
+        }
+
+        .video-hidden { opacity: 0; }
+
+        /* --- HEADER --- */
+        header { text-align: center; margin-top: 3rem; margin-bottom: 1rem; padding: 0 1rem; position: relative; z-index: 4; }
+        
+        /* Modifica per Logo Testuale Aphex Twin */
+        .main-title-text {
+            font-family: var(--font-title);
+            font-size: 4rem;
+            color: var(--ink-color);
+            letter-spacing: 2px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .subtitle-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .subtitle {
+            font-family: var(--font-body); font-size: 1.5rem; color: var(--accent-color); font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 4px;
+        }
+
+        .global-lang-switch {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .global-lang-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 4px;
+            color: #888;
+            transition: all 0.3s;
+        }
+        
+        .global-lang-btn.active {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        /* --- CONTENITORE PRINCIPALE --- */
+        .content-card {
+            background: var(--paper-color); padding: 3rem; margin: 0 auto;
+            width: 90%; max-width: 1200px; position: relative;
+            border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); z-index: 4;
+            margin-bottom: 2rem; margin-top: 2rem;
+        }
+        @media (max-width: 600px) { 
+            .content-card { padding: 1.5rem; width: 95%; margin-top: 1rem; } 
+            .main-title-text { font-size: 2.5rem; }
+            .subtitle { font-size: 1.2rem; letter-spacing: 2px; }
+            .global-lang-btn { padding: 5px 10px; font-size: 0.8rem; }
+        }
+
+        /* --- ACCORDION GENERALE --- */
+        .accordion-item { margin-bottom: 1rem; border-bottom: none; }
+        
+        .master-header {
+            background: transparent; border: 2px solid var(--accent-color); border-radius: 8px;
+            padding: 15px 20px; justify-content: center; font-size: 1.5rem; 
+            color: var(--accent-color); width: 100%; margin-bottom: 1rem;
+            cursor: pointer; display: flex; align-items: center; font-family: var(--font-title);
+            transition: all 0.3s ease;
+        }
+        .master-header:hover { background: rgba(55, 90, 127, 0.1); }
+        .master-header .icon-plus { margin-left: 15px; font-family: var(--font-body); font-weight: 300; transition: transform 0.3s; }
+
+        .accordion-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, opacity 0.5s;
+            padding: 0; opacity: 0;
+        }
+        .accordion-content.active { max-height: 20000px; opacity: 1; padding-top: 2rem; }
+        .master-header.active .icon-plus { transform: rotate(90deg); }
+
+        /* --- LAYOUT PLAYER --- */
+        .playlist-layout {
+            display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; align-items: start; margin-bottom: 2rem;
+        }
+        @media (max-width: 900px) { .playlist-layout { grid-template-columns: 1fr; } }
+
+        /* --- AUDIO PLAYER CONTAINER --- */
+        .player-wrapper {
+            position: sticky; top: 20px; background: #fff; border-radius: 12px;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 10; border: 1px solid #eee;
+        }
+
+        .youtube-container { 
+            position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #000; 
+        }
+        .youtube-container iframe { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; 
+        }
+
+        /* --- TRACKLIST E MESSAGGI --- */
+        .tracklist-column { display: flex; flex-direction: column; }
+
+        .scroll-disclaimer {
+            font-size: 0.85rem; color: #665500; margin-bottom: 12px; font-style: italic; text-align: center; 
+            background-color: rgba(255, 238, 0, 0.2); border: 2px dashed #e6c200; padding: 10px; border-radius: 8px; width: 100%;
+        }
+        .msg-desktop { display: block; }
+        .msg-mobile { display: none; }
+        
+        .mobile-track-trigger {
+            display: none; width: 100%; background: #fff; border: 2px dashed #ddd; border-radius: 8px;
+            padding: 12px 20px; font-family: var(--font-title); font-size: 1.2rem; color: var(--accent-color);
+            justify-content: space-between; align-items: center; cursor: pointer; margin-top: 10px; margin-bottom: 10px; transition: all 0.3s;
+        }
+        .mobile-track-trigger:hover { background: #fdfdfd; border-color: var(--accent-color); }
+        .mobile-track-trigger.active { background: #f0f4f8; border-style: solid; border-color: var(--accent-color); }
+        .trigger-arrow { transition: transform 0.3s; font-size: 1rem; }
+        .mobile-track-trigger.active .trigger-arrow { transform: rotate(180deg); }
+
+        .tracklist-container { 
+            width: 100%; max-height: 500px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #ccc #f0f0f2;
+            padding-right: 5px; transition: max-height 0.5s ease-out, opacity 0.5s;
+        }
+        .tracklist-container::-webkit-scrollbar { width: 6px; }
+        .tracklist-container::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+
+        .track-row {
+            display: grid; grid-template-columns: 40px 1fr 40px; padding: 12px 10px; border-bottom: 1px solid rgba(0,0,0,0.05);
+            cursor: pointer; transition: background 0.2s, padding-left 0.2s; border-radius: 6px; align-items: center;
+        }
+        .track-row:hover { background-color: var(--hover-row); padding-left: 15px; }
+        .track-row.active { background-color: var(--hover-row); border-left: 4px solid var(--accent-color); }
+
+        .track-num { font-size: 0.9rem; color: #888; font-weight: 700; }
+        .track-row.active .track-num { display: none; }
+        .track-row.active .playing-icon { display: inline-block; }
+        
+        .playing-icon { display: none; width: 14px; height: 14px; position: relative; }
+        .bar { background: var(--accent-color); bottom: 0; position: absolute; width: 3px; animation: sound 0ms -800ms linear infinite alternate; }
+        .bar:nth-child(1) { left: 0px; height: 10px; animation-duration: 474ms; }
+        .bar:nth-child(2) { left: 5px; height: 6px; animation-duration: 433ms; }
+        .bar:nth-child(3) { left: 10px; height: 12px; animation-duration: 407ms; }
+        @keyframes sound { 0% { opacity: .35; height: 3px; } 100% { opacity: 1; height: 14px; } }
+
+        .track-info { display: flex; flex-direction: column; }
+        .track-title { font-weight: 700; font-size: 1rem; color: var(--ink-color); }
+        .track-row.active .track-title { color: var(--accent-color); }
+        .track-artist { font-size: 0.85rem; color: #666; }
+
+        /* --- ACCORDIONS COMUNI (Guida, Storia, Mobile Lyrics) --- */
+        .guide-accordion-wrapper { margin-top: 1rem; border-top: 1px solid #eee; }
+        .guide-trigger {
+            background: #fff; border: 2px dashed #ddd; border-radius: 8px; width: 100%; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s; margin-top: 1rem;
+        }
+        .guide-trigger:hover { border-color: var(--accent-color); background: #fdfdfd; }
+        .guide-trigger.active { border-color: var(--accent-color); background: #f0f4f8; border-style: solid; }
+        .guide-trigger span { font-family: var(--font-title); font-size: 1.4rem; color: var(--accent-color); }
+        .guide-arrow { font-size: 1.2rem; transition: transform 0.3s; color: var(--accent-color); }
+        .guide-trigger.active .guide-arrow { transform: rotate(180deg); }
+
+        .guide-panel { max-height: 0; overflow: hidden; transition: max-height 0.6s ease-out, opacity 0.5s; opacity: 0; background: #fff; border-radius: 0 0 8px 8px; }
+        .guide-panel.open { max-height: 80000px; opacity: 1; padding: 20px 0; }
+
+        .guide-grid { display: grid; grid-template-columns: 2fr 1.5fr; gap: 2rem; align-items: start; }
+        .guide-box { background: #fff; padding: 1rem 0; max-height: 600px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--accent-color) #f0f0f2; padding-right: 15px; }
+        .guide-box::-webkit-scrollbar { width: 8px; }
+        .guide-box::-webkit-scrollbar-thumb { background-color: var(--accent-color); border-radius: 10px; }
+        
+        .guide-content p { margin-bottom: 1rem; font-size: 1rem; color: #333; }
+        .guide-content strong { color: var(--accent-color); font-weight: 900; }
+
+        .curiosity-box { background: #fffcf0; border-left: 4px solid var(--pop-yellow); padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0; font-size: 0.95rem; font-style: italic; color: #554; }
+        .curiosity-label { font-weight: bold; font-style: normal; color: #d4a000; text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 5px; }
+
+        /* --- FLIP CARDS CHIRURGICHE --- */
+        .flip-card {
+            perspective: 1000px;
+            cursor: pointer;
+            width: 100%;
+            display: block;
+            margin-bottom: 15px;
+        }
+        .wiki-figure .flip-card { margin-bottom: 0; } /* Reset dentro al testo */
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-card-front, .flip-card-back {
+            width: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        
+        /* Il front detta l'altezza del blocco in modo naturale */
+        .flip-card-front {
+            position: relative;
+            height: auto;
+            z-index: 2;
+        }
+        
+        /* Il back si sovrappone esattamente e si adatta all'altezza */
+        .flip-card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: var(--accent-color);
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .flip-card-back strong { color: var(--pop-yellow); font-family: var(--font-title); font-size: 1.1rem; margin-bottom: 5px; line-height: 1.2; }
+        .flip-card-back small { font-size: 0.85rem; opacity: 0.9; }
+
+        /* Applica i bordi arrotondati alle facce, l'immagine li erediterà */
+        .flip-card-front img, .flip-card-back { border-radius: inherit; }
+        
+        .band-gallery .flip-card-front, .band-gallery .flip-card-back {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .wiki-figure .flip-card-front, .wiki-figure .flip-card-back {
+            border-radius: 4px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #ccc;
+        }
+        .wiki-figure .flip-card-back { border: none; }
+
+        /* Immagini base */
+        .gallery-img, .wiki-img { display: block; width: 100%; height: auto; object-fit: cover; }
+        .wiki-img { filter: sepia(0.1) contrast(1.05); transition: all 0.3s; border: none; box-shadow: none; border-radius: 0; }
+        .gallery-img { border: none; box-shadow: none; border-radius: 0; }
+        .flip-card-front:hover .wiki-img { filter: none; }
+
+        /* --- STILE GALLERIA IMMAGINI --- */
+        .band-gallery { display: flex; flex-direction: column; gap: 20px; max-height: 650px; overflow-y: auto; padding-right: 10px; }
+        .band-gallery::-webkit-scrollbar { width: 4px; }
+        .band-gallery::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
+        .band-gallery .flip-card { height: auto; margin-bottom: 0; }
+
+        /* --- STILE WIKI / STORIA --- */
+        .wiki-content { font-family: 'Inter', sans-serif; color: #333; line-height: 1.7; padding: 0 10px; text-align: justify; }
+        .wiki-title { font-family: var(--font-title); color: var(--accent-color); font-size: 1.4rem; margin-top: 10px; margin-bottom: 5px; letter-spacing: 1px; }
+        .wiki-subtitle { font-weight: 900; color: #d4a000; text-transform: uppercase; font-size: 0.85rem; margin-top: 40px; margin-bottom: 10px; clear: both; }
+        .wiki-divider { border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); margin: 30px 0; clear: both; }
+        .wiki-figure { margin: 15px 0; width: 100%; }
+        .wiki-figure figcaption { font-size: 0.75rem; color: #666; font-style: italic; text-align: center; margin-top: 5px; display: block; }
+        .wiki-gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 30px 0 40px 0; }
+        .wiki-gallery-grid .wiki-figure { height: 100%; margin: 0; }
+        .wiki-gallery-grid .wiki-img { height: 100%; object-fit: cover; }
+
+        .btn-close-bottom { width: 100%; padding: 12px; margin-top: 15px; background: #fff; border: 1px solid #ddd; color: var(--accent-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; font-weight: 700; transition: background 0.3s; text-align: center; }
+        .btn-close-bottom:hover { background: #f0f4f8; border-color: var(--accent-color); }
+        .track-close-desktop-hidden { display: none; }
+
+        @media (min-width: 901px) {
+            .wiki-figure.right { float: right; width: 40%; margin-left: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.left { float: left; width: 40%; margin-right: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.full { clear: both; width: 100%; margin: 30px 0; }
+            .wiki-chapter::after { content: ""; display: table; clear: both; }
+        }
+
+        @media (max-width: 900px) {
+            .msg-desktop { display: none !important; }
+            .msg-mobile { display: block !important; text-align: center; }
+            .guide-grid { grid-template-columns: 1fr; }
+            .band-gallery { display: block; order: -1; max-height: none; overflow: hidden; padding-right: 0; margin-bottom: 10px; }
+            
+            /* Gestione Flip Card Slider su mobile */
+            .band-gallery .flip-card { display: none; animation: fadeInSlide 0.5s ease-in-out; margin-bottom: 0; }
+            .band-gallery .flip-card.mobile-active { display: block; }
+            
+            @keyframes fadeInSlide { from { opacity: 0; } to { opacity: 1; } }
+            .wiki-gallery-grid { grid-template-columns: 1fr; gap: 20px; }
+            .mobile-track-trigger { display: flex; } 
+            .tracklist-wrapper.opened .track-close-desktop-hidden { display: block; }
+            .tracklist-container { max-height: 0; overflow: hidden; opacity: 0; }
+            .tracklist-container.mobile-open { max-height: 5000px; overflow-y: visible; opacity: 1; margin-bottom: 1rem; }
+            .tracklist-wrapper.closed .scroll-disclaimer { display: none; }
+            .tracklist-wrapper.opened .scroll-disclaimer { display: block; }
+            .guide-box { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-background-wrapper" id="bg-wrapper">
+        <div class="video-foreground" id="video-layer">
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774294387/sfondo_gnguxy.jpg" alt="Aphex Twin Background" class="bg-image">
+        </div>
+        <div class="video-filter-overlay"></div>
+    </div>
+
+    <header>
+        <h1>
+            <span class="main-title-text">Aphex Twin</span>
+        </h1>
+        <div class="subtitle-wrapper">
+            <div class="subtitle">
+                <span class="lang-it">REPERTORIO </span>
+                <span class="lang-en">REPERTOIRE</span>
+            </div>
+            <div class="global-lang-switch">
+                <button id="btn-lang-it" class="global-lang-btn active" onclick="setGlobalLang('it')">ITA</button>
+                <button id="btn-lang-en" class="global-lang-btn" onclick="setGlobalLang('en')">ENG</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-card">
+        
+        <div class="accordion-item">
+            <button class="master-header" id="btn-inizia" onclick="toggleLesson()">
+                <span id="btn-text">
+                    <span class="lang-it" id="btn-txt-it">Inizia Esperienza</span>
+                    <span class="lang-en" id="btn-txt-en">Start Experience</span>
+                </span> 
+                <span class="icon-plus">→</span>
+            </button>
+            
+            <div class="accordion-content" id="main-content">
+                
+                <div class="playlist-layout">
+                    <div class="player-wrapper" id="player-wrapper-ui">
+                        <div class="youtube-container">
+                            <iframe id="youtube-player" src="about:blank" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+                    </div>
+
+                    <div class="tracklist-column tracklist-wrapper closed" id="tracklist-wrapper">
+                        
+                        <button class="mobile-track-trigger" onclick="toggleMobileTracks()">
+                            <span>
+                                <span class="lang-it">Brani</span>
+                                <span class="lang-en">Tracks</span>
+                            </span>
+                            <span class="trigger-arrow">▼</span>
+                        </button>
+
+                        <div class="scroll-disclaimer msg-desktop">
+                            <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere l'intera lista di brani</span>
+                            <span class="lang-en">Use your keyboard or mouse wheel to scroll through the full tracklist</span>
+                        </div>
+                        <div class="scroll-disclaimer msg-mobile">
+                            <span class="lang-it">Clicca e scorri per vedere l'intera lista di brani</span>
+                            <span class="lang-en">Tap and scroll to see the full tracklist</span>
+                        </div>
+
+                        <div class="tracklist-container" id="tracklist">
+                            </div>
+                        
+                        <button class="btn-close-bottom track-close-desktop-hidden" onclick="toggleMobileTracks()">
+                            <span class="lang-it">↑ Chiudi Lista Brani</span>
+                            <span class="lang-en">↑ Close Tracklist</span>
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper">
+                    <button class="guide-trigger" id="guide-btn" onclick="toggleGuide()">
+                        <span>
+                            <span class="lang-it">Guida all'Ascolto & Curiosità</span>
+                            <span class="lang-en">Listening Guide & Trivia</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="guide-panel">
+                        <div class="guide-grid">
+                            <div>
+                                <div class="guide-box">
+                                    <div id="guide-content" class="guide-content">
+                                        <p style="text-align:center; color:#888; margin-top:50px;">
+                                            <span class="lang-it">Seleziona un brano dalla playlist per visualizzare qui i dettagli.</span>
+                                            <span class="lang-en">Select a track from the playlist to view details here.</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="scroll-disclaimer msg-desktop" style="margin-top: 10px;">
+                                    <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere la guida</span>
+                                    <span class="lang-en">Use your keyboard or mouse wheel to scroll through the guide</span>
+                                </div>
+                            </div>
+
+                            <div class="band-gallery">
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774294387/1_tugjhr.jpg" alt="Aphex Twin Gallery"></div>
+                                        <div class="flip-card-back"><strong>Aphex Twin</strong><small>Source: bing.net</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774294383/2_tjlcso.jpg" alt="Aphex Twin Field Day"></div>
+                                        <div class="flip-card-back"><strong>Live Field Day</strong><small>Source: consequence.net</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774294382/3_megkil.avif" alt="Aphex Twin Compilation"></div>
+                                        <div class="flip-card-back"><strong>Merch Desk</strong><small>Source: hypebeast.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774294381/4_jhwiaa.jpg" alt="Aphex Twin Image"></div>
+                                        <div class="flip-card-back"><strong>Aphex Twin</strong><small>Source: bing.net</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774294375/5_f4ldgf.jpg" alt="Aphex Twin Rolling Stone"></div>
+                                        <div class="flip-card-back"><strong>Aphex Twin</strong><small>Source: rollingstone.co.uk</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774294374/6_nqk9gv.jpg" alt="Aphex Twin RA"></div>
+                                        <div class="flip-card-back"><strong>Aphex Twin</strong><small>Source: ra.co</small></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleGuide()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Guida</span>
+                            <span class="lang-en">↑ Close Guide</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="history-btn" onclick="toggleHistory()">
+                        <span>
+                            <span class="lang-it">Contesto Storico & Artistico</span>
+                            <span class="lang-en">Historical & Artistic Context</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="history-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Le Origini e la Formazione (1971–1991)</span>
+                                        <span class="lang-en">Origins and Formation (1971–1991)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774294375/7_h3weuq.jpg" alt="Cornwall 1970s" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Cornwall negli anni '70</span><span class="lang-en">Cornwall in the '70s</span></strong>
+                                                    <small>Source: bygonely.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Cornwall negli anni '70</span>
+                                            <span class="lang-en">Cornwall in the '70s</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Richard David James nasce il 18 agosto 1971 a Limerick, in Irlanda, da genitori gallesi. Cresce tuttavia a Lanner, in Cornovaglia, dove fin dalla più tenera età manifesta un rapporto ossessivo con il suono e la tecnologia. A soli 12 anni comincia a produrre musica, anticipando con straordinaria precocità quella che diventerà una carriera senza precedenti nella storia della musica elettronica contemporanea.</p>
+                                    <p class="lang-en">Richard David James was born on August 18, 1971, in Limerick, Ireland, to Welsh parents. However, he grew up in Lanner, Cornwall, where from an early age he manifested an obsessive relationship with sound and technology. At just 12 years old, he began producing music, anticipating with extraordinary precocity what would become an unprecedented career in the history of contemporary electronic music.</p>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774294374/8_sbzn7q.jpg" alt="Aphex Twin" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Richard David James</span><span class="lang-en">Richard David James</span></strong>
+                                                    <small>Source: facts.net</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Aphex Twin, pseudonimo di Richard David James</span>
+                                            <span class="lang-en">Aphex Twin, pseudonym of Richard David James</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Negli anni dell'adolescenza lavora come disc jockey in diversi locali della Cornovaglia, affinando sul campo una sensibilità sonora che non troverà mai un genere abbastanza grande da contenerla. La scelta del nome d'arte — Aphex Twin — è già di per sé rivelatrice di una personalità complessa e stratificata. Il termine Aphex deriva dalla Aphex Systems Limited, azienda produttrice di processori di segnali audio, a sua volta composto dalla fusione di "A" e "FX" (Analogue Effects). La parola Twin, in inglese "gemello", è invece un omaggio al fratello Richard, deceduto alla nascita: un gesto di memoria privata celato sotto le spoglie di un nome tecnico, quasi a suggerire fin dall'inizio la coesistenza in James di freddezza ingegneristica e profondità emotiva.</p>
+                                    <p class="lang-en">During his teenage years, he worked as a disc jockey in several clubs in Cornwall, refining in the field a sonic sensibility that would never find a genre large enough to contain it. The choice of his stage name — Aphex Twin — is in itself revealing of a complex and layered personality. The term Aphex derives from Aphex Systems Limited, an audio signal processor manufacturer, which in turn is composed of the fusion of "A" and "FX" (Analogue Effects). The word Twin is instead a tribute to his brother Richard, who died at birth: a gesture of private memory hidden in the guise of a technical name, almost suggesting from the start the coexistence in James of engineering coldness and emotional depth.</p>
+
+                                    <p class="lang-it">Nel 1991, James fonda insieme a Grant Wilson-Claridge l'etichetta indipendente Rephlex, con la dichiarata missione di promuovere l'acid house, genere che James descrive come «molto amato e spesso frainteso, allo stesso tempo dimenticato da alcuni e sconosciuto ad altri, soprattutto in Gran Bretagna». È il primo atto di una strategia che farà di James non solo un artista, ma un vero e proprio architetto di ecosistemi sonori autonomi.</p>
+                                    <p class="lang-en">In 1991, James founded the independent label Rephlex alongside Grant Wilson-Claridge, with the declared mission of promoting acid house, a genre James described as "much loved and often misunderstood, simultaneously forgotten by some and unknown by others, especially in Britain." It was the first act of a strategy that would make James not only an artist but a true architect of autonomous sonic ecosystems.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">La Costruzione di un Universo Parallelo (1991–1994)</span>
+                                        <span class="lang-en">The Construction of a Parallel Universe (1991–1994)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774294374/9_cjapad.jpg" alt="Rave 90s" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Scena Rave</span><span class="lang-en">Rave Scene</span></strong>
+                                                    <small>Source: happymag.tv</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">La scena rave inglese degli anni '90</span>
+                                            <span class="lang-en">The English rave scene of the 90s</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Tra il 1991 e il 1993, James pubblica sotto una molteplicità di pseudonimi con una prolificità che rasenta il frenetico. Come AFX dà alle stampe i tre EP della serie Analogue Bubblebath; come Bradley Strider pubblica un LP e un singolo; come Caustic Window una serie di EP in vinile. Come Polygon Window esplora invece un ibrido tra Chicago house e Detroit techno. Ogni alias corrisponde a un territorio sonoro distinto, a una maschera differente indossata con uguale padronanza.</p>
+                                    <p class="lang-en">Between 1991 and 1993, James released music under a multitude of pseudonyms with a prolificacy that bordered on the frenetic. As AFX, he pressed the three EPs of the Analogue Bubblebath series; as Bradley Strider, he released an LP and a single; as Caustic Window, a series of vinyl EPs. As Polygon Window, he explored a hybrid between Chicago house and Detroit techno. Each alias corresponded to a distinct sonic territory, a different mask worn with equal mastery.</p>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774294373/10_n3u1vl.jpg" alt="Album Cover" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Copertina Album</span><span class="lang-en">Album Cover</span></strong>
+                                                    <small>Source: mzstatic.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">La copertina dell'album d'esordio</span>
+                                            <span class="lang-en">The cover of his debut album</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Il 1992 segna però il momento fondativo dell'intera carriera. Sotto il nome Aphex Twin esce Selected Ambient Works 85–92, un album che raccoglie materiale prodotto negli anni precedenti e che viene immediatamente riconosciuto come la pietra miliare dell'ambient techno. Il titolo è già una dichiarazione programmatica: James ha cominciato a registrare musica a 14 anni, e ciò che presenta al mondo non è un esordio, ma una summa di un percorso già maturo. Il disco si distingue per l'uso di ritmi rarefatti, linee melodiche sintetiche di rara bellezza e un'atmosfera sospesa tra il meccanico e l'onirico.</p>
+                                    <p class="lang-en">1992, however, marked the foundational moment of his entire career. Under the name Aphex Twin, he released Selected Ambient Works 85–92, an album that collected material produced in the preceding years and was immediately recognized as a milestone of ambient techno. The title was already a programmatic statement: James had begun recording music at 14, and what he presented to the world was not a debut, but a summary of an already mature path. The record distinguished itself with its use of rarefied rhythms, synthetic melodic lines of rare beauty, and an atmosphere suspended between the mechanical and the dreamlike.</p>
+
+                                    <p class="lang-it">Nel frattempo, James si trasferisce a Londra per frequentare un corso di elettronica al politecnico di Kingston, ma abbandonerà presto gli studi: il mondo accademico si rivela troppo lento rispetto alla velocità del suo pensiero creativo. Nel 1994 arriva Selected Ambient Works Volume II, disco radicalmente diverso dal predecessore: le sonorità si fanno ancora più eteree, quasi incorporee, prive di struttura ritmica convenzionale. La rivista Pitchfork lo classificherà come il secondo miglior album ambient mai realizzato, dopo Music for Airports di Brian Eno — un riferimento che colloca James in una genealogia nobilissima.</p>
+                                    <p class="lang-en">Meanwhile, James moved to London to attend an electronics course at Kingston Polytechnic, but he soon abandoned his studies: the academic world proved too slow compared to the speed of his creative thought. In 1994 came Selected Ambient Works Volume II, a radically different record from its predecessor: the sounds became even more ethereal, almost incorporeal, devoid of conventional rhythmic structure. Pitchfork magazine would classify it as the second best ambient album ever made, after Brian Eno's Music for Airports — a reference that places James in a highly noble genealogy.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">La Consacrazione e la Provocazione (1995–1999)</span>
+                                        <span class="lang-en">Consecration and Provocation (1995–1999)</span>
+                                    </h3>
+
+                                    <p class="lang-it">La metà degli anni Novanta segna il periodo di maggiore visibilità pubblica di un artista che, paradossalmente, tutto fa per restare nell'ombra. Nel 1995 esce ...I Care Because You Do, album in cui James introduce per la prima volta campionamenti di archi, aprendo una dimensione orchestrale che caratterizzerà buona parte della sua produzione successiva. Il 1996 è l'anno della svolta mediatica. Richard D. James Album porta il suo sound verso territori drum and bass, jungle e techno, con una velocità e una precisione ritmica che lasciano attonita la critica.</p>
+                                    <p class="lang-en">The mid-1990s marked the period of greatest public visibility for an artist who, paradoxically, did everything to remain in the shadows. In 1995 he released ...I Care Because You Do, an album where James first introduced string samples, opening an orchestral dimension that would characterize much of his subsequent production. 1996 was the year of his media breakthrough. The Richard D. James Album pushed his sound toward drum and bass, jungle, and techno territories, with a rhythmic speed and precision that left critics stunned.</p>
+
+                                    <p class="lang-it">Ma è soprattutto attraverso i singoli — e i loro videoclip — che Aphex Twin conquista una notorietà trasversale. I video di Come to Daddy e Windowlicker, entrambi diretti dal regista Chris Cunningham, diventano fenomeni culturali autonomi: perturbanti, grotteschi, onirici, vengono trasmessi su MTV e finiscono in copertina sulle principali riviste musicali, tra cui NME. Sono opere capaci di disturbare e affascinare simultaneamente, perfetto riflesso visivo di una musica che non chiede il permesso per esistere.</p>
+                                    <p class="lang-en">But it was primarily through his singles — and their music videos — that Aphex Twin conquered a transversal notoriety. The videos for Come to Daddy and Windowlicker, both directed by Chris Cunningham, became autonomous cultural phenomena: disturbing, grotesque, dreamlike, they were broadcast on MTV and ended up on the covers of major music magazines, including NME. They are works capable of simultaneously disturbing and fascinating, a perfect visual reflection of music that doesn't ask for permission to exist.</p>
+
+                                    <p class="lang-it">Nello stesso periodo, James anticipa con anni di anticipo quella che diventerà la norma: l'uso di sintetizzatori software come strumenti primari di composizione, prefigurando la successiva centralità del computer nella produzione musicale globale.</p>
+                                    <p class="lang-en">During the same period, James anticipated by years what would become the norm: the use of software synthesizers as primary compositional tools, foreshadowing the subsequent centrality of the computer in global music production.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Il Silenzio e il Ritorno Misterioso (2001–2014)</span>
+                                        <span class="lang-en">Silence and the Mysterious Return (2001–2014)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774294373/11_snircy.jpg" alt="Aphex Twin Blimp" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Il dirigibile Aphex Twin</span><span class="lang-en">The Aphex Twin Blimp</span></strong>
+                                                    <small>Source: synthtopia.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Il dirigibile promozionale lanciato nei cieli di Londra nel 2014</span>
+                                            <span class="lang-en">The promotional blimp launched in the skies of London in 2014</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Nel 2001 esce Drukqs, doppio album di straordinaria complessità che alterna composizioni per pianoforte preparato a costruzioni ritmiche frenetiche. Dopo questa pubblicazione, James entra in una fase di relativo ritiro dalla scena principale, continuando però a produrre sotto l'alias AFX, raccogliendo parte del materiale nella compilation Chosen Lords nel 2006. Nel settembre 2011, in Polonia, James dirige a distanza — tramite controller MIDI, un PC e schermi distribuiti tra i musicisti — un'orchestra di 48 elementi e un coro di 24 persone: un gesto che sintetizza perfettamente la sua poetica, in cui la tecnologia non sostituisce l'umano ma lo amplifica e lo ridisegna.</p>
+                                    <p class="lang-en">In 2001, he released Drukqs, a double album of extraordinary complexity that alternated prepared piano compositions with frenetic rhythmic constructions. After this release, James entered a phase of relative withdrawal from the main scene, though continuing to produce under the AFX alias, collecting some of the material in the Chosen Lords compilation in 2006. In September 2011, in Poland, James directed remotely — via MIDI controllers, a PC, and screens distributed among the musicians — a 48-piece orchestra and a 24-person choir: a gesture that perfectly synthesizes his poetics, where technology does not replace the human but amplifies and redesigns it.</p>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774294374/12_gixd92.jpg" alt="Syro Deep Web" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Annuncio nel Deep Web</span><span class="lang-en">Deep Web Announcement</span></strong>
+                                                    <small>Source: billboard.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">L'annuncio criptico dell'album Syro via deep web nel 2014</span>
+                                            <span class="lang-en">The cryptic announcement of the Syro album via the deep web in 2014</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Il ritorno discografico del 2014 avviene con modalità che solo Aphex Twin poteva concepire. Il 17 giugno 2014 viene condiviso in streaming su YouTube il Caustic Window LP, un album perduto pubblicato in sole quattro o cinque copie nel 1994 e mai reso pubblico, recuperato grazie a una campagna Kickstarter che aveva finanziato il trasferimento audio di un vinile originale misteriosamente apparso sul mercato. Il 18 agosto 2014, giorno del suo 43° compleanno, James pubblica un criptico post su Twitter che conferma indizi disseminati nei mesi precedenti: mini dirigibili lanciati nei cieli di Londra e New York, stencil comparsi sui marciapiedi di Manhattan. Il messaggio rimanda, via deep web, a titolo, tracklist e copertina del nuovo album. Il 4 settembre viene estratto il singolo Minipops 67, e il 22 settembre 2014 esce Syro: il grande ritorno di Aphex Twin, accolto dalla critica come un evento di portata storica.</p>
+                                    <p class="lang-en">His 2014 recording return occurred in a way that only Aphex Twin could conceive. On June 17, 2014, the Caustic Window LP was shared via streaming on YouTube, a lost album released in only four or five copies in 1994 and never made public, recovered thanks to a Kickstarter campaign that funded the audio transfer of an original vinyl mysteriously surfaced on the market. On August 18, 2014, his 43rd birthday, James published a cryptic Twitter post confirming clues scattered in the preceding months: mini-blimps flown over London and New York, stencils appearing on Manhattan sidewalks. The message linked, via the deep web, to the title, tracklist, and cover of his new album. On September 4, the single Minipops 67 was extracted, and on September 22, 2014, Syro was released: Aphex Twin's grand return, welcomed by critics as an event of historical magnitude.</p>
+
+                                    <h4 class="wiki-title" style="font-size: 1.1rem; margin-top: 20px;"><span class="lang-it">Stile, Eredità e Influenza</span><span class="lang-en">Style, Legacy and Influence</span></h4>
+                                    <p class="lang-it">Definito da più parti come una delle figure più inventive e influenti della musica contemporanea, Aphex Twin ha costruito nel corso di trent'anni un corpus di lavori che attraversa l'Intelligent Dance Music, la techno, la drum and bass, l'ambient, la noise music e la musica classica contemporanea, senza mai appartenere del tutto a nessuna di queste categorie. Il suo repertorio è al tempo stesso aggressivo e melodico, algido e profondamente emotivo. Tra le fonti di ispirazione dichiarate vi sono l'acid house, l'ambient sperimentale e — elemento insolito e rivelatore — i propri sogni lucidi, come se la produzione musicale fosse per James una forma di trascrizione dell'inconscio attraverso circuiti elettronici.</p>
+                                    <p class="lang-en">Defined by many as one of the most inventive and influential figures in contemporary music, Aphex Twin has built over thirty years a body of work crossing Intelligent Dance Music, techno, drum and bass, ambient, noise music, and contemporary classical music, without ever fully belonging to any of these categories. His repertoire is simultaneously aggressive and melodic, cold and profoundly emotional. Among his declared sources of inspiration are acid house, experimental ambient, and — an unusual and revealing element — his own lucid dreams, as if music production were for James a form of transcription of the unconscious through electronic circuits.</p>
+
+                                    <p class="lang-it">L'eredità di Aphex Twin è incalcolabile: ha definito il linguaggio dell'ambient techno negli anni Novanta, ha anticipato l'era del computer come strumento musicale primario, ha dimostrato che la musica elettronica poteva essere al tempo stesso sperimentale e popolare, oscura e accessibile. Il suo catalogo — distribuito tra una quindicina di pseudonimi, decine di EP e album, etichette indipendenti e strategie promozionali volutamente anti-convenzionali — resta uno degli archivi sonori più vasti e coerenti della storia della musica contemporanea.</p>
+                                    <p class="lang-en">Aphex Twin's legacy is incalculable: he defined the language of ambient techno in the nineties, anticipated the computer era as a primary musical instrument, and proved that electronic music could be simultaneously experimental and popular, obscure and accessible. His catalog — distributed across about fifteen pseudonyms, dozens of EPs and albums, independent labels, and deliberately anti-conventional promotional strategies — remains one of the vastest and most coherent sonic archives in the history of contemporary music.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleHistory()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Storia</span>
+                            <span class="lang-en">↑ Close History</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="disclaimer-btn" onclick="toggleDisclaimer()">
+                        <span>
+                            <span class="lang-it">Disclaimer & Note Legali</span>
+                            <span class="lang-en">Disclaimer & Legal Notes</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="disclaimer-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                <h3 class="wiki-title lang-it">Disclaimer e Diritto di Citazione</h3>
+                                <h3 class="wiki-title lang-en">Disclaimer & Fair Use</h3>
+                                
+                                <p class="lang-it">I contenuti multimediali presenti in questa pagina (immagini e video) sono utilizzati esclusivamente per finalità didattiche, critiche e di approfondimento culturale, in conformità con l'Art. 70 della Legge 633/41 (Diritto di citazione e riproduzione per uso didattico o scientifico). L'utilizzo non ha alcuno scopo di lucro e mira a valorizzare l'opera dell'artista e dei relativi autori, citati puntualmente tramite la funzione interattiva sulle singole immagini.<br><br>Qualora i detentori dei diritti d'autore ritenessero inappropriata la pubblicazione o desiderassero la rimozione di specifici contenuti, possono scrivere all'indirizzo: <strong>lorenzo.sciallato@gmail.com</strong>. Provvederò all'immediata rimozione del materiale segnalato.</p>
+                                
+                                <p class="lang-en">The multimedia contents on this page (images and videos) are used exclusively for educational, critical, and cultural purposes, in accordance with international Fair Use principles and national copyright laws. This project is strictly non-commercial and aims to provide historical and artistic context, with full credit given to authors and sources via the interactive photo-flip feature.<br><br>If you are a copyright holder and object to the use of any material, or would like to request its removal, please contact: <strong>lorenzo.sciallato@gmail.com</strong>. Any disputed content will be removed immediately upon request.</p>
+
+                                <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 25px 0;">
+
+                                <p class="lang-it" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Pagina creata con l'assistenza di software di intelligenza artificiale generativa, unendo cura umana e supporto tecnologico per l'apprendimento e la divulgazione culturale.</p>
+                                <p class="lang-en" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Page created with the assistance of generative artificial intelligence software, combining human curation and technological support for educational and cultural dissemination.</p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleDisclaimer()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Disclaimer</span>
+                            <span class="lang-en">↑ Close Disclaimer</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const playlist = [
+            { id: "xtal", title: "Xtal", ytId: "sWcLccMuCA8" },
+            { id: "tha", title: "Tha", ytId: "N3G7JPTVVEQ" },
+            { id: "pulsewidth", title: "Pulsewidth", ytId: "OtAweb0IV14" },
+            { id: "ageispolis", title: "Ageispolis", ytId: "bdWIwpTS48s" },
+            { id: "i", title: "I", ytId: "KqnezE0qLSM" },
+            { id: "green_calx", title: "Green Calx", ytId: "6yROS-zZqFU" },
+            { id: "heliosphan", title: "Heliosphan", ytId: "Xxk-ryO6J2I" },
+            { id: "music_makers", title: "We Are the Music Makers", ytId: "4acK8W65jAE" },
+            { id: "schottkey", title: "Schottkey 7th Path", ytId: "22x8jxh4aVw" },
+            { id: "ptolemy", title: "Ptolemy", ytId: "dBubcKr93K0" },
+            { id: "hedphelym", title: "Hedphelym", ytId: "9gbSs6vAs_w" },
+            { id: "delphium", title: "Delphium", ytId: "W4YVXY5YKAE" },
+            { id: "actium", title: "Actium", ytId: "pLxNh-qDIvg" }
+        ];
+
+        // GUIDA (Completely BILINGUAL)
+        const guideData = {
+            "xtal": {
+                it: `
+                    <h3>Xtal</h3>
+                    <p><strong>0:00 — L'Apertura Come Immersione</strong><br>Non c'è un inizio nel senso tradizionale: il suono è già lì quando lo si incontra, come entrare in una stanza dove la musica suona da ore. Un pad di sintetizzatore — probabilmente un Roland Juno o un Oberheim Matrix — tiene una nota lunga nelle frequenze medie-alte con un leggero tremolo di modulazione. La sensazione è quella di una superficie che vibra appena, come acqua che risponde a qualcosa di lontano.</p>
+                    <p><strong>0:30 — Il Beat Come Respiro</strong><br>Una drum machine — con ogni probabilità una Roland TR-909 o una E-mu SP-1200, strumenti fondamentali nella nascita della musica elettronica degli anni Novanta — produce un pattern di kick drum e hi-hat così lento e rarefatto che non si percepisce come ritmo ma come pulsazione organica. Non scandisce il tempo: lo suggerisce. La differenza è fondamentale — uno strumento di navigazione invece di un motore.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Registrato in Camera da Letto.</span>Richard D. James — Aphex Twin — registrò la maggior parte di Selected Ambient Works Volume II in condizioni domestiche, usando sintetizzatori analogici acquistati a prezzi stracciati nei mercatini e nelle aste degli anni Ottanta, quando questi strumenti erano considerati obsoleti dall'industria musicale che si stava spostando sul digitale. La "povertà" del setup è paradossalmente responsabile del suono ricco e caldo dell'album — i sintetizzatori analogici producono imperfezioni armoniche che il digitale non riesce a replicare.</div>
+                    <p><strong>1:30 — Il Melody Loop</strong><br>Una melodia breve — quattro o cinque note — inizia a ripetersi in loop con variazioni minime. Non è una melodia che va da qualche parte: è una melodia che esiste, come un oggetto che si osserva da angolazioni diverse invece di seguire un percorso. Richard D. James aveva studiato il minimalismo di Steve Reich e Terry Riley, e questa tecnica del loop melodico trasformativo è diretta discendente di quella tradizione.</p>
+                    <p><strong>3:00 — La Profondità del Mix</strong><br>Ascoltando con cuffie di qualità, il mix di Xtal rivela una profondità spaziale notevole: elementi diversi sono posizionati a distanze diverse nell'immagine stereo — alcuni vicini, quasi "dentro" la testa, altri lontani come suoni sentiti attraverso una parete. Questa costruzione tridimensionale dello spazio sonoro è una delle caratteristiche tecniche distintive dell'album.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Titolo Come Cristallo.</span>"Xtal" è abbreviazione di "crystal" — cristallo. Richard D. James ha descritto il processo compositivo di questo brano come il tentativo di catturare la qualità visiva dei cristalli in suono: strutture che si ripetono in modo simile a scale diverse, ordine e trasparenza. È un'intenzione sinestesica — tradurre un'esperienza visiva in audio — che attraversa l'intero album.</div>
+                `,
+                en: `
+                    <h3>Xtal</h3>
+                    <p><strong>0:00 — The Opening As Immersion</strong><br>There is no beginning in the traditional sense: the sound is already there when you encounter it, like entering a room where the music has been playing for hours. A synthesizer pad — probably a Roland Juno or an Oberheim Matrix — holds a long note in the mid-high frequencies with a slight modulation tremolo. The sensation is that of a surface barely vibrating, like water responding to something distant.</p>
+                    <p><strong>0:30 — The Beat As Breath</strong><br>A drum machine — in all likelihood a Roland TR-909 or an E-mu SP-1200, fundamental instruments in the birth of nineties electronic music — produces a kick drum and hi-hat pattern so slow and rarefied that it is not perceived as rhythm but as an organic pulsation. It doesn't mark time: it suggests it. The difference is fundamental — a navigational instrument instead of an engine.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Recorded in a Bedroom.</span>Richard D. James — Aphex Twin — recorded most of Selected Ambient Works Volume II in domestic conditions, using analog synthesizers bought at bargain prices in flea markets and auctions in the eighties, when these instruments were considered obsolete by a music industry shifting to digital. The "poverty" of the setup is paradoxically responsible for the rich and warm sound of the album — analog synthesizers produce harmonic imperfections that digital cannot replicate.</div>
+                    <p><strong>1:30 — The Melody Loop</strong><br>A short melody — four or five notes — begins to repeat in a loop with minimal variations. It is not a melody that goes anywhere: it is a melody that exists, like an object observed from different angles instead of following a path. Richard D. James had studied the minimalism of Steve Reich and Terry Riley, and this technique of the transformative melodic loop is a direct descendant of that tradition.</p>
+                    <p><strong>3:00 — The Depth of the Mix</strong><br>Listening with quality headphones, the mix of Xtal reveals a remarkable spatial depth: different elements are positioned at different distances in the stereo image — some close, almost "inside" the head, others far away like sounds heard through a wall. This three-dimensional construction of the sonic space is one of the album's distinctive technical characteristics.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Title As Crystal.</span>"Xtal" is an abbreviation for "crystal". Richard D. James has described the compositional process of this track as an attempt to capture the visual quality of crystals in sound: structures that repeat similarly at different scales, order, and transparency. It is a synesthetic intention — translating a visual experience into audio — that runs through the entire album.</div>
+                `
+            },
+            "tha": {
+                it: `
+                    <h3>Tha</h3>
+                    <p><strong>0:00 — Il Pad Come Ambiente</strong><br>Apertura con un pad di sintetizzatore nelle frequenze basse-medie — un suono caldo, quasi corporeo, che occupa lo spazio prima che qualsiasi altro elemento entri. La qualità timbrica suggerisce un sintetizzatore analogico con filtro passa-basso aperto gradualmente — tecnicamente, un filtro che taglia le alte frequenze e le rivela lentamente aumentando il parametro di cutoff, producendo quella sensazione di "schiudersi" progressivo.</p>
+                    <p><strong>0:45 — La Melodia Come Domanda</strong><br>Una linea melodica entra nel registro medio-alto — suonata probabilmente su un Korg M1 o su un sintetizzatore con preset di carattere acustico leggermente artificiale. La melodia è semplice, quasi infantile nella sua struttura scalare, ma il contesto armonico intorno a lei è ambiguo — non si riesce a stabilire con certezza la tonalità, e quella incertezza dà alla melodia una qualità sospesa, come una domanda che non attende risposta.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Gestazione dei Sogni.</span>Richard D. James ha affermato in diverse interviste di aver sviluppato nel corso degli anni la capacità di controllare i propri sogni lucidi, e che molti dei materiali melodici di Selected Ambient Works Volume II nacquero da melodie sentite durante questi sogni, trascritte immediatamente al risveglio. Tha è spesso citato come uno degli esempi più diretti di questa pratica — la qualità onirica della melodia non è una metafora ma una descrizione letterale della sua origine.</div>
+                    <p><strong>2:00 — La Stratificazione Progressiva</strong><br>Layer dopo layer si aggiungono alla texture — non in modo drammatico, ma con la gradualità di un'alba. Ogni nuovo elemento occupa uno spazio frequenziale diverso: bassi profondi, medi caldi, alte cristalline. Il risultato finale è una texture densa ma mai caotica — ogni elemento ha il suo posto e non invade quello degli altri.</p>
+                    <p><strong>4:00 — Il Decadimento Come Struttura</strong><br>Negli ultimi minuti del brano gli elementi non vengono "spenti" brutalmente ma si lasciano decadere naturalmente — il volume diminuisce gradualmente, i loop si fanno più rarefatti, gli spazi tra le note si allargano. È il tempo naturale di decadimento di un suono lasciato a se stesso, e quella naturalezza dà alla chiusura una qualità organica che nessun fade-out artificiale avrebbe prodotto.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Album Senza Titoli.</span>Selected Ambient Works Volume II è famoso per essere stato originalmente pubblicato senza titoli testuali sui brani — ogni traccia era identificata solo da un'immagine fotografica nel libretto. I titoli che usiamo oggi (Xtal, Tha, ecc.) furono aggiunti in ristampe successive o sono emersi da fonti vicine a James. Questa scelta originale era una dichiarazione estetica precisa: la musica non doveva essere mediata dal linguaggio verbale, non doveva avere un "nome" che pre-condizionasse l'ascolto.</div>
+                `,
+                en: `
+                    <h3>Tha</h3>
+                    <p><strong>0:00 — The Pad As Environment</strong><br>Opening with a synthesizer pad in the low-mid frequencies — a warm, almost bodily sound that occupies the space before any other element enters. The timbral quality suggests an analog synthesizer with a gradually opened low-pass filter — technically, a filter that cuts high frequencies and slowly reveals them by increasing the cutoff parameter, producing that sensation of progressive "unfolding".</p>
+                    <p><strong>0:45 — The Melody As Question</strong><br>A melodic line enters in the mid-high register — probably played on a Korg M1 or on a synthesizer with an acoustic preset of a slightly artificial character. The melody is simple, almost childlike in its scalar structure, but the harmonic context around it is ambiguous — it is impossible to establish the key with certainty, and that uncertainty gives the melody a suspended quality, like a question not waiting for an answer.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Gestation of Dreams.</span>Richard D. James stated in several interviews that he had developed over the years the ability to control his lucid dreams, and that much of the melodic material of Selected Ambient Works Volume II was born from melodies heard during these dreams, transcribed immediately upon waking. Tha is often cited as one of the most direct examples of this practice — the dreamlike quality of the melody is not a metaphor but a literal description of its origin.</div>
+                    <p><strong>2:00 — Progressive Layering</strong><br>Layer after layer is added to the texture — not in a dramatic way, but with the gradualness of a sunrise. Each new element occupies a different frequency space: deep lows, warm mids, crystalline highs. The final result is a dense but never chaotic texture — each element has its place and does not invade that of the others.</p>
+                    <p><strong>4:00 — Decay As Structure</strong><br>In the final minutes of the track the elements are not brutally "turned off" but are allowed to decay naturally — the volume gradually decreases, the loops become more rarefied, the spaces between the notes widen. It is the natural decay time of a sound left to itself, and that naturalness gives the closure an organic quality that no artificial fade-out would have produced.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Untitled Album.</span>Selected Ambient Works Volume II is famous for having originally been released without textual track titles — each track was identified only by a photographic image in the booklet. The titles we use today (Xtal, Tha, etc.) were added in subsequent represses or emerged from sources close to James. This original choice was a precise aesthetic statement: music was not to be mediated by verbal language, it should not have a "name" that preconditioned the listening experience.</div>
+                `
+            },
+            "pulsewidth": {
+                it: `
+                    <h3>Pulsewidth</h3>
+                    <p><strong>0:00 — Il Titolo Come Tecnica</strong><br>"Pulsewidth" — larghezza d'impulso — è un termine tecnico della sintesi analogica. Nei sintetizzatori a onda quadra, la pulse width è il parametro che controlla la proporzione tra la parte "alta" e la parte "bassa" di ogni ciclo dell'onda. Modificare questo parametro — pulse width modulation, PWM — produce un suono caratteristico che oscilla e si anima, come qualcosa che respira. Questo brano è costruito esplicitamente su quel suono.</p>
+                    <p><strong>0:10 — L'Oscillatore Come Protagonista</strong><br>Il suono principale del brano è un oscillatore a onda quadra con PWM attiva — si sente chiaramente quella qualità "viva" e oscillante che nessun suono digitale riesce a replicare perfettamente. Il parametro di modulazione cambia lentamente nel corso del brano, facendo evolvere il timbro in modo continuo anche quando la melodia rimane statica.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Estetica del Difetto.</span>Richard D. James era noto per cercare attivamente i "difetti" nei suoi sintetizzatori — comportamenti non intenzionali dello strumento, instabilità del pitch, rumori di fondo — e usarli come elementi compositivi invece di correggerli. Pulsewidth contiene diversi di questi "difetti intenzionali": piccole instabilità nel tempo, variazioni di intonazione che un produttore tradizionale avrebbe eliminato. Quella imperfezione è parte della bellezza del brano.</div>
+                    <p><strong>1:00 — Il Ritmo Minimale</strong><br>Il pattern ritmico è ridotto all'essenziale: un kick drum in posizioni irregolari e un hi-hat che segna il tempo senza insistere. Non è un groove nel senso funky del termine — è una punteggiatura, un modo di ricordare all'ascoltatore che il tempo esiste senza imporlo come struttura dominante.</p>
+                    <p><strong>2:30 — L'Evoluzione Timbrica</strong><br>La caratteristica più affascinante di Pulsewidth è che cambia senza che nulla di strutturalmente significativo cambi: la melodia è semplice e ripetuta, il ritmo è minimale, ma il suono stesso si trasforma costantemente grazie alla modulazione del parametro di pulse width. È come guardare lo stesso oggetto mentre la luce intorno ad esso cambia — l'oggetto è immobile, la percezione si muove.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Influenza sul Futuro.</span>Il suono di Pulsewidth — in particolare quel timbro di oscillatore a onda quadra con PWM — divenne uno dei suoni più imitati nella musica elettronica degli anni successivi, influenzando direttamente generi come il chillwave, il lo-fi e buona parte dell'estetica della musica indie elettronica degli anni Duemila e Dieci. Produttori come Boards of Canada hanno citato esplicitamente questo brano come riferimento.</div>
+                `,
+                en: `
+                    <h3>Pulsewidth</h3>
+                    <p><strong>0:00 — The Title As Technique</strong><br>"Pulsewidth" is a technical term in analog synthesis. In square wave synthesizers, pulse width is the parameter that controls the proportion between the "high" and "low" part of each wave cycle. Modifying this parameter — pulse width modulation, PWM — produces a characteristic sound that oscillates and animates, like something breathing. This track is explicitly built on that sound.</p>
+                    <p><strong>0:10 — The Oscillator As Protagonist</strong><br>The main sound of the track is a square wave oscillator with active PWM — you can clearly hear that "alive" and oscillating quality that no digital sound can perfectly replicate. The modulation parameter changes slowly over the course of the song, making the timbre evolve continuously even when the melody remains static.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Aesthetics of Defect.</span>Richard D. James was known for actively seeking out "defects" in his synthesizers — unintentional instrument behaviors, pitch instability, background noise — and using them as compositional elements instead of correcting them. Pulsewidth contains several of these "intentional defects": small instabilities in timing, pitch variations that a traditional producer would have eliminated. That imperfection is part of the track's beauty.</div>
+                    <p><strong>1:00 — The Minimal Rhythm</strong><br>The rhythmic pattern is reduced to the essentials: a kick drum in irregular positions and a hi-hat that marks time without insisting. It's not a groove in the funky sense of the term — it's punctuation, a way of reminding the listener that time exists without imposing it as a dominant structure.</p>
+                    <p><strong>2:30 — Timbral Evolution</strong><br>The most fascinating characteristic of Pulsewidth is that it changes without anything structurally significant changing: the melody is simple and repeated, the rhythm is minimal, but the sound itself transforms constantly thanks to the modulation of the pulse width parameter. It is like looking at the same object while the light around it changes — the object is motionless, perception moves.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Influence on the Future.</span>The sound of Pulsewidth — particularly that square wave oscillator timbre with PWM — became one of the most imitated sounds in electronic music in subsequent years, directly influencing genres such as chillwave, lo-fi, and much of the electronic indie music aesthetic of the 2000s and 2010s. Producers like Boards of Canada have explicitly cited this track as a reference.</div>
+                `
+            },
+            "ageispolis": {
+                it: `
+                    <h3>Ageispolis</h3>
+                    <p><strong>0:00 — L'Arpeggiatore Come Architettura</strong><br>Il brano apre con un pattern di arpeggiatore — una sequenza di note di un accordo suonate in successione rapida invece che simultaneamente — che costruisce immediatamente una struttura armonica complessa da un materiale semplice. L'arpeggiatore è uno strumento tipico dei sintetizzatori analogici degli anni Ottanta, e il suo uso qui è diretto ma sofisticato: la sequenza di note crea una sensazione di movimento orizzontale (melodia) e verticale (armonia) contemporaneamente.</p>
+                    <p><strong>0:20 — Il Contrasto Temperatura</strong><br>Sopra l'arpeggiatore "freddo" e meccanico entra un pad caldo e morbido che occupa le frequenze medie. Il contrasto timbrico tra i due elementi — uno tagliente e definito, l'altro morbido e diffuso — crea una tensione che non è dissonanza armonica ma dissonanza timbrica. Due temperature diverse nello stesso spazio.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Nome Come Città Immaginaria.</span>"Ageispolis" suona come il nome di una città — il suffisso "-polis" è greco per "città". Non esiste nessuna Ageispolis reale, ma il nome evoca un luogo: una metropoli di qualche civiltà alternativa, con le sue architetture sonore e i suoi ritmi urbani. Richard D. James ha sempre rifiutato di spiegare i suoi titoli, lasciando che l'evocazione funzionasse senza conferma o smentita.</div>
+                    <p><strong>1:30 — La Melodia Sovrapposta</strong><br>Una melodia lenta entra sopra l'arpeggiatore veloce, creando una poliritmia — due livelli di velocità diverse che coesistono. L'arpeggiatore è rapido e regolare; la melodia è lenta e irregolare nel fraseggio. L'orecchio può seguire entrambi separatamente o lasciarli fondere in un'unica texture complessa — è una scelta percettiva che l'ascoltatore fa inconsciamente.</p>
+                    <p><strong>3:00 — La Qualità Nostalgica</strong><br>Ageispolis ha una qualità emotiva che molti ascoltatori descrivono come nostalgia — non per qualcosa di specifico, ma per qualcosa di non identificabile. Tecnicamente, questa sensazione è prodotta dalla combinazione di progressioni armoniche che usano accordi non risolti (sospesi, con settima non dominante) e da timbri sintetici che imitano strumenti acustici senza essere mai completamente convincenti in quell'imitazione. È la nostalgia per qualcosa che non è mai esistito.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Boards of Canada e la Genealogia.</span>Il duo scozzese Boards of Canada — autori di alcuni degli album ambient elettronici più celebrati degli anni Novanta e Duemila — ha citato Ageispolis come uno dei brani che definirono la loro estetica. La qualità "VHS deteriorato", la nostalgia senza oggetto, l'uso di timbri sintetici che imitano il calore dell'analogico — tutto quello che definisce il suono di Boards of Canada ha una radice diretta in questo brano.</div>
+                `,
+                en: `
+                    <h3>Ageispolis</h3>
+                    <p><strong>0:00 — The Arpeggiator As Architecture</strong><br>The track opens with an arpeggiator pattern — a sequence of chord notes played in rapid succession rather than simultaneously — which immediately builds a complex harmonic structure out of simple material. The arpeggiator is a typical tool of 1980s analog synthesizers, and its use here is direct yet sophisticated: the note sequence creates a sensation of horizontal (melody) and vertical (harmony) movement simultaneously.</p>
+                    <p><strong>0:20 — Temperature Contrast</strong><br>Above the "cold" and mechanical arpeggiator enters a warm, soft pad occupying the mid frequencies. The timbral contrast between the two elements — one sharp and defined, the other soft and diffused — creates a tension that is not harmonic dissonance but timbral dissonance. Two different temperatures in the same space.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Name As Imaginary City.</span>"Ageispolis" sounds like the name of a city — the suffix "-polis" is Greek for "city". There is no real Ageispolis, but the name evokes a place: a metropolis of some alternative civilization, with its sonic architectures and urban rhythms. Richard D. James has always refused to explain his titles, letting the evocation work without confirmation or denial.</div>
+                    <p><strong>1:30 — The Overlaid Melody</strong><br>A slow melody enters over the fast arpeggiator, creating a polyrhythm — two different speed levels coexisting. The arpeggiator is fast and regular; the melody is slow and irregular in phrasing. The ear can follow both separately or let them merge into a single complex texture — it is a perceptual choice the listener makes unconsciously.</p>
+                    <p><strong>3:00 — The Nostalgic Quality</strong><br>Ageispolis has an emotional quality that many listeners describe as nostalgia — not for anything specific, but for something unidentifiable. Technically, this sensation is produced by the combination of harmonic progressions using unresolved chords (suspended, with non-dominant sevenths) and synthetic timbres that imitate acoustic instruments without ever being fully convincing in that imitation. It is nostalgia for something that never existed.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Boards of Canada and Genealogy.</span>The Scottish duo Boards of Canada — authors of some of the most celebrated electronic ambient albums of the nineties and two-thousands — cited Ageispolis as one of the tracks that defined their aesthetic. The "deteriorated VHS" quality, the objectless nostalgia, the use of synthetic timbres imitating analog warmth — everything that defines the Boards of Canada sound has a direct root in this track.</div>
+                `
+            },
+            "i": {
+                it: `
+                    <h3>I</h3>
+                    <p><strong>0:00 — Il Minimalismo Come Scelta Radicale</strong><br>Titolo di un solo carattere per il brano più essenziale dell'album. L'apertura è quasi nulla: un suono basso, continuo, ai limiti dell'udibile, che stabilisce una frequenza fondamentale senza dichiararla. Non è un drone nel senso della musica indiana classica — è qualcosa di più vicino al rumore bianco filtrato, un suono che è quasi silenzio ma non lo è.</p>
+                    <p><strong>0:30 — La Singola Voce</strong><br>Una linea melodica entra — suonata su un sintetizzatore con un timbro che ricorda un flauto o una voce processata — e procede senza accompagnamento armonico esplicito. È una monodia: una sola voce, una sola linea. Nella tradizione della musica occidentale, la monodia è la forma più antica — il canto gregoriano, i lamenti medievali. Aphex Twin la usa in un contesto elettronico producendo qualcosa che suona simultaneamente antico e futurista.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Titolo Come Pronome.</span>"I" — "io" in inglese — è il pronome della prima persona singolare, ma in questo contesto sembra anche il numero romano "1" — uno, singolo, indivisibile. Entrambe le letture si applicano al brano: è una composizione che afferma la singolarità, che riduce la complessità all'unità fondamentale. In un album di texture stratificate, questo brano è il punto di silenzio dal quale tutto il resto emerge.</div>
+                    <p><strong>2:00 — Lo Spazio Come Elemento</strong><br>Quello che rende I così singolare nel contesto dell'album è la quantità di spazio — silenzio, pausa, assenza — che contiene. Tra una nota e la successiva ci sono intervalli di tempo più lunghi di quanto la musica pop o rock permetterebbe. Quello spazio non è vuoto: è carico della risonanza della nota precedente, dell'aspettativa della nota successiva. È la tecnica del "ma" giapponese — il significato nello spazio tra le cose.</p>
+                    <p><strong>3:30 — Il Decadimento Come Composizione</strong><br>Il brano finisce lasciando che l'ultimo suono decada naturalmente, senza intervento. Si sente la coda del sintetizzatore — il release, in gergo tecnico — che si estingue progressivamente. Questa scelta di lasciare il decadimento naturale invece di tagliare il suono artificialmente è una dichiarazione filosofica: le cose finiscono nei loro tempi propri.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Meditazione Come Pratica.</span>Richard D. James ha menzionato in diverse occasioni la pratica della meditazione come parte del processo compositivo di Selected Ambient Works Volume II. I è il brano che porta più chiaramente questa influenza: la sua struttura — una singola voce, molto spazio, ascolto attivo del silenzio — rispecchia tecniche meditative di diverse tradizioni. Non è musica da meditare: è musica che è meditazione.</div>
+                `,
+                en: `
+                    <h3>I</h3>
+                    <p><strong>0:00 — Minimalism As a Radical Choice</strong><br>A single-character title for the most essential track on the album. The opening is almost nothing: a low, continuous sound on the edge of audibility, establishing a fundamental frequency without declaring it. It is not a drone in the sense of classical Indian music — it is closer to filtered white noise, a sound that is almost silence but isn't.</p>
+                    <p><strong>0:30 — The Single Voice</strong><br>A melodic line enters — played on a synthesizer with a timbre reminiscent of a flute or processed voice — and proceeds without explicit harmonic accompaniment. It is a monody: a single voice, a single line. In the Western musical tradition, monody is the oldest form — Gregorian chant, medieval laments. Aphex Twin uses it in an electronic context, producing something that sounds simultaneously ancient and futuristic.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Title As Pronoun.</span>"I" is the first-person singular pronoun, but in this context, it also looks like the Roman numeral "1" — one, single, indivisible. Both readings apply to the track: it is a composition that affirms singularity, that reduces complexity to the fundamental unit. In an album of layered textures, this track is the point of silence from which everything else emerges.</div>
+                    <p><strong>2:00 — Space As Element</strong><br>What makes I so unique in the context of the album is the amount of space — silence, pause, absence — it contains. Between one note and the next there are time intervals longer than pop or rock music would allow. That space is not empty: it is charged with the resonance of the previous note, with the expectation of the next. It is the Japanese "ma" technique — meaning in the space between things.</p>
+                    <p><strong>3:30 — Decay As Composition</strong><br>The song ends by letting the last sound decay naturally, without intervention. You can hear the synthesizer tail — the release, in technical jargon — progressively dying out. This choice to leave the natural decay instead of artificially cutting the sound is a philosophical statement: things end in their own time.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Meditation As Practice.</span>Richard D. James has mentioned meditation on several occasions as part of the compositional process for Selected Ambient Works Volume II. I is the track that most clearly bears this influence: its structure — a single voice, lots of space, active listening to silence — mirrors meditative techniques of various traditions. It's not music to meditate to: it is music that is meditation.</div>
+                `
+            },
+            "green_calx": {
+                it: `
+                    <h3>Green Calx</h3>
+                    <p><strong>0:00 — Il Drone Come Fondamenta Geologica</strong><br>Il brano apre con un drone — una nota tenuta a lungo nelle frequenze basse — che non è un accordo, non è una melodia, ma una presenza. In chimica, il "calx" è il residuo lasciato da un metallo dopo la calcinazione — cenere, ossido, ciò che rimane dopo che il processo ha esaurito se stesso. Il titolo suggerisce qualcosa di simile: non la sostanza originale, ma ciò che resta. Il drone è quel residuo sonoro.</p>
+                    <p><strong>0:20 — La Texture Come Superficie</strong><br>Sopra il drone emerge una texture di pad sovrapposti che non ha melodia riconoscibile ma ha una qualità superficiale complessa — come guardare la superficie di un minerale che riflette la luce in modi diversi a seconda dell'angolazione. I sintetizzatori sono accordati in modo da creare battimenti — interferenze tra frequenze vicine ma non identiche — che producono un'ondulazione lenta e continua nella texture complessiva.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Verde Come Frequenza.</span>Richard D. James ha descritto in alcune interviste la sua esperienza della musica in termini sinestesici — la capacità di associare suoni a colori, forme, sensazioni tattili. "Green Calx" è uno dei titoli più esplicitamente sinestesici dell'album: il verde non come metafora emotiva (speranza, natura) ma come frequenza percettiva, come qualità fisica del suono. La sfida per l'ascoltatore è abbandonare le associazioni simboliche del colore e cercarne la qualità sensoriale diretta.</div>
+                    <p><strong>1:30 — L'Elemento Melodico Nascosto</strong><br>A circa un minuto e mezzo dall'inizio, se si ascolta con attenzione nelle frequenze medie, emerge qualcosa che potrebbe essere una melodia — o potrebbe essere un armonico particolarmente prominente della texture. La distinzione è deliberatamente ambigua: James costruisce situazioni in cui l'ascoltatore non sa con certezza se sta sentendo una melodia composta o un fenomeno acustico naturale della texture. Quella incertezza è parte dell'esperienza.</p>
+                    <p><strong>3:00 — Il Cambiamento Impercettibile</strong><br>Green Calx è uno dei brani dell'album in cui il cambiamento è più difficile da localizzare temporalmente. Ascoltando retrospettivamente, si nota che il brano alla fine è diverso dall'inizio — la texture si è addensata, il drone si è spostato leggermente di frequenza, nuovi armonici sono emersi. Ma non si riesce a indicare il momento esatto in cui queste trasformazioni sono avvenute. È la stessa qualità del cambiamento climatico, del crescere di un bambino, dell'invecchiamento: si nota il risultato, non il processo.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Tradizione del Drone.</span>L'uso del drone come elemento compositivo ha radici profonde in molte tradizioni musicali non occidentali — il tambura nella musica classica indiana, il bordone nella musica medievale europea, il didgeridoo australiano. Richard D. James era un ascoltatore vorace di musiche di tradizioni diverse, e il suo uso del drone in Green Calx si inserisce consapevolmente in questa genealogia lunghissima pur essendo realizzato con strumenti completamente contemporanei.</div>
+                `,
+                en: `
+                    <h3>Green Calx</h3>
+                    <p><strong>0:00 — The Drone As Geological Foundation</strong><br>The track opens with a drone — a long-held note in the low frequencies — which is not a chord, not a melody, but a presence. In chemistry, "calx" is the residue left by a metal after calcination — ash, oxide, what remains after the process has exhausted itself. The title suggests something similar: not the original substance, but what is left. The drone is that sonic residue.</p>
+                    <p><strong>0:20 — Texture As Surface</strong><br>Above the drone emerges a texture of overlapping pads that has no recognizable melody but has a complex surface quality — like looking at the surface of a mineral that reflects light differently depending on the angle. The synthesizers are tuned to create beats — interference between close but not identical frequencies — which produce a slow, continuous undulation in the overall texture.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Green As Frequency.</span>Richard D. James has described in some interviews his experience of music in synesthetic terms — the ability to associate sounds with colors, shapes, tactile sensations. "Green Calx" is one of the most explicitly synesthetic titles on the album: green not as an emotional metaphor (hope, nature) but as a perceptual frequency, as a physical quality of sound. The challenge for the listener is to abandon symbolic associations of color and seek its direct sensory quality.</div>
+                    <p><strong>1:30 — The Hidden Melodic Element</strong><br>At about a minute and a half in, if you listen carefully in the mid frequencies, something emerges that could be a melody — or it could be a particularly prominent harmonic of the texture. The distinction is deliberately ambiguous: James builds situations where the listener is never certain whether they are hearing a composed melody or a natural acoustic phenomenon of the texture. That uncertainty is part of the experience.</p>
+                    <p><strong>3:00 — Imperceptible Change</strong><br>Green Calx is one of the tracks on the album where change is hardest to locate temporally. Listening retrospectively, you notice that the track is different at the end than at the beginning — the texture has thickened, the drone has shifted slightly in frequency, new harmonics have emerged. But you can't point to the exact moment these transformations occurred. It's the same quality as climate change, a child growing up, aging: you notice the result, not the process.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Drone Tradition.</span>The use of the drone as a compositional element has deep roots in many non-Western musical traditions — the tambura in Indian classical music, the drone in medieval European music, the Australian didgeridoo. Richard D. James was a voracious listener of music from different traditions, and his use of the drone in Green Calx consciously inserts itself into this very long genealogy while being realized with completely contemporary instruments.</div>
+                `
+            },
+            "heliosphan": {
+                it: `
+                    <h3>Heliosphan</h3>
+                    <p><strong>0:00 — L'Energia Come Anomalia</strong><br>Dopo la qualità contemplativa dei brani precedenti, Heliosphan apre con qualcosa di inaspettato: energia. Un beat veloce — non frenetico, ma decisamente più mosso rispetto al resto dell'album — e una linea di basso sintetico che pulsa con una qualità quasi funky. È l'anomalia dell'album, il brano che dimostra che "ambient" non significa necessariamente lento o passivo.</p>
+                    <p><strong>0:15 — Il Basso Sintetico Come Groove</strong><br>La linea di basso è suonata su un sintetizzatore con un suono che imita vagamente il basso elettrico ma con una qualità sintetica dichiarata — non cerca di ingannare nessuno sulla propria natura. Il pattern è semplice ma efficace: note corte e staccate che creano una sensazione di rimbalzo, di leggerezza invece della gravità tipica dei bassi profondi dei brani precedenti.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: "Heliosphan" Come Cosmologia.</span>Il titolo combina "Helios" — il dio greco del sole — con un suffisso che suggerisce una sfera o uno spazio. È un termine inventato che evoca un paesaggio cosmico: la sfera del sole, l'atmosfera solare. Musicalmente, il brano è il più "luminoso" dell'album — timbri più brillanti, frequenze più alte in primo piano, una qualità generale di luce invece di ombra. Il titolo e il suono si corrispondono con una precisione che dimostra la cura con cui James costruiva il rapporto tra linguaggio e musica.</div>
+                    <p><strong>1:00 — La Melodia Come Gioia</strong><br>Una melodia entra nel registro alto — suonata su un sintetizzatore con un timbro brillante e quasi metallico — con una qualità che si può solo descrivere come gioiosa. Non è l'euforia della musica dance, non è il trionfo della musica orchestrale: è qualcosa di più quieto e personale, come la soddisfazione di risolvere un problema elegante. È la gioia intellettuale trasformata in musica.</p>
+                    <p><strong>2:30 — La Sovrapposizione dei Layer</strong><br>Nella seconda metà del brano i layer si moltiplicano — nuove linee melodiche si aggiungono alla prima, creando un contrappunto semplice ma efficace. Le linee non si ostacolano: si completano, trovano spazi frequenziali diversi e vi abitano pacificamente. È una costruzione polifonica applicata alla sintesi elettronica — una tecnica compositiva antica in un contesto completamente moderno.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Brano Più "Accessibile".</span>Heliosphan è spesso il punto di ingresso per i nuovi ascoltatori di Selected Ambient Works Volume II — il brano che dimostra che l'album non è solo meditazione astratta ma contiene anche momenti di piacere melodico diretto. Richard D. James ha detto in interviste che il brano nacque in una mattina particolarmente serena, e che quella qualità del momento originale rimase nella registrazione finale nonostante tutte le elaborazioni successive.</div>
+                `,
+                en: `
+                    <h3>Heliosphan</h3>
+                    <p><strong>0:00 — Energy As Anomaly</strong><br>After the contemplative quality of previous tracks, Heliosphan opens with something unexpected: energy. A fast beat — not frantic, but decidedly more animated than the rest of the album — and a synth bass line pulsating with an almost funky quality. It is the album's anomaly, the track that proves "ambient" doesn't necessarily mean slow or passive.</p>
+                    <p><strong>0:15 — Synth Bass As Groove</strong><br>The bassline is played on a synthesizer with a sound vaguely imitating an electric bass but with an openly synthetic quality — it isn't trying to fool anyone about its nature. The pattern is simple yet effective: short, staccato notes creating a bouncing sensation, lightness instead of the typical gravity of deep basses found in earlier tracks.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: "Heliosphan" As Cosmology.</span>The title combines "Helios" — the Greek sun god — with a suffix suggesting a sphere or space. It is an invented term evoking a cosmic landscape: the sphere of the sun, the solar atmosphere. Musically, the track is the "brightest" on the album — brighter timbres, higher frequencies in the foreground, a general quality of light instead of shadow. Title and sound correspond with a precision demonstrating the care with which James built the relationship between language and music.</div>
+                    <p><strong>1:00 — Melody As Joy</strong><br>A melody enters in the high register — played on a synthesizer with a bright, almost metallic timbre — with a quality that can only be described as joyful. It's not the euphoria of dance music, nor the triumph of orchestral music: it's something quieter and more personal, like the satisfaction of solving an elegant problem. It is intellectual joy transformed into music.</p>
+                    <p><strong>2:30 — Layer Stacking</strong><br>In the second half of the track layers multiply — new melodic lines are added to the first, creating a simple but effective counterpoint. The lines do not hinder each other: they complete each other, finding different frequency spaces and inhabiting them peacefully. It is a polyphonic construction applied to electronic synthesis — an ancient compositional technique in a completely modern context.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Most "Accessible" Track.</span>Heliosphan is often the entry point for new listeners of Selected Ambient Works Volume II — the track proving the album isn't just abstract meditation but also contains moments of direct melodic pleasure. Richard D. James said in interviews that the track was born on a particularly serene morning, and that original moment's quality remained in the final recording despite all subsequent processing.</div>
+                `
+            },
+            "music_makers": {
+                it: `
+                    <h3>We Are the Music Makers</h3>
+                    <p><strong>0:00 — Il Campionamento Come Citazione</strong><br>Il brano apre con un campionamento vocale — una voce umana, reale, non sintetizzata — che emerge dalla texture elettronica come un ricordo che affiora. È uno degli unici momenti dell'album in cui la voce umana è presente in modo riconoscibile, e quella presenza crea un contrasto immediato con tutto il materiale sintetico che l'ha preceduta.</p>
+                    <p><strong>0:30 — Il Pad Come Oceano</strong><br>Un pad di sintetizzatore nelle frequenze basse-medie occupa tutto lo spazio armonico con una qualità che molti ascoltatori descrivono come "oceano" — non per una somiglianza ovvia con il suono delle onde, ma per la sensazione di essere contenuti in qualcosa di vastissimo e in movimento costante ma non frenetico. La modulazione lenta del filtro crea quella sensazione di respiro — qualcosa che sale e scende con regolarità propria.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Arthur O'Shaughnessy e la Fonte.</span>Il titolo è una citazione diretta dalla poesia Ode di Arthur O'Shaughnessy (1874): "We are the music makers, and we are the dreamers of dreams." La poesia parla di artisti come costruttori di realtà, come coloro che attraverso l'arte creano il mondo invece di limitarsi a descriverlo. Richard D. James — che raramente mostrava le sue influenze letterarie — scelse questa citazione come titolo nel momento in cui l'album stava raggiungendo la sua forma definitiva. È una dichiarazione di intenti: questo non è intrattenimento, è costruzione di mondi.</div>
+                    <p><strong>1:45 — La Melodia Come Rimpianto</strong><br>Una linea melodica lenta emerge dal pad — poche note, fraseggio irregolare, qualità timbrica che ricorda un oboe o un clarinetto sintetico. La melodia ha una qualità che è difficile da descrivere senza ricorrere a termini emotivi: suona come qualcosa che si ricorda di aver perso, come la versione musicale della nostalgia nel suo significato etimologico originale — il dolore del ritorno a casa.</p>
+                    <p><strong>4:00 — Il Silenzio Che Cresce</strong><br>Negli ultimi minuti il brano si rarefà progressivamente — gli elementi si staccano uno per uno, i layer svaniscono, lo spazio tra i suoni si allarga. Il silenzio non arriva di colpo: cresce lentamente come la notte, finché quello che rimane è appena percettibile, e poi niente. È una delle dissolvenze più lunghe e più costruite dell'album.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Album Come Sogno Ricorrente.</span>Richard D. James ha descritto Selected Ambient Works Volume II come un tentativo di creare musica che funzionasse come i sogni ricorrenti — strutture che ritornano con variazioni, familiari e al tempo stesso sempre leggermente diverse. We Are the Music Makers è il brano che più direttamente incarna questa intenzione: la melodia sembra sempre sul punto di essere riconosciuta, come qualcosa che si è già sentito ma non si riesce a collocare con precisione.</div>
+                `,
+                en: `
+                    <h3>We Are the Music Makers</h3>
+                    <p><strong>0:00 — Sampling As Citation</strong><br>The track opens with a vocal sample — a human, real, non-synthesized voice — emerging from the electronic texture like a surfacing memory. It is one of the only moments on the album where the human voice is present in a recognizable way, and that presence creates an immediate contrast with all the synthetic material that preceded it.</p>
+                    <p><strong>0:30 — The Pad As Ocean</strong><br>A synthesizer pad in the low-mid frequencies occupies the entire harmonic space with a quality many listeners describe as "ocean" — not for an obvious resemblance to wave sounds, but for the sensation of being contained in something vast and constantly, though not frantically, moving. The slow filter modulation creates that breathing sensation — something rising and falling with its own regularity.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Arthur O'Shaughnessy and the Source.</span>The title is a direct quote from the poem Ode by Arthur O'Shaughnessy (1874): "We are the music makers, and we are the dreamers of dreams." The poem speaks of artists as builders of reality, those who through art create the world instead of merely describing it. Richard D. James — who rarely showed literary influences — chose this quote as a title exactly when the album was reaching its definitive form. It is a declaration of intent: this is not entertainment, it's world-building.</div>
+                    <p><strong>1:45 — Melody As Regret</strong><br>A slow melodic line emerges from the pad — few notes, irregular phrasing, a timbral quality reminiscent of a synthetic oboe or clarinet. The melody has a quality hard to describe without resorting to emotional terms: it sounds like something you remember having lost, like the musical version of nostalgia in its original etymological meaning — the pain of returning home.</p>
+                    <p><strong>4:00 — The Growing Silence</strong><br>In the final minutes the track progressively rarefies — elements detach one by one, layers vanish, the space between sounds widens. Silence doesn't arrive suddenly: it grows slowly like the night, until what remains is barely perceptible, and then nothing. It's one of the longest and most constructed fade-outs on the album.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Album As a Recurring Dream.</span>Richard D. James described Selected Ambient Works Volume II as an attempt to create music that functioned like recurring dreams — structures returning with variations, familiar yet always slightly different. We Are the Music Makers is the track most directly embodying this intention: the melody always seems on the verge of being recognized, like something already heard but impossible to place accurately.</div>
+                `
+            },
+            "schottkey": {
+                it: `
+                    <h3>Schottkey 7th Path</h3>
+                    <p><strong>0:00 — La Percussione Come Tessitura</strong><br>Apertura con elementi percussivi — suoni metallici, click, oggetti non identificabili — che non formano un groove tradizionale ma una texture ritmica. È la percussione come paesaggio invece che come motore: non ti dice dove andare, ti dice dove sei. Tecnicamente, questi suoni sembrano prodotti da campionamenti di oggetti fisici processati digitalmente — non drum machine, ma registrazioni di oggetti del mondo reale trasformate in elementi ritmici.</p>
+                    <p><strong>0:40 — Il Titolo Come Enigma</strong><br>"Schottkey 7th Path" non corrisponde a nessun termine musicale, geografico o scientifico riconoscibile. È uno dei titoli più ermetici dell'album — due parole che suonano come potrebbero avere significato senza rivelarlo. In matematica, un "path" è un percorso in un grafo; in fisica, uno "schotky" è un effetto quantistico. L'associazione di questi frammenti di linguaggio tecnico crea un'evocazione di precisione senza contenuto decifrabile — come la firma di un sistema che non conosciamo.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Numerologia dei Titoli.</span>Diversi titoli di Selected Ambient Works Volume II contengono numeri o riferimenti numerici — "7th Path", il singolo carattere "I". Richard D. James era interessato alla matematica e alla fisica come fonti di struttura compositiva, e i titoli riflettono questa fascinazione. Non si tratta di numerologia mistica ma di un'estetica che trova bellezza nelle strutture formali, nelle serie, nei sistemi.</div>
+                    <p><strong>1:30 — La Progressione Armonica Ambigua</strong><br>Sotto la texture percussiva emerge lentamente un elemento armonico — un pad che tiene accordi lunghi senza mai stabilire chiaramente una tonica. La progressione si muove attraverso accordi che potrebbero appartenere a diverse tonalità, creando un'armonia perpetuamente "in transito" che non si stabilisce mai in nessun posto. È l'equivalente armonico del titolo: un percorso senza destinazione dichiarata.</p>
+                    <p><strong>3:30 — La Texture Come Fine</strong><br>Il brano non va da nessuna parte nel senso narrativo — non costruisce verso un climax, non risolve la tensione armonica, non conclude. Si interrompe quando ha esaurito il suo materiale, o quando James ha deciso che era finito. Quella arbitrarietà della conclusione è parte del design: non ogni percorso ha una meta.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Brano Come Esperimento.</span>Schottkey 7th Path è uno dei brani di Selected Ambient Works Volume II che sembra più chiaramente un "esperimento" nel senso letterale — un tentativo di verificare cosa succede quando certi elementi vengono combinati, senza un risultato predeterminato. Richard D. James ha descritto il suo processo compositivo in questi termini: mettere insieme elementi e vedere cosa emerge, trattare lo studio come un laboratorio invece che come uno strumento di esecuzione di idee già formate.</div>
+                `,
+                en: `
+                    <h3>Schottkey 7th Path</h3>
+                    <p><strong>0:00 — Percussion As Weave</strong><br>Opening with percussive elements — metallic sounds, clicks, unidentifiable objects — that do not form a traditional groove but a rhythmic texture. It is percussion as landscape instead of engine: it doesn't tell you where to go, it tells you where you are. Technically, these sounds seem produced by digitally processed samples of physical objects — not drum machines, but real-world object recordings transformed into rhythmic elements.</p>
+                    <p><strong>0:40 — The Title As Enigma</strong><br>"Schottkey 7th Path" corresponds to no recognizable musical, geographical, or scientific term. It is one of the album's most hermetic titles — two words sounding like they could carry meaning without revealing it. In mathematics, a "path" is a route in a graph; in physics, "Schottky" is a quantum effect. Associating these technical language fragments creates an evocation of precision lacking decipherable content — like the signature of an unknown system.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Title Numerology.</span>Several titles on Selected Ambient Works Volume II contain numbers or numerical references — "7th Path", the single character "I". Richard D. James was interested in mathematics and physics as sources of compositional structure, and the titles reflect this fascination. It's not mystical numerology but an aesthetic finding beauty in formal structures, series, and systems.</div>
+                    <p><strong>1:30 — Ambiguous Harmonic Progression</strong><br>Beneath the percussive texture slowly emerges a harmonic element — a pad holding long chords without ever clearly establishing a tonic. The progression moves through chords that could belong to different keys, creating a perpetually "in transit" harmony that never settles anywhere. It is the harmonic equivalent of the title: a path with no declared destination.</p>
+                    <p><strong>3:30 — Texture As Ending</strong><br>The track goes nowhere in a narrative sense — it builds to no climax, resolves no harmonic tension, and draws no conclusion. It stops when it exhausts its material, or when James decided it was finished. That arbitrary conclusion is part of the design: not every path has a goal.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Track As Experiment.</span>Schottkey 7th Path is one of the tracks on Selected Ambient Works Volume II that most clearly feels like an "experiment" in the literal sense — an attempt to see what happens when certain elements are combined, without a predetermined result. Richard D. James described his compositional process in these terms: putting elements together and seeing what emerges, treating the studio as a laboratory instead of an execution tool for preformed ideas.</div>
+                `
+            },
+            "ptolemy": {
+                it: `
+                    <h3>Ptolemy</h3>
+                    <p><strong>0:00 — Il Nome Come Sistema</strong><br>Tolomeo — l'astronomo greco che costruì un modello geocentrico dell'universo, con la Terra al centro e tutto il resto in orbita intorno a essa. Un sistema sbagliato ma internamente coerente, elegante, capace di fare previsioni accurate per secoli prima di essere sostituito. Il brano porta questo nome e ne porta anche la qualità: qualcosa di ordinato, di circolare, di apparentemente completo che contiene un errore fondamentale che non si riesce a localizzare.</p>
+                    <p><strong>0:20 — Il Pad Come Sistema Solare</strong><br>Un pad di sintetizzatore apre con una qualità timbrica che molti ascoltatori descrivono come "cosmica" — frequenze basse che suggeriscono scala, distanza, spazio. Non è un cliché della musica spaziale degli anni Settanta: è qualcosa di più sobrio, più matematico. Gli armonici del pad si distribuiscono nelle frequenze come pianeti nelle loro orbite — ognuno al suo posto, ognuno in relazione agli altri.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Scienza Come Estetica.</span>Richard D. James era un lettore vorace di testi scientifici — fisica, matematica, astronomia — e molti dei titoli di Selected Ambient Works Volume II riflettono questa fascinazione. Ptolemy è uno dei casi in cui il riferimento scientifico non è decorativo ma strutturale: la composizione è costruita su pattern ciclici e ripetizioni che imitano la struttura orbitale — elementi che tornano, che girano, che si ripetono con variazioni minime come corpi celesti nelle loro ellissi.</div>
+                    <p><strong>1:15 — La Melodia Come Orbita</strong><br>Una linea melodica breve inizia a ripetersi — un loop di poche note che torna su se stesso con la regolarità di un'orbita. Ma ogni ripetizione ha una piccola variazione — un armonico diverso, una sfumatura timbrica — che impedisce alla ripetizione di diventare identica a se stessa. È la differenza tra un cerchio perfetto e un'ellisse: la struttura è simmetrica, ma non è mai esattamente uguale.</p>
+                    <p><strong>3:00 — La Densità Crescente</strong><br>Nel corso del brano nuovi layer si aggiungono alla texture — non in modo drammatico, ma con la gradualità di corpi celesti che entrano nel campo visivo man mano che si regola il telescopio. Verso la metà del brano la texture ha una densità che non era presente all'inizio, e quella densità crea una qualità di peso, di massa, di gravità nel senso fisico del termine.</p>
+                    <p><strong>5:00 — Il Finale Come Dispersione</strong><br>Gli elementi si dissolvono uno per uno negli ultimi minuti — non con la gradualità di un fade-out tradizionale, ma con la qualità di oggetti che si allontanano nell'orbita, che diventano troppo distanti per essere percepiti. Il sistema si disfa non per collasso ma per dispersione: le sue componenti continuano a esistere, semplicemente non sono più raggiungibili.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Lunghezza Come Scelta.</span>Ptolemy è uno dei brani più lunghi dell'album — oltre sette minuti — e quella lunghezza non è mai percepita come eccesso ma come necessità. Richard D. James aveva una relazione particolare con la durata: credeva che certi stati mentali richiedessero certi tempi per essere raggiunti, e che tagliare un brano prima che quello stato fosse stabilito fosse una forma di incompletezza. La lunghezza di Ptolemy è il tempo necessario perché l'ascoltatore si abitui al sistema prima che questo cominci a dissolversi.</div>
+                `,
+                en: `
+                    <h3>Ptolemy</h3>
+                    <p><strong>0:00 — The Name As System</strong><br>Ptolemy — the Greek astronomer who built a geocentric model of the universe, with Earth at the center and everything else orbiting it. A flawed but internally consistent, elegant system, capable of making accurate predictions for centuries before being replaced. The track bears this name and also its quality: something orderly, circular, apparently complete containing a fundamental error you can't locate.</p>
+                    <p><strong>0:20 — The Pad As Solar System</strong><br>A synthesizer pad opens with a timbral quality many listeners describe as "cosmic" — low frequencies suggesting scale, distance, space. It's no seventies space music cliché: it's something more sober, more mathematical. The pad's harmonics distribute themselves in frequencies like planets in their orbits — each in its place, each in relation to the others.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Science As Aesthetics.</span>Richard D. James was a voracious reader of scientific texts — physics, math, astronomy — and many Selected Ambient Works Volume II titles reflect this fascination. Ptolemy is one case where the scientific reference isn't decorative but structural: the composition is built on cyclical patterns and repetitions imitating orbital structure — elements returning, spinning, repeating with minimal variations like celestial bodies in their ellipses.</div>
+                    <p><strong>1:15 — Melody As Orbit</strong><br>A short melodic line begins repeating — a loop of a few notes returning on itself with orbital regularity. But each repetition has a small variation — a different harmonic, a timbral nuance — preventing the repetition from becoming identical to itself. It's the difference between a perfect circle and an ellipse: the structure is symmetrical, but never exactly the same.</p>
+                    <p><strong>3:00 — Increasing Density</strong><br>Throughout the track new layers are added to the texture — not dramatically, but with the gradualness of celestial bodies entering the visual field as you adjust a telescope. Toward the track's middle, the texture has a density not present at the beginning, and that density creates a quality of weight, mass, and gravity in the physical sense.</p>
+                    <p><strong>5:00 — The Finale As Dispersion</strong><br>Elements dissolve one by one in the final minutes — not with traditional fade-out gradualness, but with the quality of objects moving away in orbit, becoming too distant to be perceived. The system unravels not by collapse but by dispersion: its components continue to exist, they simply are no longer reachable.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Length As Choice.</span>Ptolemy is one of the album's longest tracks — over seven minutes — and that length is never perceived as excess but as necessity. Richard D. James had a particular relationship with duration: he believed certain mental states required certain amounts of time to be reached, and cutting a track before that state was established was a form of incompleteness. Ptolemy's length is the time needed for the listener to get used to the system before it begins dissolving.</div>
+                `
+            },
+            "hedphelym": {
+                it: `
+                    <h3>Hedphelym</h3>
+                    <p><strong>0:00 — Il Timbro Come Identità</strong><br>Il brano si identifica immediatamente attraverso il suo timbro principale — un sintetizzatore con una qualità che è difficile da descrivere senza ricorrere a sinestesie: qualcosa tra il metallico e il liquido, tra il rigido e il morbido. Non è un suono che si trova nei preset standard dei sintetizzatori commerciali — è il risultato di una catena di elaborazioni (oscillatore, filtro, modulazione, effetti) costruita specificamente per questo brano.</p>
+                    <p><strong>0:30 — Il Ritmo Nascosto</strong><br>Sotto la texture emerge un pattern ritmico — non una drum machine nel senso tradizionale, ma una sequenza di eventi sonori che il cervello organizza automaticamente in struttura ritmica. È la stessa capacità che ci fa sentire ritmo nel rumore della pioggia o del treno: il cervello cerca pattern anche dove non sono stati composti esplicitamente. James costruisce situazioni in cui questa tendenza percettiva diventa parte dell'esperienza musicale.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Nome Come Suono.</span>"Hedphelym" non è una parola di nessuna lingua conosciuta — è un suono che diventa nome. James ha costruito diversi dei suoi titoli in questo modo: combinare fonemi in sequenze che suonano come potrebbero avere significato senza averlo dichiarato. È una tecnica che ricorda la poesia nonsense di Edward Lear o Lewis Carroll, dove il suono delle parole porta significato indipendentemente dal loro contenuto semantico. "Hedphelym" suona antico, forse germanico o celtico, forse il nome di un luogo o di una persona in una mitologia che non esiste.</div>
+                    <p><strong>1:45 — La Stratificazione Orizzontale</strong><br>A differenza di molti brani dell'album che costruiscono verticalmente — aggiungendo layer uno sopra l'altro — Hedphelym si sviluppa orizzontalmente: il materiale melodico si estende nel tempo invece di addensarsi nello spazio. Le frasi sono più lunghe, i respiri tra di esse più ampi. È una concezione del tempo musicale che deve più alla musica classica che all'elettronica — il pensiero sinfonico applicato a mezzi elettronici.</p>
+                    <p><strong>3:30 — Il Momento di Apertura</strong><br>Circa a tre minuti e mezzo, il brano si "apre" — la texture si alleggerisce, le frequenze basse si ritirano, e quello che rimane è più leggero e più acuto. È come emergere da un interno verso uno spazio aperto: la qualità dell'aria cambia, la prospettiva si allarga. Tecnicamente, è una riduzione dei layer bassi combinata con l'introduzione di elementi nelle frequenze alte — ma l'effetto percettivo è spaziale, quasi architettonico.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Influenza della Musica Classica.</span>Richard D. James aveva studiato brevemente musica classica prima di immergersi completamente nell'elettronica, e quella formazione emerge in brani come Hedphelym — nella qualità del fraseggio melodico, nella gestione delle dinamiche, nel senso di forma a lungo termine. Non è musica classica rielaborata elettronicamente: è pensiero compositivo classico applicato a strumenti e tecniche completamente diversi. La distinzione è importante.</div>
+                `,
+                en: `
+                    <h3>Hedphelym</h3>
+                    <p><strong>0:00 — Timbre As Identity</strong><br>The track immediately identifies itself through its main timbre — a synthesizer with a quality hard to describe without resorting to synesthesia: something between metallic and liquid, between rigid and soft. It isn't a sound found in standard commercial synthesizer presets — it's the result of a processing chain (oscillator, filter, modulation, effects) built specifically for this track.</p>
+                    <p><strong>0:30 — The Hidden Rhythm</strong><br>Beneath the texture emerges a rhythmic pattern — not a drum machine in the traditional sense, but a sequence of sonic events the brain automatically organizes into rhythmic structure. It's the same capacity making us hear rhythm in rain or train noise: the brain seeks patterns even where none were explicitly composed. James builds situations where this perceptual tendency becomes part of the musical experience.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Name As Sound.</span>"Hedphelym" isn't a word in any known language — it's a sound becoming a name. James constructed several titles this way: combining phonemes into sequences sounding like they could carry meaning without declaring it. It's a technique recalling the nonsense poetry of Edward Lear or Lewis Carroll, where word sound carries meaning regardless of semantic content. "Hedphelym" sounds ancient, perhaps Germanic or Celtic, perhaps a place or person's name in a non-existent mythology.</div>
+                    <p><strong>1:45 — Horizontal Layering</strong><br>Unlike many album tracks building vertically — adding layers on top of each other — Hedphelym develops horizontally: melodic material extends in time instead of thickening in space. Phrasing is longer, breaths between them wider. It's a musical time conception owing more to classical music than electronic — symphonic thought applied to electronic means.</p>
+                    <p><strong>3:30 — The Moment of Opening</strong><br>At about three and a half minutes, the track "opens" — texture lightens, low frequencies recede, and what remains is lighter and higher. It's like emerging from an interior into open space: air quality changes, perspective widens. Technically, it's a reduction of low layers combined with high-frequency element introduction — but the perceptual effect is spatial, almost architectural.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Classical Music Influence.</span>Richard D. James briefly studied classical music before fully immersing himself in electronics, and that training emerges in tracks like Hedphelym — in melodic phrasing quality, dynamic management, long-term form sense. It isn't electronically reworked classical music: it's classical compositional thought applied to completely different instruments and techniques. The distinction is important.</div>
+                `
+            },
+            "delphium": {
+                it: `
+                    <h3>Delphium</h3>
+                    <p><strong>0:00 — L'Apertura Più Intima</strong><br>Delphium è il brano che suona più "piccolo" dell'album — non nel senso di meno importante, ma nel senso di scala. Dove altri brani evocano spazi cosmici o paesaggi vasti, questo suona come qualcosa di dimensioni umane, quasi domestico. Il pad di apertura ha una qualità calda e ravvicinata, come un suono sentito in una stanza invece che in un paesaggio.</p>
+                    <p><strong>0:20 — La Melodia Come Conversazione</strong><br>La linea melodica principale di Delphium ha una qualità dialogica — frasi che si rispondono, pause che aspettano risposta, un andamento che ricorda una conversazione più che un monologo. Non ci sono due voci distinte, ma il fraseggio melodico è costruito in modo da suggerire un'alternanza, una reciprocità. È la melodia come scambio invece che come dichiarazione.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Delfino Come Guida.</span>"Delphium" deriva dal greco "delphis" — delfino — e nella mitologia greca i delfini erano guide, accompagnatori di anime, creature che abitavano il confine tra due mondi (acqua e aria, umano e divino). Il brano ha questa qualità di accompagnamento — non porta da nessuna parte di specifico, ma la sensazione di essere accompagnati è precisa e reale. È musica che cammina accanto invece di precedere o seguire.</div>
+                    <p><strong>1:30 — La Texture Come Acqua</strong><br>Il pad che accompagna la melodia ha una qualità fluida — gli armonici si muovono lentamente, come riflessi sull'acqua che cambiano con il movimento della superficie. Tecnicamente, questo effetto è prodotto da una modulazione lenta del filtro passa-basso: il parametro di cutoff viene alzato e abbassato con un LFO (oscillatore a bassa frequenza) a velocità molto lenta, producendo quell'ondulazione continua e quasi impercettibile.</p>
+                    <p><strong>3:00 — Il Registro Come Significato</strong><br>Delphium rimane per tutta la sua durata in un registro medio — né le frequenze cosmiche dei bassi profondi di brani come Green Calx, né le altezze cristalline di Heliosphan. Quella scelta di registro non è neutra: il registro medio è il registro della voce umana, dello spazio abitabile, della scala domestica. È il brano più "umano" dell'album nel senso più letterale.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Posizione nell'Album.</span>Delphium è posizionato verso la fine di Selected Ambient Works Volume II, e quella posizione sembra calibrata: dopo i paesaggi più vasti e astratti dei brani precedenti, questo brano porta l'ascolto verso qualcosa di più intimo, preparando l'ascoltatore per la conclusione. È una funzione drammaturgica — la penultima scena prima della chiusura — che presuppone un pensiero sull'album come unità narrativa invece che come raccolta di brani indipendenti.</div>
+                `,
+                en: `
+                    <h3>Delphium</h3>
+                    <p><strong>0:00 — The Most Intimate Opening</strong><br>Delphium is the track sounding "smallest" on the album — not meaning less important, but in sense of scale. Where other tracks evoke cosmic spaces or vast landscapes, this sounds like something of human dimensions, almost domestic. The opening pad has a warm, close-up quality, like a sound heard in a room rather than a landscape.</p>
+                    <p><strong>0:20 — Melody As Conversation</strong><br>Delphium's main melodic line has a dialogic quality — phrases answering each other, pauses awaiting response, a pacing recalling conversation rather than monologue. There aren't two distinct voices, but melodic phrasing is constructed to suggest alternation, reciprocity. It's melody as exchange instead of declaration.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Dolphin As Guide.</span>"Delphium" derives from Greek "delphis" — dolphin — and in Greek mythology dolphins were guides, soul companions, creatures inhabiting boundaries between two worlds (water and air, human and divine). The track has this accompanying quality — it leads nowhere specific, but the sensation of being accompanied is precise and real. It's music walking beside instead of preceding or following.</div>
+                    <p><strong>1:30 — Texture As Water</strong><br>The pad accompanying the melody has a fluid quality — harmonics move slowly, like water reflections changing with surface movement. Technically, this effect is produced by slow low-pass filter modulation: the cutoff parameter is raised and lowered with an LFO (low-frequency oscillator) at very slow speed, producing that continuous, almost imperceptible undulation.</p>
+                    <p><strong>3:00 — Register As Meaning</strong><br>Delphium remains throughout its duration in a mid register — neither cosmic frequencies of deep basses from tracks like Green Calx, nor crystalline heights of Heliosphan. That register choice isn't neutral: the mid register is the human voice register, habitable space, domestic scale. It's the album's most "human" track in the most literal sense.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Album Positioning.</span>Delphium is positioned toward the end of Selected Ambient Works Volume II, and that position seems calibrated: after vaster, abstract landscapes of previous tracks, this track brings listening toward something more intimate, preparing the listener for conclusion. It's a dramaturgical function — the penultimate scene before closing — presupposing thought on the album as a narrative unit instead of a collection of independent tracks.</div>
+                `
+            },
+            "actium": {
+                it: `
+                    <h3>Actium</h3>
+                    <p><strong>0:00 — La Battaglia Come Metafora</strong><br>Azio fu il nome della battaglia navale del 31 a.C. in cui Ottaviano sconfisse Marco Antonio e Cleopatra, determinando la fine della Repubblica romana e l'inizio dell'Impero. Una battaglia che decise il corso della storia occidentale per secoli — non attraverso la forza bruta, ma attraverso la strategia, la posizione, il controllo dello spazio. Il brano porta questo nome e quella qualità: non è musica di conflitto, è musica di esiti irreversibili.</p>
+                    <p><strong>0:20 — Il Drone Come Storia</strong><br>Un drone nelle frequenze basse apre il brano con una qualità di peso storico — non il peso emotivo della tristezza o della grandiosità, ma il peso specifico di qualcosa che è già accaduto e non può essere cambiato. È il suono del passato come presenza fisica, non come ricordo. Tecnicamente è un oscillatore a onda sinusoidale nelle frequenze subbasse — sotto i 60 Hz — che si sente più con il corpo che con le orecchie, specialmente su impianti con buoni subwoofer.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Fine Come Inizio.</span>Actium chiude Selected Ambient Works Volume II, e quella posizione finale è significativa: la battaglia di Azio fu una fine (della Repubblica, di Marco Antonio, di Cleopatra) ma anche un inizio (dell'Impero, del principato augusteo, di un'intera era della storia romana). James scelse un titolo che porta questa doppiezza — la conclusione come soglia verso qualcosa di diverso. È la riflessione sull'album stesso: la fine di una serie di ascolti che apre verso qualcosa che l'album non può contenere.</div>
+                    <p><strong>1:00 — La Stratificazione Finale</strong><br>Actium è il brano con la stratificazione più densa dell'album — layer dopo layer si aggiungono nel corso dei suoi minuti, costruendo una texture che verso la metà del brano è quasi satura. Non è caos: ogni elemento ha il suo spazio frequenziale, ogni voce è distinguibile dall'altra. Ma la complessità complessiva è maggiore di qualsiasi brano precedente. È come se l'album stesse raccogliendo tutto il suo materiale per un ultimo inventario.</p>
+                    <p><strong>2:30 — Il Momento di Svolta</strong><br>A circa due minuti e mezzo il brano raggiunge la sua densità massima — e poi inizia lentamente a cedere. Non è un collasso ma una dissoluzione ordinata: gli elementi si ritirano nell'ordine inverso a quello in cui sono entrati, come un esercito che si ritira con disciplina. Tecnicamente, è un fade-out costruito per strati invece che globale — ogni layer viene abbassato separatamente, producendo una texture che cambia qualità invece di diminuire uniformemente di volume.</p>
+                    <p><strong>4:00 — Il Silenzio Come Conclusione</strong><br>Il brano finisce nel silenzio — non nel silenzio improvviso di un taglio netto, ma nel silenzio graduale di qualcosa che si esaurisce. L'ultimo elemento a scomparire è il drone delle frequenze basse — quello che era entrato per primo è l'ultimo ad andarsene. È una struttura ad arco: ciò che apre chiude, ciò che era fondamenta è anche tetto.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Album Come Oggetto.</span>Selected Ambient Works Volume II è uno degli album che più chiaramente esiste come unità — non come raccolta di singoli ma come esperienza unica e indivisibile. Actium è la prova di questa intenzione: un brano che funziona come conclusione non solo di se stesso ma dell'intero percorso. Richard D. James aveva pensato all'album come a un viaggio — non nel senso narrativo del termine, ma nel senso fisico: uno spostamento nello spazio che lascia l'ascoltatore in un posto diverso da quello in cui era partito. Actium è il momento in cui ci si ferma e si guarda indietro la distanza percorsa.</div>
+                `,
+                en: `
+                    <h3>Actium</h3>
+                    <p><strong>0:00 — Battle As Metaphor</strong><br>Actium was the name of the 31 BC naval battle where Octavian defeated Mark Antony and Cleopatra, determining the Roman Republic's end and the Empire's beginning. A battle deciding Western history's course for centuries — not through brute force, but through strategy, position, space control. The track bears this name and that quality: it's not conflict music, it's irreversible outcome music.</p>
+                    <p><strong>0:20 — Drone As History</strong><br>A low-frequency drone opens the track with a quality of historical weight — not emotional weight of sadness or grandeur, but the specific weight of something already happened and unchangeable. It's the sound of the past as physical presence, not memory. Technically it's a sine wave oscillator in sub-bass frequencies — under 60 Hz — felt more with the body than ears, especially on systems with good subwoofers.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The End As Beginning.</span>Actium closes Selected Ambient Works Volume II, and that final position is significant: the Battle of Actium was an end (of the Republic, Mark Antony, Cleopatra) but also a beginning (of the Empire, Augustan principate, a whole Roman history era). James chose a title carrying this duality — conclusion as a threshold to something different. It is a reflection on the album itself: the end of a listening series opening toward something the album cannot contain.</div>
+                    <p><strong>1:00 — The Final Layering</strong><br>Actium is the album's most densely layered track — layer after layer added over its minutes, building a texture almost saturated towards the middle. It's not chaos: every element has its frequency space, every voice distinguishable. But overall complexity is greater than any previous track. It's as if the album were gathering all its material for a final inventory.</p>
+                    <p><strong>2:30 — The Turning Point</strong><br>At about two and a half minutes the track reaches maximum density — and then slowly begins to yield. It's not a collapse but an orderly dissolution: elements retreat in reverse order to their entrance, like a disciplined retreating army. Technically, it's a layer-built fade-out instead of a global one — each layer lowered separately, producing a texture changing quality instead of uniformly decreasing volume.</p>
+                    <p><strong>4:00 — Silence As Conclusion</strong><br>The track ends in silence — not sudden sharp-cut silence, but the gradual silence of something exhausting itself. The last element to disappear is the low-frequency drone — what entered first is last to leave. It's an arch structure: what opens closes, what was foundation is also roof.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Album As Object.</span>Selected Ambient Works Volume II is one of the albums most clearly existing as a unit — not a singles collection but a single, indivisible experience. Actium is proof of this intention: a track functioning as conclusion not just of itself but the entire journey. Richard D. James thought of the album as a journey — not in the narrative sense, but physical: a spatial shift leaving the listener in a different place than where they started. Actium is the moment you stop and look back at the distance traveled.</div>
+                `
+            }
+        };
+
+        let mobileGalleryInterval;
+        let currentImgIndex = 0;
+
+        function startMobileGallery() {
+            const images = document.querySelectorAll('.band-gallery .flip-card');
+            if (images.length === 0) return;
+
+            function updateGallery() {
+                if (window.innerWidth <= 900) {
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                    images[currentImgIndex].classList.add('mobile-active');
+                    currentImgIndex = (currentImgIndex + 1) % images.length;
+                }
+            }
+
+            if (window.innerWidth <= 900) {
+                updateGallery();
+                if (!mobileGalleryInterval) {
+                    mobileGalleryInterval = setInterval(updateGallery, 5000);
+                }
+            }
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth <= 900) {
+                    if (!mobileGalleryInterval) {
+                        updateGallery();
+                        mobileGalleryInterval = setInterval(updateGallery, 5000);
+                    }
+                } else {
+                    clearInterval(mobileGalleryInterval);
+                    mobileGalleryInterval = null;
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderPlaylist();
+            startMobileGallery();
+            
+            const trackList = document.getElementById('tracklist');
+            if(trackList) trackList.scrollTop = 0;
+        });
+
+        // GESTIONE CAMBIO LINGUA GLOBALE
+        function setGlobalLang(lang) {
+            document.documentElement.lang = lang;
+            
+            document.querySelectorAll('.global-lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-lang-' + lang).classList.add('active');
+
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentId = ytPlayer ? ytPlayer.getAttribute('data-current-id') : null;
+            
+            if (currentId) {
+                const guideContent = document.getElementById('guide-content');
+                if (guideData[currentId] && guideData[currentId][lang]) {
+                    guideContent.innerHTML = guideData[currentId][lang];
+                }
+            }
+        }
+
+        function renderPlaylist() {
+            const container = document.getElementById('tracklist');
+            let html = '';
+
+            playlist.forEach((track, index) => {
+                html += `
+                    <div class="track-row" id="track-${track.id}" onclick="playTrack('${track.id}', '${track.ytId}', '${track.title.replace(/'/g, "\\'")}', this)">
+                        <div class="track-num">
+                            <span>${index + 1}</span>
+                            <div class="playing-icon">
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                            </div>
+                        </div>
+                        <div class="track-info">
+                            <div class="track-title">${track.title}</div>
+                            <div class="track-artist">Aphex Twin</div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function playTrack(id, ytId, title, rowElement) {
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentPlayingId = ytPlayer.getAttribute('data-current-id');
+            const currentLang = document.documentElement.lang;
+
+            if (currentPlayingId !== id) {
+                ytPlayer.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`;
+                ytPlayer.setAttribute('data-current-id', id);
+            }
+
+            const rows = document.querySelectorAll('.track-row');
+            rows.forEach(r => r.classList.remove('active'));
+            if(rowElement) rowElement.classList.add('active');
+
+            // Guida
+            const guideContent = document.getElementById('guide-content');
+            if (guideData[id] && guideData[id][currentLang]) {
+                guideContent.innerHTML = guideData[id][currentLang];
+                const gBox = document.querySelector('.guide-box');
+                if(gBox) gBox.scrollTop = 0;
+            } else {
+                guideContent.innerHTML = currentLang === 'it' ? "<p>Guida all'ascolto non disponibile.</p>" : "<p>Listening guide not available.</p>";
+            }
+
+            const guidePanel = document.getElementById('guide-panel');
+            if(guidePanel && !guidePanel.classList.contains('open')) {
+                toggleGuide();
+            }
+        }
+
+        // --- FUNZIONI ACCORDION MASTER ---
+        function toggleLesson() { 
+            const content = document.getElementById('main-content');
+            const videoLayer = document.getElementById('video-layer');
+            const btn = document.getElementById('btn-inizia');
+            const btnTxtIt = document.getElementById('btn-txt-it');
+            const btnTxtEn = document.getElementById('btn-txt-en');
+            const icon = btn.querySelector('.icon-plus');
+            
+            const isOpening = !content.classList.contains('active');
+            
+            if (isOpening) {
+                content.classList.add('active'); 
+                btn.classList.add('active'); 
+                btnTxtIt.textContent = "Chiudi Esperienza"; 
+                btnTxtEn.textContent = "Close Experience";
+                icon.textContent = "×"; 
+                videoLayer.classList.add('video-hidden');
+            } else {
+                content.classList.remove('active'); 
+                btn.classList.remove('active'); 
+                btnTxtIt.textContent = "Inizia Esperienza"; 
+                btnTxtEn.textContent = "Start Experience"; 
+                icon.textContent = "→"; 
+                videoLayer.classList.remove('video-hidden');
+                
+                const ytPlayer = document.getElementById('youtube-player');
+                if(ytPlayer) ytPlayer.src = "about:blank";
+            }
+        }
+
+        function toggleGuide() {
+            const panel = document.getElementById('guide-panel');
+            const btn = document.getElementById('guide-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleHistory() {
+            const panel = document.getElementById('history-panel');
+            const btn = document.getElementById('history-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleDisclaimer() {
+            const panel = document.getElementById('disclaimer-panel');
+            const btn = document.getElementById('disclaimer-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleMobileTracks() {
+            const trackList = document.getElementById('tracklist');
+            const wrapper = document.getElementById('tracklist-wrapper');
+            const trigger = document.querySelector('.mobile-track-trigger');
+            if (trackList.classList.contains('mobile-open')) {
+                trackList.classList.remove('mobile-open'); wrapper.classList.remove('opened'); wrapper.classList.add('closed'); trigger.classList.remove('active');
+            } else {
+                trackList.classList.add('mobile-open'); wrapper.classList.remove('closed'); wrapper.classList.add('opened'); trigger.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

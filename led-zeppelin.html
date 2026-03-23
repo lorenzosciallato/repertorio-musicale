@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Led Zeppelin | Repertorio Audio</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- VARIABILI & RESET --- */
+        :root {
+            --bg-color: #f0f0f2;
+            --paper-color: #fdfbf7;
+            --ink-color: #1a1a1a;
+            --accent-color: #375a7f;
+            --pop-yellow: #ffee00;
+            --font-title: 'Abril Fatface', cursive;
+            --font-body: 'Inter', sans-serif;
+            --hover-row: rgba(55, 90, 127, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: var(--font-body);
+            color: var(--ink-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px;
+            width: 100%;
+            overflow-x: hidden; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- MULTILINGUA CSS LOGIC --- */
+        html[lang="it"] .lang-en { display: none !important; }
+        html[lang="en"] .lang-it { display: none !important; }
+
+        /* --- BACKGROUND --- */
+        .video-background-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden;
+            background: #e0e0e5; 
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .video-foreground {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; transition: opacity 0.8s ease; opacity: 1;
+        }
+
+        .video-foreground img.bg-image {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.1; 
+            filter: grayscale(100%) sepia(1) hue-rotate(190deg) contrast(1.2);
+            mix-blend-mode: multiply;
+        }
+
+        .video-hidden { opacity: 0; }
+
+        /* --- HEADER --- */
+        header { text-align: center; margin-top: 3rem; margin-bottom: 1rem; padding: 0 1rem; position: relative; z-index: 4; }
+        
+        .main-logo {
+            max-width: 90%; width: 350px; height: auto;
+            display: block; margin: 0 auto;
+        }
+
+        .subtitle-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .subtitle {
+            font-family: var(--font-body); font-size: 1.5rem; color: var(--accent-color); font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 4px;
+        }
+
+        .global-lang-switch {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .global-lang-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 4px;
+            color: #888;
+            transition: all 0.3s;
+        }
+        
+        .global-lang-btn.active {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        /* --- CONTENITORE PRINCIPALE --- */
+        .content-card {
+            background: var(--paper-color); padding: 3rem; margin: 0 auto;
+            width: 90%; max-width: 1200px; position: relative;
+            border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); z-index: 4;
+            margin-bottom: 2rem; margin-top: 2rem;
+        }
+        @media (max-width: 600px) { 
+            .content-card { padding: 1.5rem; width: 95%; margin-top: 1rem; } 
+            .main-logo { width: 280px; }
+            .subtitle { font-size: 1.2rem; letter-spacing: 2px; }
+            .global-lang-btn { padding: 5px 10px; font-size: 0.8rem; }
+        }
+
+        /* --- ACCORDION GENERALE --- */
+        .accordion-item { margin-bottom: 1rem; border-bottom: none; }
+        
+        .master-header {
+            background: transparent; border: 2px solid var(--accent-color); border-radius: 8px;
+            padding: 15px 20px; justify-content: center; font-size: 1.5rem; 
+            color: var(--accent-color); width: 100%; margin-bottom: 1rem;
+            cursor: pointer; display: flex; align-items: center; font-family: var(--font-title);
+            transition: all 0.3s ease;
+        }
+        .master-header:hover { background: rgba(55, 90, 127, 0.1); }
+        .master-header .icon-plus { margin-left: 15px; font-family: var(--font-body); font-weight: 300; transition: transform 0.3s; }
+
+        .accordion-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, opacity 0.5s;
+            padding: 0; opacity: 0;
+        }
+        .accordion-content.active { max-height: 20000px; opacity: 1; padding-top: 2rem; }
+        .master-header.active .icon-plus { transform: rotate(90deg); }
+
+        /* --- LAYOUT PLAYER --- */
+        .playlist-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr; gap: 2rem; align-items: start; margin-bottom: 2rem;
+        }
+        @media (max-width: 900px) { .playlist-layout { grid-template-columns: 1fr; } }
+
+        /* --- YOUTUBE PLAYER CONTAINER --- */
+        .player-wrapper {
+            position: sticky; top: 20px; background: #fff; border-radius: 12px;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 10; border: 1px solid #eee;
+        }
+
+        .youtube-container { 
+            position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #000; 
+        }
+        .youtube-container iframe { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; 
+        }
+
+        /* --- TRACKLIST E MESSAGGI --- */
+        .tracklist-column { display: flex; flex-direction: column; }
+
+        .scroll-disclaimer {
+            font-size: 0.85rem; color: #665500; margin-bottom: 12px; font-style: italic; text-align: center; 
+            background-color: rgba(255, 238, 0, 0.2); border: 2px dashed #e6c200; padding: 10px;
+            border-radius: 8px; width: 100%;
+        }
+        .msg-desktop { display: block; }
+        .msg-mobile { display: none; }
+        
+        .mobile-track-trigger {
+            display: none; width: 100%; background: #fff; border: 2px dashed #ddd; border-radius: 8px;
+            padding: 12px 20px; font-family: var(--font-title); font-size: 1.2rem; color: var(--accent-color);
+            justify-content: space-between; align-items: center; cursor: pointer; margin-top: 10px; margin-bottom: 10px; transition: all 0.3s;
+        }
+        .mobile-track-trigger:hover { background: #fdfdfd; border-color: var(--accent-color); }
+        .mobile-track-trigger.active { background: #f0f4f8; border-style: solid; border-color: var(--accent-color); }
+        .trigger-arrow { transition: transform 0.3s; font-size: 1rem; }
+        .mobile-track-trigger.active .trigger-arrow { transform: rotate(180deg); }
+
+        .tracklist-container { 
+            width: 100%; max-height: 500px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #ccc #f0f0f2;
+            padding-right: 5px; transition: max-height 0.5s ease-out, opacity 0.5s;
+        }
+        .tracklist-container::-webkit-scrollbar { width: 6px; }
+        .tracklist-container::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+
+        .track-row {
+            display: grid; grid-template-columns: 40px 1fr 40px; padding: 12px 10px; border-bottom: 1px solid rgba(0,0,0,0.05);
+            cursor: pointer; transition: background 0.2s, padding-left 0.2s; border-radius: 6px; align-items: center;
+        }
+        .track-row:hover { background-color: var(--hover-row); padding-left: 15px; }
+        .track-row.active { background-color: var(--hover-row); border-left: 4px solid var(--accent-color); }
+
+        .track-num { font-size: 0.9rem; color: #888; font-weight: 700; }
+        .track-row.active .track-num { display: none; }
+        .track-row.active .playing-icon { display: inline-block; }
+        
+        .playing-icon { display: none; width: 14px; height: 14px; position: relative; }
+        .bar { background: var(--accent-color); bottom: 0; position: absolute; width: 3px; animation: sound 0ms -800ms linear infinite alternate; }
+        .bar:nth-child(1) { left: 0px; height: 10px; animation-duration: 474ms; }
+        .bar:nth-child(2) { left: 5px; height: 6px; animation-duration: 433ms; }
+        .bar:nth-child(3) { left: 10px; height: 12px; animation-duration: 407ms; }
+        @keyframes sound { 0% { opacity: .35; height: 3px; } 100% { opacity: 1; height: 14px; } }
+
+        .track-info { display: flex; flex-direction: column; }
+        .track-title { font-weight: 700; font-size: 1rem; color: var(--ink-color); }
+        .track-row.active .track-title { color: var(--accent-color); }
+        .track-artist { font-size: 0.85rem; color: #666; }
+
+        /* --- STILI TESTI (LYRICS) TOGGLE E PULSANTI --- */
+        .btn-back-tracks {
+            display: none; width: 100%; padding: 8px; margin-bottom: 10px; background: var(--pop-yellow); border: none;
+            color: var(--ink-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem;
+            font-weight: 900; transition: background 0.3s; text-align: center;
+        }
+        .btn-back-tracks:hover { background: #e6d600; }
+
+        .desktop-lyrics-view { display: none; }
+        
+        .lyrics-wrapper { background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .lyrics-toggle { display: flex; gap: 10px; margin-bottom: 15px; justify-content: center; }
+        
+        .flag-btn { 
+            background: #f0f0f2; border: 2px solid #ddd; border-radius: 6px; padding: 8px 15px; 
+            font-size: 1rem; cursor: pointer; transition: all 0.3s; color: var(--ink-color);
+        }
+        .flag-btn:hover { background: #e8e8e8; }
+        .flag-btn.active { 
+            background: #fff; border-color: var(--accent-color); font-weight: bold; 
+            color: var(--accent-color); box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .lyrics-content-area { max-height: 350px; overflow-y: auto; scrollbar-width: thin; padding-right: 5px; }
+        .lyrics-content-area::-webkit-scrollbar { width: 6px; }
+        .lyrics-content-area::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+        
+        .lyrics-col { display: none; white-space: pre-wrap; color: #333; font-size: 0.9rem; }
+        .lyrics-col.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        .lyrics-col h4 { color: var(--accent-color); margin-bottom: 10px; font-family: var(--font-title); font-size: 1.1rem; }
+        .lyrics-col.ita { font-style: italic; color: #555; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* GESTIONE LOGICA DESKTOP (Mostra Lyrics, Nascondi Lista) */
+        @media (min-width: 901px) {
+            .tracklist-wrapper.lyrics-active #tracklist { display: none; }
+            .tracklist-wrapper.lyrics-active #desktop-lyrics-view { display: block; }
+            .tracklist-wrapper.lyrics-active #btn-back-tracks { display: block; }
+            .tracklist-wrapper.lyrics-active .msg-desktop { display: none; }
+            .mobile-lyrics-accordion { display: none; } 
+        }
+
+        /* GESTIONE LOGICA MOBILE */
+        @media (max-width: 900px) {
+            .tracklist-wrapper.lyrics-active #desktop-lyrics-view { display: none !important; }
+            .tracklist-wrapper.lyrics-active #btn-back-tracks { display: none !important; }
+            
+            .mobile-lyrics-accordion { display: block; margin-top: 1rem; border-top: 1px solid #eee; }
+        }
+
+        /* --- ACCORDIONS COMUNI (Guida, Storia, Mobile Lyrics) --- */
+        .guide-accordion-wrapper { margin-top: 1rem; border-top: 1px solid #eee; }
+        .guide-trigger {
+            background: #fff; border: 2px dashed #ddd; border-radius: 8px; width: 100%; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+            transition: all 0.3s; margin-top: 1rem;
+        }
+        .guide-trigger:hover { border-color: var(--accent-color); background: #fdfdfd; }
+        .guide-trigger.active { border-color: var(--accent-color); background: #f0f4f8; border-style: solid; }
+        .guide-trigger span { font-family: var(--font-title); font-size: 1.4rem; color: var(--accent-color); }
+        .guide-arrow { font-size: 1.2rem; transition: transform 0.3s; color: var(--accent-color); }
+        .guide-trigger.active .guide-arrow { transform: rotate(180deg); }
+
+        .guide-panel { max-height: 0; overflow: hidden; transition: max-height 0.6s ease-out, opacity 0.5s; opacity: 0; background: #fff; border-radius: 0 0 8px 8px; }
+        .guide-panel.open { max-height: 80000px; opacity: 1; padding: 20px 0; }
+
+        .guide-grid { display: grid; grid-template-columns: 2fr 1.5fr; gap: 2rem; align-items: start; }
+        .guide-box { background: #fff; padding: 1rem 0; max-height: 600px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--accent-color) #f0f0f2; padding-right: 15px; }
+        .guide-box::-webkit-scrollbar { width: 8px; }
+        .guide-box::-webkit-scrollbar-thumb { background-color: var(--accent-color); border-radius: 10px; }
+        
+        .guide-content p { margin-bottom: 1rem; font-size: 1rem; color: #333; }
+        .guide-content strong { color: var(--accent-color); font-weight: 900; }
+
+        .curiosity-box { background: #fffcf0; border-left: 4px solid var(--pop-yellow); padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0; font-size: 0.95rem; font-style: italic; color: #554; }
+        .curiosity-label { font-weight: bold; font-style: normal; color: #d4a000; text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 5px; }
+
+        /* --- STILE GALLERIA IMMAGINI --- */
+        .band-gallery { display: flex; flex-direction: column; gap: 20px; max-height: 650px; overflow-y: auto; padding-right: 10px; }
+        .band-gallery::-webkit-scrollbar { width: 4px; }
+        .band-gallery::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
+        .gallery-img { width: 100%; height: auto; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: block; transition: transform 0.3s; }
+        .gallery-img:hover { transform: scale(1.02); }
+
+        /* --- STILE WIKI / STORIA --- */
+        .wiki-content { font-family: 'Inter', sans-serif; color: #333; line-height: 1.7; padding: 0 10px; text-align: justify; }
+        .wiki-title { font-family: var(--font-title); color: var(--accent-color); font-size: 1.4rem; margin-top: 10px; margin-bottom: 5px; letter-spacing: 1px; }
+        .wiki-subtitle { font-weight: 900; color: #d4a000; text-transform: uppercase; font-size: 0.85rem; margin-top: 40px; margin-bottom: 10px; clear: both; }
+        .wiki-divider { border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); margin: 30px 0; clear: both; }
+        .wiki-figure { margin: 15px 0; width: 100%; }
+        .wiki-img { width: 100%; height: auto; border-radius: 4px; border: 1px solid #ccc; box-shadow: 2px 2px 8px rgba(0,0,0,0.1); filter: sepia(0.1) contrast(1.05); transition: all 0.3s; }
+        .wiki-img:hover { filter: none; }
+        .wiki-figure figcaption { font-size: 0.75rem; color: #666; font-style: italic; text-align: center; margin-top: 5px; }
+        .wiki-gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 30px 0 40px 0; }
+        .wiki-gallery-grid .wiki-figure { height: 100%; margin: 0; }
+        .wiki-gallery-grid .wiki-img { height: 100%; object-fit: cover; }
+
+        .btn-close-bottom { width: 100%; padding: 12px; margin-top: 15px; background: #fff; border: 1px solid #ddd; color: var(--accent-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; font-weight: 700; transition: background 0.3s; text-align: center; }
+        .btn-close-bottom:hover { background: #f0f4f8; border-color: var(--accent-color); }
+        .track-close-desktop-hidden { display: none; }
+
+        @media (min-width: 901px) {
+            .wiki-figure.right { float: right; width: 40%; margin-left: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.left { float: left; width: 40%; margin-right: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.full { clear: both; width: 100%; margin: 30px 0; }
+            .wiki-chapter::after { content: ""; display: table; clear: both; }
+        }
+
+        @media (max-width: 900px) {
+            .msg-desktop { display: none !important; }
+            .msg-mobile { display: block !important; text-align: center; }
+            .guide-grid { grid-template-columns: 1fr; }
+            .band-gallery { display: block; order: -1; max-height: none; overflow: hidden; padding-right: 0; margin-bottom: 10px; }
+            .gallery-img { display: none; width: 100%; border-radius: 8px; animation: fadeInSlide 0.5s ease-in-out; }
+            .gallery-img.mobile-active { display: block; }
+            @keyframes fadeInSlide { from { opacity: 0; } to { opacity: 1; } }
+            .wiki-gallery-grid { grid-template-columns: 1fr; gap: 20px; }
+            .wiki-gallery-grid .wiki-img { height: auto; object-fit: contain; }
+            .mobile-track-trigger { display: flex; } 
+            .tracklist-wrapper.opened .track-close-desktop-hidden { display: block; }
+            .tracklist-container { max-height: 0; overflow: hidden; opacity: 0; }
+            .tracklist-container.mobile-open { max-height: 5000px; overflow-y: visible; opacity: 1; margin-bottom: 1rem; }
+            .tracklist-wrapper.closed .scroll-disclaimer { display: none; }
+            .tracklist-wrapper.opened .scroll-disclaimer { display: block; }
+            .guide-box { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+            
+            .lyrics-content-area { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-background-wrapper" id="bg-wrapper">
+        <div class="video-foreground" id="video-layer">
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774197044/6_dukoob.jpg" alt="Led Zeppelin Background" class="bg-image">
+        </div>
+        <div class="video-filter-overlay"></div>
+    </div>
+
+    <header>
+        <h1>
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774197056/logo_qqzsvx.png" alt="Led Zeppelin Logo" class="main-logo">
+        </h1>
+        <div class="subtitle-wrapper">
+            <div class="subtitle">
+                <span class="lang-it">Repertorio</span>
+                <span class="lang-en">Repertoire</span>
+            </div>
+            <div class="global-lang-switch">
+                <button id="btn-lang-it" class="global-lang-btn active" onclick="setGlobalLang('it')">ITA</button>
+                <button id="btn-lang-en" class="global-lang-btn" onclick="setGlobalLang('en')">ENG</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-card">
+        
+        <div class="accordion-item">
+            <button class="master-header" id="btn-inizia" onclick="toggleLesson()">
+                <span id="btn-text">
+                    <span class="lang-it" id="btn-txt-it">Inizia Esperienza</span>
+                    <span class="lang-en" id="btn-txt-en">Start Experience</span>
+                </span> 
+                <span class="icon-plus">→</span>
+            </button>
+            
+            <div class="accordion-content" id="main-content">
+                
+                <div class="playlist-layout">
+                    <div class="player-wrapper" id="player-wrapper-ui">
+                        <div class="youtube-container">
+                            <iframe id="youtube-player" src="about:blank" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+                    </div>
+
+                    <div class="tracklist-column tracklist-wrapper closed" id="tracklist-wrapper">
+                        
+                        <button class="mobile-track-trigger" onclick="toggleMobileTracks()">
+                            <span>
+                                <span class="lang-it">Brani</span>
+                                <span class="lang-en">Tracks</span>
+                            </span>
+                            <span class="trigger-arrow">▼</span>
+                        </button>
+
+                        <div class="scroll-disclaimer msg-desktop">
+                            <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere l'intera lista di brani</span>
+                            <span class="lang-en">Use your keyboard or mouse wheel to scroll through the full tracklist</span>
+                        </div>
+                        <div class="scroll-disclaimer msg-mobile">
+                            <span class="lang-it">Clicca e scorri per vedere l'intera lista di brani</span>
+                            <span class="lang-en">Tap and scroll to see the full tracklist</span>
+                        </div>
+
+                        <button class="btn-back-tracks" id="btn-back-tracks" onclick="resetTracklist()">
+                            <span class="lang-it">← Torna alla lista brani</span>
+                            <span class="lang-en">← Back to tracklist</span>
+                        </button>
+
+                        <div class="desktop-lyrics-view" id="desktop-lyrics-view"></div>
+
+                        <div class="tracklist-container" id="tracklist"></div>
+                        
+                        <button class="btn-close-bottom track-close-desktop-hidden" onclick="toggleMobileTracks()">
+                            <span class="lang-it">↑ Chiudi Lista Brani</span>
+                            <span class="lang-en">↑ Close Tracklist</span>
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper mobile-lyrics-accordion" style="border-top: none;">
+                    <button class="guide-trigger" id="lyrics-btn" onclick="toggleLyricsAccordion()">
+                        <span>
+                            <span class="lang-it">Parafrasi</span>
+                            <span class="lang-en">Paraphrase</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="lyrics-panel">
+                        <div class="guide-box" style="max-height: none; overflow: visible;">
+                            <div id="mobile-lyrics-content">
+                                <p style="text-align:center; color:#888; margin-top:30px; margin-bottom:30px;">
+                                    <span class="lang-it">Seleziona un brano dalla playlist per visualizzare la parafrasi.</span>
+                                    <span class="lang-en">Select a track from the playlist to view the paraphrase.</span>
+                                </p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleLyricsAccordion()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Parafrasi</span>
+                            <span class="lang-en">↑ Close Paraphrase</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper">
+                    <button class="guide-trigger" id="guide-btn" onclick="toggleGuide()">
+                        <span>
+                            <span class="lang-it">Guida all'Ascolto & Curiosità</span>
+                            <span class="lang-en">Listening Guide & Trivia</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="guide-panel">
+                        <div class="guide-grid">
+                            <div>
+                                <div class="guide-box">
+                                    <div id="guide-content" class="guide-content">
+                                        <p style="text-align:center; color:#888; margin-top:50px;">
+                                            <span class="lang-it">Seleziona un brano dalla playlist per visualizzare qui i dettagli.</span>
+                                            <span class="lang-en">Select a track from the playlist to view details here.</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="scroll-disclaimer msg-desktop" style="margin-top: 10px;">
+                                    <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere la guida</span>
+                                    <span class="lang-en">Use your keyboard or mouse wheel to scroll through the guide</span>
+                                </div>
+                            </div>
+
+                            <div class="band-gallery">
+                                <img class="gallery-img" src="https://www.rollingstone.de/wp-content/uploads/2017/05/03/11/led-zeppelin-scaled.jpg" alt="Led Zeppelin Band">
+                                <img class="gallery-img" src="https://cdn.shopify.com/s/files/1/0797/1743/articles/zeplive_78582077-42cb-4da2-a7ca-0be87a158678_1400x.progressive.png.jpg?v=1575597960" alt="Led Zeppelin Live">
+                                <img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774197041/3_wwj3zb.jpg" alt="Led Zeppelin Performance">
+                                <img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774197041/4_v12s0j.jpg" alt="Led Zeppelin 1973">
+                                <img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774197043/5_snk56p.jpg" alt="John Bonham">
+                                <img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774197058/sfondo_yhugxo.jpg" alt="Led Zeppelin Plane">
+                                <img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774197040/7_nslg5w.jpg" alt="Led Zeppelin Art">
+                                <img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774197038/8_su5jnp.webp" alt="Led Zeppelin Vintage">
+                            </div>
+                        </div>
+
+                        <button class="btn-close-bottom" onclick="toggleGuide()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Guida</span>
+                            <span class="lang-en">↑ Close Guide</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="history-btn" onclick="toggleHistory()">
+                        <span>
+                            <span class="lang-it">Contesto Storico & Artistico</span>
+                            <span class="lang-en">Historical & Artistic Context</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="history-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 1: Genesi e Contesto (1968)</span>
+                                        <span class="lang-en">Chapter 1: Genesis and Context (1968)</span>
+                                    </h3>
+                                    
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">La Formazione del Sodalizio</span>
+                                        <span class="lang-en">The Formation of the Partnership</span>
+                                    </h4>
+
+                                    <figure class="wiki-figure right">
+                                        <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774197037/9_rszvvf.jpg" alt="Jimmy Page Yardbirds" class="wiki-img">
+                                        <figcaption>
+                                            <span class="lang-it">Jimmy Page (il secondo da destra) negli Yardbirds (1966-1968): un laboratorio di sperimentazione tra blues elettrico e psichedelia</span>
+                                            <span class="lang-en">Jimmy Page (second from right) in the Yardbirds (1966-1968): a laboratory of experimentation between electric blues and psychedelia</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Nel 1968, il panorama musicale britannico è in piena transizione. Il beat dei primi anni Sessanta sta lasciando spazio a sonorità più complesse e psichedeliche. In questo contesto Jimmy Page, già affermato turnista e membro degli Yardbirds, si ritrova con un tour scandinavo da onorare ma senza una band.</p>
+                                    <p class="lang-en">In 1968, the British musical landscape was in full transition. The beat of the early sixties was giving way to more complex and psychedelic sounds. In this context, Jimmy Page, an established session musician and member of the Yardbirds, found himself with a Scandinavian tour to honor but without a band.</p>
+                                    
+                                    <p class="lang-it">Il suo progetto, inizialmente denominato "The New Yardbirds", si concretizza attraverso una ricerca mirata di musicisti: recluta Robert Plant, un cantante blues sconosciuto delle Midlands dalla timbrica vocale unica, il quale porta con sé il batterista John Bonham, noto per la sua potenza ritmica. A chiudere la formazione arriva John Paul Jones, polistrumentista e arrangiatore di grande esperienza in studio.</p>
+                                    <p class="lang-en">His project, initially called "The New Yardbirds", materialized through a targeted search for musicians: he recruited Robert Plant, an unknown blues singer from the Midlands with a unique vocal timbre, who brought with him drummer John Bonham, known for his rhythmic power. John Paul Jones, a multi-instrumentalist and highly experienced studio arranger, completed the lineup.</p>
+                                    
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">La Nascita del Nome</span>
+                                        <span class="lang-en">The Birth of the Name</span>
+                                    </h4>
+                                    <p class="lang-it">Il nome definitivo nasce da una battuta di Keith Moon (batterista degli Who) che predisse il fallimento del progetto: «Precipiterà come un pallone di piombo» (Lead Balloon). Page adotta l'idea, toglie una "a" per evitare errori di pronuncia (Led) e sostituisce il pallone con il dirigibile (Zeppelin), simbolo di imponenza e leggerezza allo stesso tempo.</p>
+                                    <p class="lang-en">The final name stems from a joke by Keith Moon (drummer for The Who) who predicted the project's failure: "It'll go down like a lead balloon." Page adopted the idea, dropped the "a" to prevent mispronunciation (Led), and replaced the balloon with the airship (Zeppelin), a symbol of imposing size and lightness at the same time.</p>
+                                </div>
+
+                                <hr class="wiki-divider">
+
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 2: L'Innovazione del Mercato (1969-70)</span>
+                                        <span class="lang-en">Chapter 2: Market Innovation (1969-70)</span>
+                                    </h3>
+                                    
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">La Strategia di Peter Grant</span>
+                                        <span class="lang-en">Peter Grant's Strategy</span>
+                                    </h4>
+
+                                    <figure class="wiki-figure left">
+                                        <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774197037/10_pxdcnb.jpg" alt="Peter Grant" class="wiki-img">
+                                        <figcaption>
+                                            <span class="lang-it">Peter Grant: l'uomo dietro le quinte della leggenda Led Zeppelin</span>
+                                            <span class="lang-en">Peter Grant: the man behind the scenes of the Led Zeppelin legend</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Fondamentale per la storia del gruppo è la figura del manager Peter Grant. Egli impone una strategia inedita che cambierà l'industria musicale: il rifiuto dei singoli promozionali.</p>
+                                    <p class="lang-en">Fundamental to the band's history is the figure of manager Peter Grant. He imposed an unprecedented strategy that would change the music industry: the refusal to release promotional singles.</p>
+                                    
+                                    <p class="lang-it">I Led Zeppelin decidono di non vendere canzoni sfuse per la radio, obbligando il pubblico ad acquistare l'intero Long Playing (LP). Questo approccio, definito Album Oriented Rock, trasforma il disco da semplice raccolta di canzoni a opera artistica unitaria, e garantisce al gruppo un controllo economico e artistico totale, scavalcando le imposizioni delle case discografiche.</p>
+                                    <p class="lang-en">Led Zeppelin decided not to sell loose songs for radio play, forcing the public to buy the entire Long Playing (LP) record. This approach, defined as Album Oriented Rock, transformed the record from a simple collection of songs into a unified artistic work, guaranteeing the band total economic and artistic control, bypassing the impositions of record companies.</p>
+                                    
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">L'Evoluzione del Suono</span>
+                                        <span class="lang-en">The Evolution of the Sound</span>
+                                    </h4>
+                                    <p class="lang-it">I primi due album (Led Zeppelin I e II, 1969) definiscono i canoni dell'Hard Rock: riff di chitarra distorti e ritmiche pesanti derivate dal blues americano (Willie Dixon, Howlin' Wolf). Tuttavia, già con Led Zeppelin III (1970), il gruppo spiazza la critica introducendo massicci elementi di folk britannico e musica acustica, dimostrando una versatilità che li distingue dai contemporanei come i Black Sabbath o i Deep Purple.</p>
+                                    <p class="lang-en">Their first two albums (Led Zeppelin I and II, 1969) defined the canons of Hard Rock: distorted guitar riffs and heavy rhythms derived from American blues (Willie Dixon, Howlin' Wolf). However, already with Led Zeppelin III (1970), the group baffled critics by introducing massive elements of British folk and acoustic music, demonstrating a versatility that distinguished them from contemporaries like Black Sabbath or Deep Purple.</p>
+                                </div>
+
+                                <hr class="wiki-divider">
+
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 3: L'Apogeo Artistico e il Mito (1971-75)</span>
+                                        <span class="lang-en">Chapter 3: The Artistic Apogee and the Myth (1971-75)</span>
+                                    </h3>
+                                    
+                                    <div class="wiki-gallery-grid">
+                                        <figure class="wiki-figure">
+                                            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774197037/11_trn8kp.jpg" alt="Led Zeppelin IV Cover" class="wiki-img">
+                                            <figcaption>
+                                                <span class="lang-it">L'Album Cover di Led Zeppelin IV</span>
+                                                <span class="lang-en">The Album Cover of Led Zeppelin IV</span>
+                                            </figcaption>
+                                        </figure>
+                                        <figure class="wiki-figure">
+                                            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774197038/12_a0m19u.jpg" alt="Live 1973" class="wiki-img">
+                                            <figcaption>
+                                                <span class="lang-it">La Band in concerto nel 1973</span>
+                                                <span class="lang-en">The Band in concert in 1973</span>
+                                            </figcaption>
+                                        </figure>
+                                    </div>
+
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">Il Quarto Album e il Simbolismo</span>
+                                        <span class="lang-en">The Fourth Album and Symbolism</span>
+                                    </h4>
+                                    <p class="lang-it">Nel 1971, i Led Zeppelin pubblicano il loro quarto lavoro (comunemente noto come Led Zeppelin IV). In una mossa di marketing anti-convenzionale, l'album esce privo di titolo e del nome della band in copertina: al loro posto compaiono quattro simboli runici scelti dai membri.</p>
+                                    <p class="lang-en">In 1971, Led Zeppelin released their fourth work (commonly known as Led Zeppelin IV). In an unconventional marketing move, the album was released without a title or the band's name on the cover: in their place appeared four runic symbols chosen by the members.</p>
+                                    
+                                    <p class="lang-it">L'album contiene Stairway to Heaven, brano che diviene l'emblema del rock anni '70 per la sua struttura progressiva: inizia come ballata acustica e termina come hard rock. Il successo è planetario e consolida lo status del gruppo come fenomeno di massa.</p>
+                                    <p class="lang-en">The album contains Stairway to Heaven, a track that became the emblem of 70s rock for its progressive structure: starting as an acoustic ballad and ending as hard rock. The success was global, consolidating the group's status as a mass phenomenon.</p>
+                                    
+                                    <figure class="wiki-figure full">
+                                        <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774197035/13_gwqdez.jpg" alt="The Starship" class="wiki-img">
+                                        <figcaption>
+                                            <span class="lang-it">I Led Zeppelin posano davanti al loro Jet privato ("The Starship")</span>
+                                            <span class="lang-en">Led Zeppelin posing in front of their private Jet ("The Starship")</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">Il Successo Live e gli Eccessi</span>
+                                        <span class="lang-en">Live Success and Excesses</span>
+                                    </h4>
+                                    <p class="lang-it">Tra il 1973 e il 1975, con album come Houses of the Holy e il doppio Physical Graffiti, i Led Zeppelin diventano l'attrazione concertistica più redditizia al mondo. I loro concerti si dilatano fino a quattro ore, caratterizzati da lunghe improvvisazioni strumentali.</p>
+                                    <p class="lang-en">Between 1973 and 1975, with albums like Houses of the Holy and the double Physical Graffiti, Led Zeppelin became the most lucrative concert attraction in the world. Their concerts stretched up to four hours, characterized by long instrumental improvisations.</p>
+                                    
+                                    <p class="lang-it">Parallelamente, la narrazione storica del gruppo si intreccia con la cronaca dei loro eccessi: l'uso di un Boeing privato (lo Starship), la residenza fiscale all'estero per evitare le tasse britanniche e uno stile di vita sregolato contribuiscono a creare l'archetipo della "Rockstar" moderna.</p>
+                                    <p class="lang-en">At the same time, the band's historical narrative became intertwined with the chronicles of their excesses: the use of a private Boeing (The Starship), establishing tax residency abroad to avoid British taxes, and a wild lifestyle contributed to creating the archetype of the modern "Rockstar".</p>
+                                </div>
+
+                                <hr class="wiki-divider">
+
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 4: Declino, Tragedia e Scioglimento (1976-80)</span>
+                                        <span class="lang-en">Chapter 4: Decline, Tragedy and Dissolution (1976-80)</span>
+                                    </h3>
+                                    
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">La Crisi di Fine Decennio</span>
+                                        <span class="lang-en">The End-of-Decade Crisis</span>
+                                    </h4>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774197035/14_viwa4o.jpg" alt="Plant e Karac" class="wiki-img">
+                                        <figcaption>
+                                            <span class="lang-it">Robert Plant insieme al figlio Karac, scomparso tragicamente nel luglio 1977 all'età di 5 anni</span>
+                                            <span class="lang-en">Robert Plant with his son Karac, who passed away tragically in July 1977 at the age of 5</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">La seconda metà degli anni Settanta segna un periodo difficile. L'avvento del Punk Rock (1977) mette in discussione i "dinosauri del rock" come i Led Zeppelin, accusati di essere eccessivi e distanti dalla realtà.</p>
+                                    <p class="lang-en">The second half of the seventies marked a difficult period. The advent of Punk Rock (1977) challenged "rock dinosaurs" like Led Zeppelin, who were accused of being excessive and out of touch with reality.</p>
+                                    
+                                    <p class="lang-it">Inoltre, gravi problemi personali colpiscono il gruppo: un incidente automobilistico costringe Robert Plant su una sedia a rotelle per mesi, e nel 1977 la morte improvvisa del figlio di cinque anni del cantante porta alla cancellazione di un tour mondiale.</p>
+                                    <p class="lang-en">Furthermore, serious personal problems struck the band: a car accident forced Robert Plant into a wheelchair for months, and in 1977 the sudden death of the singer's five-year-old son led to the cancellation of a world tour.</p>
+                                    
+                                    <h4 class="wiki-subtitle">
+                                        <span class="lang-it">La Morte di John Bonham e la Fine</span>
+                                        <span class="lang-en">The Death of John Bonham and the End</span>
+                                    </h4>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774197037/15_dxlnci.jpg" alt="John Bonham" class="wiki-img">
+                                        <figcaption>
+                                            <span class="lang-it">John "Bonzo" Bonham</span>
+                                            <span class="lang-en">John "Bonzo" Bonham</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Il 25 settembre 1980, durante le prove per un nuovo tour, il batterista John Bonham muore per asfissia in seguito a un'ingestione eccessiva di alcol.</p>
+                                    <p class="lang-en">On September 25, 1980, during rehearsals for a new tour, drummer John Bonham died of asphyxiation following an excessive intake of alcohol.</p>
+                                    
+                                    <p class="lang-it">Il 4 dicembre 1980, i membri superstiti diramano un comunicato stampa che segna la fine del gruppo: «Desideriamo rendere noto che la perdita del nostro caro amico [...] ci ha portato a decidere che non possiamo più continuare come eravamo».</p>
+                                    <p class="lang-en">On December 4, 1980, the surviving members issued a press release marking the end of the group: "We wish it to be known that the loss of our dear friend [...] has led us to decide that we could not continue as we were."</p>
+                                    
+                                    <p class="lang-it">A differenza di altre band che sostituiscono i membri deceduti, i Led Zeppelin scelgono lo scioglimento immediato, sigillando la loro eredità artistica e storica senza compromessi.</p>
+                                    <p class="lang-en">Unlike other bands that replace deceased members, Led Zeppelin chose immediate dissolution, sealing their artistic and historical legacy without compromise.</p>
+                                </div>
+
+                            </div>
+                        </div>
+                        
+                        <button class="btn-close-bottom" onclick="toggleHistory()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Storia</span>
+                            <span class="lang-en">↑ Close History</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="disclaimer-btn" onclick="toggleDisclaimer()">
+                        <span>
+                            <span class="lang-it">Disclaimer & Note Legali</span>
+                            <span class="lang-en">Disclaimer & Legal Notes</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="disclaimer-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                <h3 class="wiki-title lang-it">Disclaimer e Diritto di Citazione</h3>
+                                <h3 class="wiki-title lang-en">Disclaimer & Fair Use</h3>
+                                
+                                <p class="lang-it">I contenuti multimediali presenti in questa pagina (immagini e video) sono utilizzati esclusivamente per finalità didattiche, critiche e di approfondimento culturale, in conformità con l'Art. 70 della Legge 633/41 (Diritto di citazione e riproduzione per uso didattico o scientifico). L'utilizzo non ha alcuno scopo di lucro e mira a valorizzare l'opera dell'artista e dei relativi autori, citati puntualmente tramite didascalie e crediti.<br><br>Qualora i detentori dei diritti d'autore ritenessero inappropriata la pubblicazione o desiderassero la rimozione di specifici contenuti, possono scrivere all'indirizzo: <strong>lorenzo.sciallato@gmail.com</strong>. Provvederò all'immediata rimozione del materiale segnalato.</p>
+                                
+                                <p class="lang-en">The multimedia contents on this page (images and videos) are used exclusively for educational, critical, and cultural purposes, in accordance with international Fair Use principles and national copyright laws. This project is strictly non-commercial and aims to provide historical and artistic context, with full credit given to authors and sources.<br><br>If you are a copyright holder and object to the use of any material, or would like to request its removal, please contact: <strong>lorenzo.sciallato@gmail.com</strong>. Any disputed content will be removed immediately upon request.</p>
+
+                                <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 25px 0;">
+
+                                <p class="lang-it" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Pagina creata con l'assistenza di software di intelligenza artificiale generativa, unendo cura umana e supporto tecnologico per l'apprendimento e la divulgazione culturale.</p>
+                                <p class="lang-en" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Page created with the assistance of generative artificial intelligence software, combining human curation and technological support for educational and cultural dissemination.</p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleDisclaimer()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Disclaimer</span>
+                            <span class="lang-en">↑ Close Disclaimer</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATI PLAYLIST ---
+        const playlist = [
+            { id: "black_dog", title: "Black Dog", ytId: "2KPEHohJMuw" },
+            { id: "rock_and_roll", title: "Rock And Roll", ytId: "D2lSwosw9xY" },
+            { id: "battle_evermore", title: "The Battle Of Evermore", ytId: "X_AfMHCVoxA" },
+            { id: "stairway_heaven", title: "Stairway To Heaven", ytId: "QkF3oxziUI4" },
+            { id: "misty_mountain", title: "Misty Mountain Hop", ytId: "y6M3YQ_EF2E" },
+            { id: "four_sticks", title: "Four Sticks", ytId: "My1PH6H1Qpo" },
+            { id: "going_california", title: "Going To California", ytId: "NrUIJY_Xu2s" },
+            { id: "levee_breaks", title: "When The Levee Breaks", ytId: "JM3fodiK9rY" }
+        ];
+
+        // --- PARAPHRASE DATA ---
+        const paraphraseData = {
+            "black_dog": {
+                it: `Un'invocazione che nasce dal silenzio assoluto, come se la voce emergesse direttamente dalla terra. Il cantante è travolto da un desiderio che brucia e punge, una forza fisica irresistibile che lo svuota e lo riempie allo stesso tempo. L'oggetto del suo turbamento si muove con una grazia inconsapevole e devastante, trascinando dietro di sé una scia di caos. Ma l'incantesimo si spezza: quella stessa donna che accendeva ogni senso si rivela predatoria, svuota i portafogli e le strade, trasforma i sogni in fumo. L'uomo rimane solo con la sua voce che urla nel vuoto, sapendo che certe fiamme lasciano solo cenere.`,
+                en: `A raw invocation rising from absolute silence, as though the voice were pulled directly from the earth. The singer is consumed by a desire that burns and stings — an irresistible physical force that empties and fills him at once. The source of his torment moves with devastating, unconscious grace, trailing chaos in her wake. But the spell shatters: the same woman who ignited every sense reveals herself as predatory, draining wallets and dreams alike, turning promises to smoke. The man is left alone with a voice screaming into the void, knowing that certain fires leave only ash behind.`
+            },
+            "rock_and_roll": {
+                it: `Una nostalgia viscerale per qualcosa di primordiale: il ritmo puro, il battito del cuore amplificato, la gioia fisica del movimento. Il cantante guarda indietro a un'epoca in cui la vita aveva un senso semplice e immediato, scandito dalla musica e dall'amore. Gli anni passati pesano come piombo, il libro dell'amore è rimasto chiuso troppo a lungo, le lacrime si sono accumulate in silenzio. Ma c'è ancora speranza: le braccia aperte di qualcuno possono ribaltare tutto, far tornare quel fiume in piena di emozioni che sembrava prosciugato per sempre. La canzone è un atto di fede nel potere salvifico del ritmo.`,
+                en: `A visceral nostalgia for something primordial: pure rhythm, the amplified heartbeat, the physical joy of movement. The singer looks back to a time when life had simple, immediate meaning — marked by music and love. The years weigh like lead; the book of love has stayed closed too long, and tears have gathered in silence. Yet hope remains: someone's open arms can overturn everything, bringing back that flood of emotion that seemed dried up forever. The song is an act of faith in the redemptive power of rhythm itself.`
+            },
+            "battle_evermore": {
+                it: `Un arazzo sonoro intessuto di mitologia e terrore cosmico. Una regina di luce e un principe di pace si muovono in un paesaggio oscuro, mentre un signore delle tenebre cavalca con la sua armata verso l'inevitabile scontro. Le voci — una maschile e una femminile — si rincorrono come il bene e il male, come domande e risposte senza soluzione definitiva. Gli angeli di Avalon aspettano oltre le colline; i campanelli del tempo suonano lenti mentre gli occhi stanchi scrutano l'orizzonte. Solo quando il drago dell'oscurità brucia e le rune magiche tornano al loro posto, il sole può finalmente sorgere su un mondo rimasto troppo a lungo nell'ombra.`,
+                en: `A sonic tapestry woven from mythology and cosmic dread. A queen of light and a prince of peace move through a darkened landscape while a lord of shadows rides with his army toward inevitable confrontation. Two voices — one male, one female — chase each other like good and evil, like questions and answers with no final resolution. The angels of Avalon wait beyond the hills; the bells of time toll slowly as weary eyes scan the horizon. Only when the dragon of darkness burns and the magic runes return to their place can the sun finally rise over a world that has lingered too long in shadow.`
+            },
+            "stairway_heaven": {
+                it: `Una donna convinta che ogni cosa preziosa possa essere acquistata si incammina verso il paradiso, ignara che certe soglie non si varcano con l'oro. Il cammino è ambiguo: le parole hanno doppi significati, i cartelli sul muro mentono, l'uccellino nel bosco canta una verità che lei non sa ancora ascoltare. Man mano che la strada sale, la musica si trasforma: dall'intimità quasi sussurrata dei flauti nascono fiumi di chitarra, finché l'intera montagna non trema in un torrente sonoro. Alla sommità, però, il tumulto si azzera. Rimane solo una voce, nel silenzio totale, a pronunciare quella domanda irrisolta: la scala esiste davvero, oppure è soltanto un'illusione costruita con il riflesso delle cose che brillano?`,
+                en: `A woman convinced that all things precious can be purchased walks toward heaven, unaware that certain thresholds cannot be crossed with gold. The path is ambiguous: words carry double meanings, the signs on the wall deceive, and the songbird in the grove sings a truth she has not yet learned to hear. As the road climbs higher, the music transforms — from the near-whispered intimacy of flutes, rivers of guitar emerge, until the whole mountain trembles in a sonic torrent. Yet at the summit, the tumult falls to zero. One voice remains, in total silence, uttering that unresolved question: does the stairway truly exist, or is it merely an illusion built from the reflection of things that glitter?`
+            },
+            "misty_mountain": {
+                it: `Una scena urbana resa surreale dalla luce del pomeriggio: fiori tra i capelli, erba del parco, una folla che si crede libera finché l'ordine costituito non mostra i denti. La polizia arriva con la sua logica assurda, e quello che sembrava un sogno collettivo si dissolve in fila indiana. Ma la risposta del cantante non è la resa: è la fuga verso l'alto, verso montagne avvolte nella nebbia dove gli spiriti volano liberamente e la burocrazia non sa dove mettere i piedi. Le Montagne Nebbiose sono insieme il rifugio tolkieniano del fantastico e la metafora di ogni luogo dove la mente può respirare lontano dalla pressione del mondo.`,
+                en: `An urban scene rendered surreal by afternoon light: flowers in hair, park grass, a crowd believing itself free until the established order bares its teeth. The police arrive with their absurd logic, and what seemed a collective dream dissolves into a single file. But the singer's response is not surrender — it is escape upward, toward fog-wrapped mountains where spirits fly freely and bureaucracy has no footing. The Misty Mountains are at once Tolkien's fantastical refuge and a metaphor for every place where the mind can breathe far from the pressure of the world.`
+            },
+            "four_sticks": {
+                it: `Un incubo ritmico che gira su se stesso senza trovare uscita. Il cuore del cantante è in fiamme — non di passione, ma di quella frenesia ansiosa che precede il crollo. Il fiume è rosso, il cielo preme dall'alto, e un presentimento oscuro abita ogni angolo della melodia. I gufi gridano nella notte, i pini piangono, e la domanda "come ti senti?" rimane sospesa nell'aria come un'accusa. La canzone non offre risposte né consolazioni: è il ritratto sonoro di una mente che gira a vuoto in un labirinto di emozioni primitive, incapace di fermarsi, incapace di procedere.`,
+                en: `A rhythmic nightmare turning endlessly upon itself with no exit in sight. The singer's heart is ablaze — not with passion, but with the anxious frenzy that precedes collapse. The river runs red, the sky presses down, and a dark premonition inhabits every corner of the melody. Owls cry in the night, pines begin to weep, and the question "how do you feel?" hangs in the air like an accusation. The song offers neither answers nor consolation: it is the sonic portrait of a mind spinning in a labyrinth of primitive emotion, unable to stop, unable to move forward.`
+            },
+            "going_california": {
+                it: `Una fuga verso ovest carica di speranza e malinconia in ugual misura. Il cantante lascia alle spalle una relazione amara e un passato bruciato, e si incammina verso quella terra di sogni e terremoti dove qualcuno gli ha detto che esiste una donna con l'amore negli occhi e i fiori tra i capelli. La California è un miraggio bellissimo: le montagne tremano, il cielo è grigio-rosa all'orizzonte, e quella creatura che cerca — una regina senza re che piange e canta — sembra sempre un passo più avanti. Il brano è una meditazione sulla distanza tra desiderio e realtà, tra il viaggio intrapreso e la meta che non si raggiunge mai del tutto.`,
+                en: `A westward escape loaded equally with hope and melancholy. The singer leaves behind a bitter relationship and a scorched past, heading toward that land of dreams and earthquakes where someone told him there exists a woman with love in her eyes and flowers in her hair. California is a beautiful mirage: the mountains tremble, the sky glows grey-pink at the horizon, and the creature he seeks — a queen without a king who weeps and sings — always seems one step ahead. The song is a meditation on the distance between desire and reality, between the journey undertaken and the destination never quite reached.`
+            },
+            "levee_breaks": {
+                it: `Un'alluvione che non è solo di acqua. Le travi della casa scricchiolano, l'argine che tratteneva una vita intera sta cedendo, e non c'è preghiera né pianto che possa fermare la forza bruta della natura e del destino. Il canto è un lamento antico, radicato nella tradizione del blues più arcaico, nei campi allagati del Mississippi e nelle vite spezzate da forze troppo grandi per essere comprese. L'unica risposta è il movimento — spostarsi, lasciare tutto, andare a Chicago o ovunque ci sia terreno asciutto. La canzone è un documento sonoro del dolore collettivo, pesante come fango, lenta come il fiume che sale.`,
+                en: `A flood that is not only made of water. The house beams creak, the levee holding back an entire life is giving way, and neither prayer nor weeping can stop the brute force of nature and fate. The singing is an ancient lament rooted in the most archaic blues tradition — in the flooded fields of the Mississippi and the lives shattered by forces too vast to comprehend. The only response is movement: leave, abandon everything, go to Chicago or wherever dry ground can be found. The song is a sonic document of collective grief, heavy as mud, slow as the rising river.`
+            }
+        };
+
+        // --- GUIDA ALL'ASCOLTO BILINGUE ---
+        const guideData = {
+            "black_dog": {
+                it: `
+                    <h3>Black Dog</h3>
+                    <p><strong>0:00 - La chiamata a cappella:</strong> Il brano inizia nel silenzio totale con la voce di Robert Plant: "Hey, hey mama said the way you move...". Questa struttura "botta e risposta" (Call and Response) è un omaggio diretto al blues delle origini e ai canti di lavoro dei campi di cotone. Plant ha registrato la voce in due take separate per creare quel suono pieno e riverberato.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il titolo non c'entra nulla col testo.</span> Se leggi il testo, la canzone parla di lussuria e di una donna che "fa sudare e bruciare". Perché allora si chiama "Cane Nero"? Il titolo è un omaggio a un vecchio Labrador nero senza nome che gironzolava per i boschi intorno a Headley Grange (la villa in campagna dove la band stava registrando). Il cane rientrava la mattina esausto dopo aver passato la notte fuori, e la band adottò il nome per la canzone che non aveva ancora un titolo.</div>
+                    <p><strong>0:06 - Il Riff "Impossibile":</strong> Appena Plant finisce la frase, la band esplode. Ascolta attentamente il ritmo: sembra che gli strumenti stiano "inciampando". Questo accade perché la chitarra e il basso suonano un riff complesso (spesso analizzato come un'alternanza di tempi dispari come 5/4 o 9/8) mentre la batteria di John Bonham mantiene un 4/4 dritto e imperturbabile. È questo contrasto matematico a creare il famoso groove "rotolante".</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Scritta per "non far ballare la gente".</span> Il riff principale non è opera di Jimmy Page, ma del bassista John Paul Jones. Ispirato dall'album Electric Mud di Muddy Waters, Jones voleva scrivere intenzionalmente un groove ritmicamente così complesso e "storto" da impedire al pubblico di ballarlo facilmente. Dal vivo era talmente difficile da eseguire che John Bonham dovette ignorare i tempi dispari e suonare dritto per evitare che l'intera band andasse fuori tempo.</div>
+                    <p><strong>2:15 - L'Assolo "Sintetico":</strong> Inizia l'assolo di Jimmy Page. A differenza di altri brani blues, qui il suono è molto particolare, quasi simile a un sintetizzatore analogico. Page non sta usando un amplificatore tradizionale in questo punto, ma ha collegato la chitarra direttamente nel banco mixer sovraincidendo quattro tracce diverse per armonizzarle.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il segreto del suono "distrutto".</span> Quella distorsione graffiante e compressa che senti sulle chitarre non proviene da un amplificatore Marshall spinto al massimo. Jimmy Page ottenne quel suono collegando la sua Gibson Les Paul direttamente nell'ingresso microfonico del mixer (una tecnica chiamata Direct Injection) e alzando il volume dei preamplificatori fino a farli "clippare" e distorcere il segnale in modo innaturale.</div>
+                    <p><strong>3:50 - Il Finale "Ah-ah, ah-ah":</strong> Dopo l'ultima strofa, il brano cambia marcia per l'outro. La band accelera e Plant inizia i suoi celebri vocalizzi "Ah-ah, ah-ah", che sfumano lentamente (fade-out) mentre la chitarra continua a tessere variazioni sul riff principale fino al silenzio.</p>
+                `,
+                en: `
+                    <h3>Black Dog</h3>
+                    <p><strong>0:00 - The A Cappella Call:</strong> The track begins in total silence with Robert Plant's voice: "Hey, hey mama said the way you move...". This "call and response" structure is a direct homage to early blues and cotton field work songs. Plant recorded the vocal in two separate takes to create that full, reverberated sound.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The title has nothing to do with the lyrics.</span> If you read the lyrics, the song is about lust and a woman who "makes you sweat and burn". So why is it called "Black Dog"? The title is a tribute to a nameless old black Labrador that wandered the woods around Headley Grange (the country house where the band was recording). The dog would return exhausted in the morning after spending the night out, and the band adopted the name for the song which didn't have a title yet.</div>
+                    <p><strong>0:06 - The "Impossible" Riff:</strong> As soon as Plant finishes the phrase, the band explodes. Listen closely to the rhythm: the instruments seem to be "stumbling". This happens because the guitar and bass play a complex riff (often analyzed as alternating odd time signatures like 5/4 or 9/8) while John Bonham's drums maintain a straight and imperturbable 4/4. It is this mathematical contrast that creates the famous "rolling" groove.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Written to "prevent people from dancing".</span> The main riff is not the work of Jimmy Page, but of bassist John Paul Jones. Inspired by Muddy Waters' Electric Mud album, Jones intentionally wanted to write a groove so rhythmically complex and "crooked" that it would prevent the audience from easily dancing to it. Live it was so difficult to perform that John Bonham had to ignore the odd timings and play straight to prevent the whole band from falling out of time.</div>
+                    <p><strong>2:15 - The "Synthetic" Solo:</strong> Jimmy Page's solo begins. Unlike other blues tracks, the sound here is very particular, almost like an analog synthesizer. Page isn't using a traditional amplifier at this point, but plugged the guitar straight into the mixing board overdubbing four different tracks to harmonize them.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The secret of the "destroyed" sound.</span> That scratchy, compressed distortion you hear on the guitars doesn't come from a Marshall amp pushed to the max. Jimmy Page achieved that sound by plugging his Gibson Les Paul straight into the mixer's microphone input (a technique called Direct Injection) and turning up the volume on the preamps until they "clipped" and distorted the signal unnaturally.</div>
+                    <p><strong>3:50 - The "Ah-ah, ah-ah" Finale:</strong> After the last verse, the song shifts gears for the outro. The band speeds up and Plant begins his famous "Ah-ah, ah-ah" vocalizations, which slowly fade out while the guitar continues to weave variations on the main riff until silence.</p>
+                `
+            },
+            "rock_and_roll": {
+                it: `
+                    <h3>Rock And Roll</h3>
+                    <p><strong>0:00 - L'Intro Ingannatore:</strong> Bonham apre con una rullata che sembra semplice, ma in realtà parte in controtempo (sul battere "e" dell'1). È un omaggio diretto all'intro di Keep A-Knockin' di Little Richard.</p>
+                    <p><strong>0:08 - Il Riff:</strong> Page entra con un riff classico blues-rock in La, veloce e tagliente, con un suono di chitarra molto "secco" e diretto rispetto ad altri brani dell'album.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Nata per Caso.</span> La canzone fu scritta e registrata in circa 15-30 minuti. Nacque come una jam session improvvisata per scaricare la tensione durante le sessioni di Four Sticks.</div>
+                    <p><strong>1:25 - Il Piano Boogie:</strong> Sotto la chitarra senti un pianoforte martellante in stile honky-tonk. Non è John Paul Jones, ma Ian Stewart (il "sesto Rolling Stone") che suona con un'energia pazzesca.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Titolo.</span> Inizialmente doveva chiamarsi It's Been A Long Time, che è la prima frase del testo, ma fu cambiato in Rock and Roll perché... beh, è l'essenza stessa del genere.</div>
+                    <p><strong>3:25 - L'Assolo Finale:</strong> Invece di sfumare, il brano si chiude con un mini-assolo di batteria di Bonham che "chiude il cerchio" riprendendo il tema dell'intro e terminando con un colpo secco.</p>
+                `,
+                en: `
+                    <h3>Rock And Roll</h3>
+                    <p><strong>0:00 - The Deceiving Intro:</strong> Bonham opens with a drum roll that seems simple, but actually starts on the offbeat (on the "and" of beat 1). It's a direct homage to the intro of Little Richard's Keep A-Knockin'.</p>
+                    <p><strong>0:08 - The Riff:</strong> Page enters with a classic blues-rock riff in A, fast and sharp, with a very "dry" and direct guitar sound compared to other tracks on the album.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Born by Chance.</span> The song was written and recorded in about 15-30 minutes. It started as an improvised jam session to blow off steam during the tense recording sessions for Four Sticks.</div>
+                    <p><strong>1:25 - The Boogie Piano:</strong> Under the guitar you can hear a pounding honky-tonk style piano. It's not John Paul Jones, but Ian Stewart (the "sixth Rolling Stone") playing with crazy energy.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Title.</span> It was originally going to be called It's Been A Long Time, which is the first line of the lyrics, but it was changed to Rock and Roll because... well, it's the very essence of the genre.</div>
+                    <p><strong>3:25 - The Final Solo:</strong> Instead of fading out, the song ends with a mini drum solo by Bonham that "comes full circle" returning to the intro theme and ending with a sharp hit.</p>
+                `
+            },
+            "battle_evermore": {
+                it: `
+                    <h3>The Battle Of Evermore</h3>
+                    <p><strong>0:00 - Il Mandolino:</strong> Il brano è guidato interamente dal mandolino di Jimmy Page. Il suono è cristallino e tremolante, evocando immagini di bardi e corti antiche.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Lo Strumento di Jones.</span> Jimmy Page non aveva mai suonato il mandolino prima. Prese in prestito lo strumento di John Paul Jones, iniziò a strimpellare e compose il brano quasi istantaneamente.</div>
+                    <p><strong>0:30 - Il Dialogo Vocale:</strong> Questa è l'unica canzone dei Led Zeppelin con una "guest star" alla voce. Ascolta come la voce di Robert Plant (il narratore) viene rincorsa e "risposta" da una voce femminile più acuta ed eterea (Sandy Denny).</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Ospite.</span> La voce femminile è di Sandy Denny, cantante dei Fairport Convention. In suo onore, sulla copertina interna dell'album, le fu assegnato un simbolo (tre piramidi rovesciate), proprio come ai membri della band.</div>
+                    <p><strong>2:00 - Niente Batteria:</strong> Non c'è una batteria vera e propria. Il ritmo è dato dalle percussioni e dal plettro sul mandolino e sulla chitarra acustica, creando un senso di urgenza crescente senza bisogno di esplosioni sonore.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Tolkien.</span> Il testo è pesantemente influenzato da Il Signore degli Anelli. Ci sono riferimenti espliciti ai "Ringwraiths" (gli Spettri dell'Anello) e alla battaglia tra luce e oscurità.</div>
+                    <p><strong>4:20 - Il Finale:</strong> Le voci e i mandolini si intrecciano in una dissolvenza (fade-out) che sembra un esercito che si allontana nella nebbia.</p>
+                `,
+                en: `
+                    <h3>The Battle Of Evermore</h3>
+                    <p><strong>0:00 - The Mandolin:</strong> The track is driven entirely by Jimmy Page's mandolin. The sound is crystalline and trembling, evoking images of bards and ancient courts.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Jones' Instrument.</span> Jimmy Page had never played the mandolin before. He borrowed John Paul Jones' instrument, started strumming, and composed the track almost instantly.</div>
+                    <p><strong>0:30 - The Vocal Dialogue:</strong> This is the only Led Zeppelin song with a guest vocalist. Listen to how Robert Plant's voice (the narrator) is chased and "answered" by a higher, more ethereal female voice (Sandy Denny).</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Guest.</span> The female voice is Sandy Denny, singer of Fairport Convention. In her honor, on the album's inner sleeve, she was given a symbol (three inverted pyramids), just like the band members.</div>
+                    <p><strong>2:00 - No Drums:</strong> There is no actual drum kit. The rhythm is provided by percussion and the picking on the mandolin and acoustic guitar, creating a sense of growing urgency without the need for sonic explosions.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Tolkien.</span> The lyrics are heavily influenced by The Lord of the Rings. There are explicit references to the "Ringwraiths" and the battle between light and darkness.</div>
+                    <p><strong>4:20 - The Finale:</strong> The voices and mandolins intertwine in a fade-out that sounds like an army marching away into the mist.</p>
+                `
+            },
+            "stairway_heaven": {
+                it: `
+                    <h3>Stairway To Heaven</h3>
+                    <p><strong>0:00 - L'Eremita:</strong> L'introduzione è affidata a una chitarra acustica a 6 corde (non 12 come spesso si pensa) suonata da Jimmy Page in stile fingerpicking, accompagnata da un quartetto di flauti dolci suonati da John Paul Jones. L'atmosfera è volutamente arcaica e pastorale.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Flauto.</span> John Paul Jones non aveva mai suonato i flauti dolci prima delle registrazioni; imparò appositamente per dare quel tocco "medievale" che Page desiderava.</div>
+                    <p><strong>2:13 - L'Ingresso Elettrico:</strong> Entra la chitarra elettrica a 12 corde (una Fender Electric XII) sul canale sinistro. Nota come il brano inizi ad aprirsi armonicamente, mentre la voce di Robert Plant diventa più sicura e meno sussurrata.</p>
+                    <p><strong>4:18 - La Batteria:</strong> Dopo oltre quattro minuti di attesa, entra finalmente la batteria di John Bonham. Non è un ingresso violento, ma un ritmo costante e misurato che dà struttura alla sezione centrale.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Mai un Singolo.</span> La band si rifiutò categoricamente di pubblicare la canzone come singolo, costringendo i fan ad acquistare l'intero album (che divenne uno dei più venduti della storia).</div>
+                    <p><strong>5:55 - L'Assolo:</strong> Jimmy Page esegue quello che è spesso considerato il miglior assolo della storia del rock. Costruito su una progressione discendente, inizia in modo melodico per poi diventare frenetico e "urlante".</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Assolo "Buona la Prima".</span> Jimmy Page registrò tre diversi assoli improvvisati per il finale. Scelse il primo che aveva suonato, ritenendolo il più spontaneo e adatto alla canzone.</div>
+                    <p><strong>6:45 - Hard Rock Finale:</strong> Il ritmo cambia drasticamente. Bonham pesta duro, Page suona accordi potenti (power chords) e Plant urla con la sua voce più graffiante.</p>
+                    <p><strong>7:45 - Il Silenzio:</strong> Tutto si ferma. Plant resta solo per l'ultima, immortale riga cantata a cappella: "And she's buying a stairway to heaven".</p>
+                `,
+                en: `
+                    <h3>Stairway To Heaven</h3>
+                    <p><strong>0:00 - The Hermit:</strong> The introduction is entrusted to a 6-string acoustic guitar (not 12 as is often thought) played by Jimmy Page in a fingerpicking style, accompanied by a quartet of recorders played by John Paul Jones. The atmosphere is deliberately archaic and pastoral.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Flute.</span> John Paul Jones had never played recorders before the recordings; he learned specifically to give that "medieval" touch that Page desired.</div>
+                    <p><strong>2:13 - The Electric Entrance:</strong> The 12-string electric guitar (a Fender Electric XII) enters on the left channel. Notice how the track begins to open up harmonically, while Robert Plant's voice becomes more confident and less whispered.</p>
+                    <p><strong>4:18 - The Drums:</strong> After more than four minutes of waiting, John Bonham's drums finally enter. It is not a violent entrance, but a constant and measured rhythm that gives structure to the central section.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Never a Single.</span> The band categorically refused to release the song as a single, forcing fans to buy the entire album (which became one of the best-selling in history).</div>
+                    <p><strong>5:55 - The Solo:</strong> Jimmy Page executes what is often considered the best solo in rock history. Built on a descending progression, it starts melodically and then becomes frantic and "screaming".</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The "First Take" Solo.</span> Jimmy Page recorded three different improvised solos for the finale. He chose the first one he played, deeming it the most spontaneous and suited for the song.</div>
+                    <p><strong>6:45 - Hard Rock Finale:</strong> The rhythm changes drastically. Bonham hits hard, Page plays power chords, and Plant screams with his raspiest voice.</p>
+                    <p><strong>7:45 - The Silence:</strong> Everything stops. Plant is left alone for the final, immortal a cappella line: "And she's buying a stairway to heaven".</p>
+                `
+            },
+            "misty_mountain": {
+                it: `
+                    <h3>Misty Mountain Hop</h3>
+                    <p><strong>0:00 - Il Piano Elettrico:</strong> Il riff principale non è di chitarra, ma è suonato da John Paul Jones su un piano elettrico Hohner. Ha un suono rotondo e gommoso che definisce tutto il pezzo.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Arresto.</span> Il testo racconta di un vero episodio: un raduno per la legalizzazione della marijuana ("smoke-in") ad Hyde Park a Londra, dove la polizia intervenne arrestando i partecipanti in modo pacifico ma assurdo. Plant descrive la scena con ironia: "Just then a police man stepped up to me...".</div>
+                    <p><strong>0:36 - La Voce Raddoppiata:</strong> La voce di Plant è spesso sovraincisa (doppiata) per creare un effetto coro un po' straniante, perfetto per il tema "stupefacente" della canzone.</p>
+                    <p><strong>2:11 - Basso e Batteria:</strong> Ascolta come basso e cassa della batteria suonino esattamente all'unisono, creando un blocco ritmico solido come il granito sotto le tastiere.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Tolkien (di nuovo).</span> Il titolo cita le "Montagne Nebbiose" (Misty Mountains) de Lo Hobbit, continuando il filo conduttore fantasy che attraversa l'album, anche se il testo parla di eventi moderni.</div>
+                    <p><strong>4:30 - Il Caos Finale:</strong> Verso la fine, le voci si moltiplicano e si intrecciano in un crescendo caotico, simulando la folla di un raduno nel parco.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Lato B.</span> Fu pubblicata come Lato B del singolo Black Dog negli Stati Uniti, ma divenne talmente popolare nelle radio rock che spesso veniva suonata quanto il lato A.</div>
+                `,
+                en: `
+                    <h3>Misty Mountain Hop</h3>
+                    <p><strong>0:00 - The Electric Piano:</strong> The main riff is not played on guitar, but by John Paul Jones on an electric Hohner piano. It has a round, rubbery sound that defines the whole track.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Arrest.</span> The lyrics recount a real incident: a marijuana legalization rally (a "smoke-in") in London's Hyde Park, where the police intervened, arresting participants in a peaceful but absurd manner. Plant describes the scene with irony: "Just then a police man stepped up to me...".</div>
+                    <p><strong>0:36 - The Doubled Voice:</strong> Plant's voice is often overdubbed (doubled) to create a slightly alienating choir effect, perfect for the "intoxicating" theme of the song.</p>
+                    <p><strong>2:11 - Bass and Drums:</strong> Listen to how the bass and kick drum play exactly in unison, creating a rhythmic block as solid as granite under the keyboards.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Tolkien (again).</span> The title cites the "Misty Mountains" from The Hobbit, continuing the fantasy thread that runs through the album, even though the lyrics are about modern events.</div>
+                    <p><strong>4:30 - Final Chaos:</strong> Towards the end, the voices multiply and intertwine in a chaotic crescendo, simulating the crowd at a rally in the park.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: B-Side.</span> It was released as the B-side to the Black Dog single in the US, but became so popular on rock radio that it was often played as much as the A-side.</div>
+                `
+            },
+            "four_sticks": {
+                it: `
+                    <h3>Four Sticks</h3>
+                    <p><strong>0:00 - Il Riff Dispari:</strong> Il brano si apre con un riff di chitarra ossessivo e "storto". È difficile da ballare perché alterna battute in 5/4 e 6/8, creando un effetto di disorientamento ciclico.</p>
+                    <p><strong>0:15 - La Batteria "Doppia":</strong> Ascolta il suono del rullante e dei tom. È incredibilmente percussivo e pieno. Questo è il suono letterale di "quattro bacchette" (vedi curiosità).</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Perché "Four Sticks"?</span> Il titolo non è metaforico. John Bonham, frustrato perché non riusciva a ottenere la potenza che voleva con due bacchette, ne prese due per mano (quattro in totale) e suonò la traccia così, picchiando con una violenza inaudita. La take buona fu quella.</div>
+                    <p><strong>1:18 - Il Synth Nascosto:</strong> Nel ritornello, fai attenzione a un suono ronzante e oscillante in sottofondo: è un sintetizzatore VCS3 (lo stesso usato dai Pink Floyd) suonato da John Paul Jones, che aggiunge un'ansia sotterranea.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Rarità Live.</span> A causa della sua complessità ritmica e dello sforzo fisico richiesto a Bonham, la band la suonò dal vivo una sola volta in tutta la carriera (Copenaghen, 1971).</div>
+                    <p><strong>3:25 - Il Finale Trance:</strong> La canzone non finisce in modo tradizionale ma sfuma in una ripetizione quasi sciamanica del riff, con Plant che ulula in lontananza come in un rituale.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Registrazione Infinita.</span> La band faticò moltissimo a registrarla. Fu proprio durante una pausa frustrante da Four Sticks che Bonham iniziò a suonare l'intro di Rock and Roll per sfogarsi.</div>
+                `,
+                en: `
+                    <h3>Four Sticks</h3>
+                    <p><strong>0:00 - The Odd Riff:</strong> The track opens with an obsessive and "crooked" guitar riff. It is difficult to dance to because it alternates bars of 5/4 and 6/8, creating a cyclical disorienting effect.</p>
+                    <p><strong>0:15 - The "Double" Drums:</strong> Listen to the sound of the snare and the toms. It is incredibly percussive and full. This is the literal sound of "four sticks" (see trivia).</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Why "Four Sticks"?</span> The title is not metaphorical. John Bonham, frustrated because he couldn't get the power he wanted with two sticks, took two in each hand (four in total) and played the track like that, hitting with unprecedented violence. That was the master take.</div>
+                    <p><strong>1:18 - The Hidden Synth:</strong> In the chorus, pay attention to a humming, oscillating sound in the background: it's a VCS3 synthesizer (the same one used by Pink Floyd) played by John Paul Jones, which adds an underlying anxiety.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Live Rarity.</span> Because of its rhythmic complexity and the physical effort required of Bonham, the band played it live only once in their entire career (Copenhagen, 1971).</div>
+                    <p><strong>3:25 - Trance Finale:</strong> The song does not end in a traditional way but fades into an almost shamanic repetition of the riff, with Plant howling in the distance like in a ritual.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Endless Recording.</span> The band struggled greatly to record it. It was actually during a frustrating break from Four Sticks that Bonham started playing the intro to Rock and Roll to blow off steam.</div>
+                `
+            },
+            "going_california": {
+                it: `
+                    <h3>Going To California</h3>
+                    <p><strong>0:00 - L'Atmosfera:</strong> Solo chitarra acustica e mandolino. Niente batteria, niente basso. È il momento più intimo del disco.</p>
+                    <p><strong>0:25 - La Voce:</strong> Plant canta in modo morbido e narrativo, quasi sussurrato, abbandonando le urla rock per raccontare una storia personale.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Musa.</span> La canzone è una dedica d'amore platonico alla cantautrice Joni Mitchell, di cui Plant e Page erano grandissimi fan. Il verso "To find a queen without a king, they say she plays guitar and cries and sings" si riferisce a lei.</div>
+                    <p><strong>1:40 - Il Mandolino:</strong> John Paul Jones tesse melodie intricate col mandolino che riempiono lo spazio solitamente occupato dalla sezione ritmica, dando al brano un sapore folk americano.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Terremoto.</span> Mentre Jimmy Page stava missando il brano in studio a Los Angeles, ci fu un vero terremoto (una scossa di assestamento). Page lo interpretò come un segno del destino, dato che il testo parla proprio del rischio che la California finisca in mare ("The mountains and the canyons started to tremble and shake").</div>
+                    <p><strong>3:20 - Il Finale:</strong> Il brano non ha una vera conclusione netta, ma sfuma dolcemente (fade-out), come un viaggiatore che si allontana verso l'orizzonte.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Titolo Originale.</span> Inizialmente si chiamava Guide to California, ispirata dal viaggio che la band fece per andare a Los Angeles.</div>
+                `,
+                en: `
+                    <h3>Going To California</h3>
+                    <p><strong>0:00 - The Atmosphere:</strong> Only acoustic guitar and mandolin. No drums, no bass. It is the most intimate moment of the record.</p>
+                    <p><strong>0:25 - The Voice:</strong> Plant sings in a soft, narrative way, almost whispered, abandoning the rock screams to tell a personal story.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Muse.</span> The song is a platonic love dedication to singer-songwriter Joni Mitchell, of whom Plant and Page were huge fans. The line "To find a queen without a king, they say she plays guitar and cries and sings" refers to her.</div>
+                    <p><strong>1:40 - The Mandolin:</strong> John Paul Jones weaves intricate melodies with the mandolin that fill the space usually occupied by the rhythm section, giving the track an American folk flavor.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Earthquake.</span> While Jimmy Page was mixing the track in a Los Angeles studio, there was a real earthquake (an aftershock). Page interpreted it as a sign of fate, given that the lyrics speak precisely of the risk of California falling into the sea ("The mountains and the canyons started to tremble and shake").</div>
+                    <p><strong>3:20 - The Finale:</strong> The song has no clear conclusion, but gently fades out, like a traveler wandering off into the horizon.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Original Title.</span> It was originally called Guide to California, inspired by the trip the band took to go to Los Angeles.</div>
+                `
+            },
+            "levee_breaks": {
+                it: `
+                    <h3>When The Levee Breaks</h3>
+                    <p><strong>0:00 - Il "Beat" Definitivo:</strong> Il brano si apre con la batteria di John Bonham. Il suono è enorme, cavernoso e "fangoso". Questo perché i microfoni non erano vicini ai tamburi, ma appesi in cima a una tromba delle scale di tre piani, con la batteria posizionata in fondo. L'eco naturale è impressionante.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Le Origini.</span> È una cover di un vecchio blues del 1929 di Memphis Minnie e Kansas Joe McCoy, scritto dopo la grande alluvione del Mississippi del 1927 che distrusse migliaia di case.</div>
+                    <p><strong>1:23 - L'Armonica Invertita:</strong> L'armonica a bocca suonata da Robert Plant ha un effetto strano e disorientante. È stata registrata con un'eco invertita (backward echo): senti l'eco del suono prima che la nota venga effettivamente suonata.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: I Campionamenti.</span> L'intro di batteria è stato campionato in centinaia di canzoni hip-hop e pop, dai Beastie Boys ("Rhymin & Stealin") a Eminem, fino a Beyoncé ("Don't Hurt Yourself").</div>
+                    <p><strong>3:55 - Il Basso:</strong> John Paul Jones non segue la chitarra, ma crea una linea di basso pulsante e ipnotica che hold tutto il caos sonoro.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Accordatura.</span> Le chitarre sono accordate molto basse per dare quel suono pesante e "paludoso". La velocità del nastro fu anche leggermente rallentata in fase di missaggio per rendere il tutto ancora più oscuro.</div>
+                    <p><strong>5:15 - Il Vortice:</strong> Nel finale, Jimmy Page usa un effetto di panning estremo (il suono che si muove da destra a sinistra nelle cuffie) per simulare l'acqua che sale e le vertigini, creando un senso di nausea e disastro imminente.</p>
+                `,
+                en: `
+                    <h3>When The Levee Breaks</h3>
+                    <p><strong>0:00 - The Definitive "Beat":</strong> The track opens with John Bonham's drums. The sound is massive, cavernous and "muddy". This is because the microphones weren't close to the drums, but hung at the top of a three-story stairwell, with the drums positioned at the bottom. The natural echo is impressive.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Origins.</span> It is a cover of an old 1929 blues by Memphis Minnie and Kansas Joe McCoy, written after the Great Mississippi Flood of 1927 that destroyed thousands of homes.</div>
+                    <p><strong>1:23 - Reversed Harmonica:</strong> The harmonica played by Robert Plant has a strange and disorienting effect. It was recorded with a backward echo: you hear the echo of the sound before the note is actually played.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Samples.</span> The drum intro has been sampled in hundreds of hip-hop and pop songs, from the Beastie Boys ("Rhymin & Stealin") to Eminem, up to Beyoncé ("Don't Hurt Yourself").</div>
+                    <p><strong>3:55 - The Bass:</strong> John Paul Jones doesn't follow the guitar, but creates a pulsating and hypnotic bassline that holds all the sonic chaos together.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Tuning.</span> The guitars are tuned very low to give that heavy, "swampy" sound. The tape speed was also slightly slowed down during mixing to make everything even darker.</div>
+                    <p><strong>5:15 - The Vortex:</strong> In the finale, Jimmy Page uses an extreme panning effect (the sound moving from right to left in the headphones) to simulate rising water and vertigo, creating a sense of nausea and impending disaster.</p>
+                `
+            }
+        };
+
+        // --- GESTIONE GALLERIA MOBILE ---
+        let mobileGalleryInterval;
+        let currentImgIndex = 0;
+
+        function startMobileGallery() {
+            const images = document.querySelectorAll('.band-gallery .gallery-img');
+            if (images.length === 0) return;
+
+            function updateGallery() {
+                if (window.innerWidth <= 900) {
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                    images[currentImgIndex].classList.add('mobile-active');
+                    currentImgIndex = (currentImgIndex + 1) % images.length;
+                }
+            }
+
+            if (window.innerWidth <= 900) {
+                updateGallery();
+                if (!mobileGalleryInterval) {
+                    mobileGalleryInterval = setInterval(updateGallery, 5000);
+                }
+            }
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth <= 900) {
+                    if (!mobileGalleryInterval) {
+                        updateGallery();
+                        mobileGalleryInterval = setInterval(updateGallery, 5000);
+                    }
+                } else {
+                    clearInterval(mobileGalleryInterval);
+                    mobileGalleryInterval = null;
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderPlaylist();
+            startMobileGallery();
+            const trackList = document.getElementById('tracklist');
+            if(trackList) trackList.scrollTop = 0;
+        });
+
+        // --- MULTILINGUA ---
+        function setGlobalLang(lang) {
+            document.documentElement.lang = lang;
+            document.querySelectorAll('.global-lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-lang-' + lang).classList.add('active');
+
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentId = ytPlayer ? ytPlayer.getAttribute('data-current-id') : null;
+            
+            if (currentId) {
+                const paraphraseContentHTML = generateParaphraseHTML(currentId);
+                document.getElementById('desktop-lyrics-view').innerHTML = paraphraseContentHTML;
+                document.getElementById('mobile-lyrics-content').innerHTML = paraphraseContentHTML;
+                
+                const guideContent = document.getElementById('guide-content');
+                if (guideData[currentId] && guideData[currentId][lang]) {
+                    guideContent.innerHTML = guideData[currentId][lang];
+                }
+            }
+        }
+
+        // --- GENERAZIONE PARAFRASI ---
+        function generateParaphraseHTML(id) {
+            const data = paraphraseData[id] || { en: "Description not available.", it: "Descrizione non disponibile." };
+            const currentLang = document.documentElement.lang;
+
+            return `
+                <div class="lyrics-wrapper" style="padding: 10px 15px;">
+                    <div class="lyrics-content-area">
+                        <div class="lyrics-col eng active" style="width: 100%; white-space: normal;">
+                            <h4 style="margin: 0 0 2px 0; padding: 0; line-height: 1.2;">
+                                <span class="lang-it">Di cosa parla la canzone?</span>
+                                <span class="lang-en">What is this song about?</span>
+                            </h4><div style="white-space: pre-line; font-style: italic; color: #555; margin: 0; padding: 0; line-height: 1.5;">${data[currentLang]}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function switchLang(btn, lang) {
+            const wrapper = btn.closest('.lyrics-wrapper');
+            wrapper.querySelectorAll('.flag-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            wrapper.querySelectorAll('.lyrics-col').forEach(c => c.classList.remove('active'));
+            wrapper.querySelector('.lyrics-col.' + lang).classList.add('active');
+        }
+
+        // --- PLAYLIST LOGIC ---
+        function renderPlaylist() {
+            const container = document.getElementById('tracklist');
+            let html = '';
+
+            playlist.forEach((track, index) => {
+                html += `
+                    <div class="track-row" id="track-${track.id}" onclick="playTrack('${track.id}', '${track.ytId}', '${track.title.replace(/'/g, "\\'")}', this)">
+                        <div class="track-num">
+                            <span>${index + 1}</span>
+                            <div class="playing-icon">
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                            </div>
+                        </div>
+                        <div class="track-info">
+                            <div class="track-title">${track.title}</div>
+                            <div class="track-artist">Led Zeppelin</div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function playTrack(id, ytId, title, rowElement) {
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentPlayingId = ytPlayer.getAttribute('data-current-id');
+            const currentLang = document.documentElement.lang;
+
+            if (currentPlayingId !== id) {
+                ytPlayer.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`;
+                ytPlayer.setAttribute('data-current-id', id);
+            }
+
+            const rows = document.querySelectorAll('.track-row');
+            rows.forEach(r => r.classList.remove('active'));
+            if(rowElement) rowElement.classList.add('active');
+
+            // Lyrics Update (now Paraphrase)
+            const paraphraseContentHTML = generateParaphraseHTML(id);
+            document.getElementById('desktop-lyrics-view').innerHTML = paraphraseContentHTML;
+            document.getElementById('mobile-lyrics-content').innerHTML = paraphraseContentHTML;
+            document.getElementById('tracklist-wrapper').classList.add('lyrics-active');
+            document.getElementById('tracklist').scrollTop = 0;
+
+            // Guide Update
+            const guideContent = document.getElementById('guide-content');
+            if (guideData[id] && guideData[id][currentLang]) {
+                guideContent.innerHTML = guideData[id][currentLang];
+                const gBox = document.querySelector('.guide-box');
+                if(gBox) gBox.scrollTop = 0;
+            } else {
+                guideContent.innerHTML = currentLang === 'it' ? "<p>Guida all'ascolto non disponibile.</p>" : "<p>Listening guide not available.</p>";
+            }
+
+            const guidePanel = document.getElementById('guide-panel');
+            if(guidePanel && !guidePanel.classList.contains('open')) {
+                toggleGuide();
+            }
+        }
+
+        function resetTracklist() {
+            document.getElementById('tracklist-wrapper').classList.remove('lyrics-active');
+        }
+
+        // --- ACCORDIONS MASTER ---
+        function toggleLesson() { 
+            const content = document.getElementById('main-content');
+            const videoLayer = document.getElementById('video-layer');
+            const btn = document.getElementById('btn-inizia');
+            const btnTxtIt = document.getElementById('btn-txt-it');
+            const btnTxtEn = document.getElementById('btn-txt-en');
+            const icon = btn.querySelector('.icon-plus');
+            const isOpening = !content.classList.contains('active');
+            
+            if (isOpening) {
+                content.classList.add('active');
+                btn.classList.add('active'); 
+                btnTxtIt.textContent = "Chiudi Esperienza"; 
+                btnTxtEn.textContent = "Close Experience";
+                icon.textContent = "×"; 
+                videoLayer.classList.add('video-hidden');
+            } else {
+                content.classList.remove('active'); 
+                btn.classList.remove('active');
+                btnTxtIt.textContent = "Inizia Esperienza"; 
+                btnTxtEn.textContent = "Start Experience"; 
+                icon.textContent = "→"; 
+                videoLayer.classList.remove('video-hidden');
+                
+                const ytPlayer = document.getElementById('youtube-player');
+                if(ytPlayer) ytPlayer.src = "about:blank";
+            }
+        }
+
+        function toggleLyricsAccordion() {
+            const panel = document.getElementById('lyrics-panel');
+            const btn = document.getElementById('lyrics-btn');
+            if (panel.classList.contains('open')) { 
+                panel.classList.remove('open');
+                btn.classList.remove('active'); 
+            } else { 
+                panel.classList.add('open');
+                btn.classList.add('active'); 
+            }
+        }
+
+        function toggleGuide() {
+            const panel = document.getElementById('guide-panel');
+            const btn = document.getElementById('guide-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleHistory() {
+            const panel = document.getElementById('history-panel');
+            const btn = document.getElementById('history-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        // --- FUNZIONE toggleDisclaimer AGGIUNTA ---
+        function toggleDisclaimer() {
+            const panel = document.getElementById('disclaimer-panel');
+            const btn = document.getElementById('disclaimer-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleMobileTracks() {
+            const trackList = document.getElementById('tracklist');
+            const wrapper = document.getElementById('tracklist-wrapper');
+            const trigger = document.querySelector('.mobile-track-trigger');
+            if (trackList.classList.contains('mobile-open')) {
+                trackList.classList.remove('mobile-open');
+                wrapper.classList.remove('opened'); wrapper.classList.add('closed'); trigger.classList.remove('active');
+            } else {
+                trackList.classList.add('mobile-open');
+                wrapper.classList.remove('closed'); wrapper.classList.add('opened'); trigger.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

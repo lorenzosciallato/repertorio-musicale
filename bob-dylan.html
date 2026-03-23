@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bob Dylan | Repertorio</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- VARIABILI & RESET --- */
+        :root {
+            --bg-color: #f0f0f2;
+            --paper-color: #fdfbf7;
+            --ink-color: #1a1a1a;
+            --accent-color: #375a7f;
+            --pop-yellow: #ffee00;
+            --font-title: 'Abril Fatface', cursive;
+            --font-body: 'Inter', sans-serif;
+            --hover-row: rgba(55, 90, 127, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: var(--font-body);
+            color: var(--ink-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px;
+            width: 100%;
+            overflow-x: hidden; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- MULTILINGUA CSS LOGIC --- */
+        html[lang="it"] .lang-en { display: none !important; }
+        html[lang="en"] .lang-it { display: none !important; }
+
+        /* --- BACKGROUND --- */
+        .video-background-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden;
+            background: #e0e0e5; 
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .video-foreground {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; transition: opacity 0.8s ease; opacity: 1;
+        }
+
+        .video-foreground img.bg-image {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.1; 
+            filter: grayscale(100%) sepia(1) hue-rotate(190deg) contrast(1.2);
+            mix-blend-mode: multiply;
+        }
+
+        .video-hidden { opacity: 0; }
+
+        /* --- HEADER --- */
+        header { text-align: center; margin-top: 3rem; margin-bottom: 1rem; padding: 0 1rem; position: relative; z-index: 4; }
+        
+        .main-logo {
+            max-width: 90%; width: 350px; height: auto;
+            display: block; margin: 0 auto;
+        }
+
+        .subtitle-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .subtitle {
+            font-family: var(--font-body); font-size: 1.5rem; color: var(--accent-color); font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 4px;
+        }
+
+        .global-lang-switch {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .global-lang-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 4px;
+            color: #888;
+            transition: all 0.3s;
+        }
+        
+        .global-lang-btn.active {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        /* --- CONTENITORE PRINCIPALE --- */
+        .content-card {
+            background: var(--paper-color); padding: 3rem; margin: 0 auto;
+            width: 90%; max-width: 1200px; position: relative;
+            border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); z-index: 4;
+            margin-bottom: 2rem; margin-top: 2rem;
+        }
+        @media (max-width: 600px) { 
+            .content-card { padding: 1.5rem; width: 95%; margin-top: 1rem; } 
+            .main-logo { width: 280px; }
+            .subtitle { font-size: 1.2rem; letter-spacing: 2px; }
+            .global-lang-btn { padding: 5px 10px; font-size: 0.8rem; }
+        }
+
+        /* --- ACCORDION GENERALE --- */
+        .accordion-item { margin-bottom: 1rem; border-bottom: none; }
+        
+        .master-header {
+            background: transparent; border: 2px solid var(--accent-color); border-radius: 8px;
+            padding: 15px 20px; justify-content: center; font-size: 1.5rem; 
+            color: var(--accent-color); width: 100%; margin-bottom: 1rem;
+            cursor: pointer; display: flex; align-items: center; font-family: var(--font-title);
+            transition: all 0.3s ease;
+        }
+        .master-header:hover { background: rgba(55, 90, 127, 0.1); }
+        .master-header .icon-plus { margin-left: 15px; font-family: var(--font-body); font-weight: 300; transition: transform 0.3s; }
+
+        .accordion-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, opacity 0.5s;
+            padding: 0; opacity: 0;
+        }
+        .accordion-content.active { max-height: 20000px; opacity: 1; padding-top: 2rem; }
+        .master-header.active .icon-plus { transform: rotate(90deg); }
+
+        /* --- LAYOUT PLAYER --- */
+        .playlist-layout {
+            display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; align-items: start; margin-bottom: 2rem;
+        }
+        @media (max-width: 900px) { .playlist-layout { grid-template-columns: 1fr; } }
+
+        /* --- YOUTUBE PLAYER CONTAINER --- */
+        .player-wrapper {
+            position: sticky; top: 20px; background: #fff; border-radius: 12px;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 10; border: 1px solid #eee;
+        }
+
+        .youtube-container { 
+            position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #000; 
+        }
+        .youtube-container iframe { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; 
+        }
+
+        /* --- TRACKLIST E MESSAGGI --- */
+        .tracklist-column { display: flex; flex-direction: column; }
+
+        .scroll-disclaimer {
+            font-size: 0.85rem; color: #665500; margin-bottom: 12px; font-style: italic; text-align: center; 
+            background-color: rgba(255, 238, 0, 0.2); border: 2px dashed #e6c200; padding: 10px; border-radius: 8px; width: 100%;
+        }
+        .msg-desktop { display: block; }
+        .msg-mobile { display: none; }
+        
+        .mobile-track-trigger {
+            display: none; width: 100%; background: #fff; border: 2px dashed #ddd; border-radius: 8px;
+            padding: 12px 20px; font-family: var(--font-title); font-size: 1.2rem; color: var(--accent-color);
+            justify-content: space-between; align-items: center; cursor: pointer; margin-top: 10px; margin-bottom: 10px; transition: all 0.3s;
+        }
+        .mobile-track-trigger:hover { background: #fdfdfd; border-color: var(--accent-color); }
+        .mobile-track-trigger.active { background: #f0f4f8; border-style: solid; border-color: var(--accent-color); }
+        .trigger-arrow { transition: transform 0.3s; font-size: 1rem; }
+        .mobile-track-trigger.active .trigger-arrow { transform: rotate(180deg); }
+
+        .tracklist-container { 
+            width: 100%; max-height: 500px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #ccc #f0f0f2;
+            padding-right: 5px; transition: max-height 0.5s ease-out, opacity 0.5s;
+        }
+        .tracklist-container::-webkit-scrollbar { width: 6px; }
+        .tracklist-container::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+
+        .track-row {
+            display: grid; grid-template-columns: 40px 1fr 40px; padding: 12px 10px; border-bottom: 1px solid rgba(0,0,0,0.05);
+            cursor: pointer; transition: background 0.2s, padding-left 0.2s; border-radius: 6px; align-items: center;
+        }
+        .track-row:hover { background-color: var(--hover-row); padding-left: 15px; }
+        .track-row.active { background-color: var(--hover-row); border-left: 4px solid var(--accent-color); }
+
+        .track-num { font-size: 0.9rem; color: #888; font-weight: 700; }
+        .track-row.active .track-num { display: none; }
+        .track-row.active .playing-icon { display: inline-block; }
+        
+        .playing-icon { display: none; width: 14px; height: 14px; position: relative; }
+        .bar { background: var(--accent-color); bottom: 0; position: absolute; width: 3px; animation: sound 0ms -800ms linear infinite alternate; }
+        .bar:nth-child(1) { left: 0px; height: 10px; animation-duration: 474ms; }
+        .bar:nth-child(2) { left: 5px; height: 6px; animation-duration: 433ms; }
+        .bar:nth-child(3) { left: 10px; height: 12px; animation-duration: 407ms; }
+        @keyframes sound { 0% { opacity: .35; height: 3px; } 100% { opacity: 1; height: 14px; } }
+
+        .track-info { display: flex; flex-direction: column; }
+        .track-title { font-weight: 700; font-size: 1rem; color: var(--ink-color); }
+        .track-row.active .track-title { color: var(--accent-color); }
+        .track-artist { font-size: 0.85rem; color: #666; }
+
+        /* --- STILI TESTI E PULSANTI --- */
+        .btn-back-tracks {
+            display: none; width: 100%; padding: 8px; margin-bottom: 10px; background: var(--pop-yellow); border: none;
+            color: var(--ink-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; font-weight: 900; transition: background 0.3s; text-align: center;
+        }
+        .btn-back-tracks:hover { background: #e6d600; }
+
+        .desktop-lyrics-view { display: none; }
+        
+        .lyrics-wrapper { background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+
+        .lyrics-content-area { max-height: 350px; overflow-y: auto; scrollbar-width: thin; padding-right: 5px; }
+        .lyrics-content-area::-webkit-scrollbar { width: 6px; }
+        .lyrics-content-area::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+        
+        .lyrics-col { display: none; white-space: pre-wrap; color: #333; font-size: 0.9rem; }
+        .lyrics-col.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        .lyrics-col h4 { color: var(--accent-color); margin-bottom: 10px; font-family: var(--font-title); font-size: 1.1rem; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* GESTIONE LOGICA DESKTOP */
+        @media (min-width: 901px) {
+            .tracklist-wrapper.lyrics-active #tracklist { display: none; }
+            .tracklist-wrapper.lyrics-active #desktop-lyrics-view { display: block; }
+            .tracklist-wrapper.lyrics-active #btn-back-tracks { display: block; }
+            .tracklist-wrapper.lyrics-active .msg-desktop { display: none; }
+            .mobile-lyrics-accordion { display: none; } 
+        }
+
+        /* GESTIONE LOGICA MOBILE */
+        @media (max-width: 900px) {
+            .tracklist-wrapper.lyrics-active #desktop-lyrics-view { display: none !important; }
+            .tracklist-wrapper.lyrics-active #btn-back-tracks { display: none !important; }
+            .mobile-lyrics-accordion { display: block; margin-top: 1rem; border-top: 1px solid #eee; }
+        }
+
+        /* --- ACCORDIONS COMUNI --- */
+        .guide-accordion-wrapper { margin-top: 1rem; border-top: 1px solid #eee; }
+        .guide-trigger {
+            background: #fff; border: 2px dashed #ddd; border-radius: 8px; width: 100%; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s; margin-top: 1rem;
+        }
+        .guide-trigger:hover { border-color: var(--accent-color); background: #fdfdfd; }
+        .guide-trigger.active { border-color: var(--accent-color); background: #f0f4f8; border-style: solid; }
+        .guide-trigger span { font-family: var(--font-title); font-size: 1.4rem; color: var(--accent-color); }
+        .guide-arrow { font-size: 1.2rem; transition: transform 0.3s; color: var(--accent-color); }
+        .guide-trigger.active .guide-arrow { transform: rotate(180deg); }
+
+        .guide-panel { max-height: 0; overflow: hidden; transition: max-height 0.6s ease-out, opacity 0.5s; opacity: 0; background: #fff; border-radius: 0 0 8px 8px; }
+        .guide-panel.open { max-height: 80000px; opacity: 1; padding: 20px 0; }
+
+        .guide-grid { display: grid; grid-template-columns: 2fr 1.5fr; gap: 2rem; align-items: start; }
+        .guide-box { background: #fff; padding: 1rem 0; max-height: 600px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--accent-color) #f0f0f2; padding-right: 15px; }
+        .guide-box::-webkit-scrollbar { width: 8px; }
+        .guide-box::-webkit-scrollbar-thumb { background-color: var(--accent-color); border-radius: 10px; }
+        
+        .guide-content p { margin-bottom: 1rem; font-size: 1rem; color: #333; }
+        .guide-content strong { color: var(--accent-color); font-weight: 900; }
+
+        .curiosity-box { background: #fffcf0; border-left: 4px solid var(--pop-yellow); padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0; font-size: 0.95rem; font-style: italic; color: #554; }
+        .curiosity-label { font-weight: bold; font-style: normal; color: #d4a000; text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 5px; }
+
+        /* --- FLIP CARDS CHIRURGICHE --- */
+        .flip-card {
+            perspective: 1000px;
+            cursor: pointer;
+            width: 100%;
+            display: block;
+            margin-bottom: 15px;
+        }
+        .wiki-figure .flip-card { margin-bottom: 0; }
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-card-front, .flip-card-back {
+            width: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        
+        .flip-card-front {
+            position: relative;
+            height: auto;
+            z-index: 2;
+        }
+        
+        .flip-card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: var(--accent-color);
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .flip-card-back strong { color: var(--pop-yellow); font-family: var(--font-title); font-size: 1.1rem; margin-bottom: 5px; line-height: 1.2; }
+        .flip-card-back small { font-size: 0.85rem; opacity: 0.9; }
+
+        .flip-card-front img, .flip-card-back { border-radius: inherit; }
+        
+        .band-gallery .flip-card-front, .band-gallery .flip-card-back {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .wiki-figure .flip-card-front, .wiki-figure .flip-card-back {
+            border-radius: 4px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #ccc;
+        }
+        .wiki-figure .flip-card-back { border: none; }
+
+        .gallery-img, .wiki-img { display: block; width: 100%; height: auto; object-fit: cover; }
+        .wiki-img { filter: sepia(0.1) contrast(1.05); transition: all 0.3s; border: none; box-shadow: none; border-radius: 0; }
+        .gallery-img { border: none; box-shadow: none; border-radius: 0; }
+        .flip-card-front:hover .wiki-img { filter: none; }
+
+        /* --- STILE GALLERIA IMMAGINI --- */
+        .band-gallery { display: flex; flex-direction: column; gap: 20px; max-height: 650px; overflow-y: auto; padding-right: 10px; }
+        .band-gallery::-webkit-scrollbar { width: 4px; }
+        .band-gallery::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
+        .band-gallery .flip-card { height: auto; margin-bottom: 0; }
+
+        /* --- STILE WIKI / STORIA --- */
+        .wiki-content { font-family: 'Inter', sans-serif; color: #333; line-height: 1.7; padding: 0 10px; text-align: justify; }
+        .wiki-title { font-family: var(--font-title); color: var(--accent-color); font-size: 1.4rem; margin-top: 10px; margin-bottom: 5px; letter-spacing: 1px; }
+        .wiki-subtitle { font-weight: 900; color: #d4a000; text-transform: uppercase; font-size: 0.85rem; margin-top: 40px; margin-bottom: 10px; clear: both; }
+        .wiki-divider { border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); margin: 30px 0; clear: both; }
+        .wiki-figure { margin: 15px 0; width: 100%; }
+        .wiki-figure figcaption { font-size: 0.75rem; color: #666; font-style: italic; text-align: center; margin-top: 5px; display: block; }
+        .wiki-gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 30px 0 40px 0; }
+        .wiki-gallery-grid .wiki-figure { height: 100%; margin: 0; }
+        .wiki-gallery-grid .wiki-img { height: 100%; object-fit: cover; }
+
+        .btn-close-bottom { width: 100%; padding: 12px; margin-top: 15px; background: #fff; border: 1px solid #ddd; color: var(--accent-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; font-weight: 700; transition: background 0.3s; text-align: center; }
+        .btn-close-bottom:hover { background: #f0f4f8; border-color: var(--accent-color); }
+        .track-close-desktop-hidden { display: none; }
+
+        @media (min-width: 901px) {
+            .wiki-figure.right { float: right; width: 40%; margin-left: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.left { float: left; width: 40%; margin-right: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.full { clear: both; width: 100%; margin: 30px 0; }
+            .wiki-chapter::after { content: ""; display: table; clear: both; }
+        }
+
+        @media (max-width: 900px) {
+            .msg-desktop { display: none !important; }
+            .msg-mobile { display: block !important; text-align: center; }
+            .guide-grid { grid-template-columns: 1fr; }
+            .band-gallery { display: block; order: -1; max-height: none; overflow: hidden; padding-right: 0; margin-bottom: 10px; }
+            
+            /* Gestione Flip Card Slider su mobile */
+            .band-gallery .flip-card { display: none; animation: fadeInSlide 0.5s ease-in-out; margin-bottom: 0; }
+            .band-gallery .flip-card.mobile-active { display: block; }
+            
+            @keyframes fadeInSlide { from { opacity: 0; } to { opacity: 1; } }
+            .wiki-gallery-grid { grid-template-columns: 1fr; gap: 20px; }
+            .mobile-track-trigger { display: flex; } 
+            .tracklist-wrapper.opened .track-close-desktop-hidden { display: block; }
+            .tracklist-container { max-height: 0; overflow: hidden; opacity: 0; }
+            .tracklist-container.mobile-open { max-height: 5000px; overflow-y: visible; opacity: 1; margin-bottom: 1rem; }
+            .tracklist-wrapper.closed .scroll-disclaimer { display: none; }
+            .tracklist-wrapper.opened .scroll-disclaimer { display: block; }
+            .guide-box { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+            .lyrics-content-area { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-background-wrapper" id="bg-wrapper">
+        <div class="video-foreground" id="video-layer">
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774196112/sfondo_n8vwyv.jpg" alt="Bob Dylan Background" class="bg-image">
+        </div>
+        <div class="video-filter-overlay"></div>
+    </div>
+
+    <header>
+        <h1>
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774196111/logo_rrphhu.svg" alt="Bob Dylan Logo" class="main-logo">
+        </h1>
+        <div class="subtitle-wrapper">
+            <div class="subtitle">
+                <span class="lang-it">Repertorio</span>
+                <span class="lang-en">Repertoire</span>
+            </div>
+            <div class="global-lang-switch">
+                <button id="btn-lang-it" class="global-lang-btn active" onclick="setGlobalLang('it')">ITA</button>
+                <button id="btn-lang-en" class="global-lang-btn" onclick="setGlobalLang('en')">ENG</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-card">
+        
+        <div class="accordion-item">
+            <button class="master-header" id="btn-inizia" onclick="toggleLesson()">
+                <span id="btn-text">
+                    <span class="lang-it" id="btn-txt-it">Inizia Esperienza</span>
+                    <span class="lang-en" id="btn-txt-en">Start Experience</span>
+                </span> 
+                <span class="icon-plus">→</span>
+            </button>
+            
+            <div class="accordion-content" id="main-content">
+                
+                <div class="playlist-layout">
+                    <div class="player-wrapper" id="player-wrapper-ui">
+                        <div class="youtube-container">
+                            <iframe id="youtube-player" src="about:blank" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+                    </div>
+
+                    <div class="tracklist-column tracklist-wrapper closed" id="tracklist-wrapper">
+                        
+                        <button class="mobile-track-trigger" onclick="toggleMobileTracks()">
+                            <span>
+                                <span class="lang-it">Brani</span>
+                                <span class="lang-en">Tracks</span>
+                            </span>
+                            <span class="trigger-arrow">▼</span>
+                        </button>
+
+                        <div class="scroll-disclaimer msg-desktop">
+                            <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere l'intera lista di brani</span>
+                            <span class="lang-en">Use your keyboard or mouse wheel to scroll through the full tracklist</span>
+                        </div>
+                        <div class="scroll-disclaimer msg-mobile">
+                            <span class="lang-it">Clicca e scorri per vedere l'intera lista di brani</span>
+                            <span class="lang-en">Tap and scroll to see the full tracklist</span>
+                        </div>
+
+                        <button class="btn-back-tracks" id="btn-back-tracks" onclick="resetTracklist()">
+                            <span class="lang-it">← Torna alla lista brani</span>
+                            <span class="lang-en">← Back to tracklist</span>
+                        </button>
+
+                        <div class="desktop-lyrics-view" id="desktop-lyrics-view"></div>
+
+                        <div class="tracklist-container" id="tracklist"></div>
+                        
+                        <button class="btn-close-bottom track-close-desktop-hidden" onclick="toggleMobileTracks()">
+                            <span class="lang-it">↑ Chiudi Lista Brani</span>
+                            <span class="lang-en">↑ Close Tracklist</span>
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper mobile-lyrics-accordion" style="border-top: none;">
+                    <button class="guide-trigger" id="lyrics-btn" onclick="toggleLyricsAccordion()">
+                        <span>
+                            <span class="lang-it">Parafrasi</span>
+                            <span class="lang-en">Paraphrase</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="lyrics-panel">
+                        <div class="guide-box" style="max-height: none; overflow: visible;">
+                            <div id="mobile-lyrics-content">
+                                <p style="text-align:center; color:#888; margin-top:30px; margin-bottom:30px;">
+                                    <span class="lang-it">Seleziona un brano dalla playlist per visualizzare la parafrasi.</span>
+                                    <span class="lang-en">Select a track from the playlist to view the paraphrase.</span>
+                                </p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleLyricsAccordion()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Parafrasi</span>
+                            <span class="lang-en">↑ Close Paraphrase</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper">
+                    <button class="guide-trigger" id="guide-btn" onclick="toggleGuide()">
+                        <span>
+                            <span class="lang-it">Guida all'Ascolto & Curiosità</span>
+                            <span class="lang-en">Listening Guide & Trivia</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="guide-panel">
+                        <div class="guide-grid">
+                            <div>
+                                <div class="guide-box">
+                                    <div id="guide-content" class="guide-content">
+                                        <p style="text-align:center; color:#888; margin-top:50px;">
+                                            <span class="lang-it">Seleziona un brano dalla playlist per visualizzare qui i dettagli.</span>
+                                            <span class="lang-en">Select a track from the playlist to view details here.</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="scroll-disclaimer msg-desktop" style="margin-top: 10px;">
+                                    <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere la guida</span>
+                                    <span class="lang-en">Use your keyboard or mouse wheel to scroll through the guide</span>
+                                </div>
+                            </div>
+
+                            <div class="band-gallery">
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://morrisonhotelgallery.com/cdn/shop/files/bob-dylan-rolling-thunder-revue-tour-1975ken-regan-547986.jpg?v=1712607922" alt="Bob Dylan Live"></div>
+                                        <div class="flip-card-back"><strong>Bob Dylan Live</strong><small>Source: morrisonhotelgallery.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774196111/2_tjj8nn.jpg" alt="Bob Dylan Image"></div>
+                                        <div class="flip-card-back"><strong>Bob Dylan 1975</strong><small>Source: bing.net</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774196110/3_smxxqk.jpg" alt="Bob Dylan Image"></div>
+                                        <div class="flip-card-back"><strong>Bob Dylan Studio</strong><small>Source: bing.net</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774196111/4_vpvgdu.jpg" alt="Bob Dylan and The Band"></div>
+                                        <div class="flip-card-back"><strong>Bob Dylan and The Band</strong><small>Source: uncut.co.uk</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774196110/5_tpixbg.webp" alt="Bob Dylan Press"></div>
+                                        <div class="flip-card-back"><strong>Bob Dylan Press</strong><small>Source: classicrock.net</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774196070/6_reoccr.jpg" alt="Bob Dylan Performance"></div>
+                                        <div class="flip-card-back"><strong>Bob Dylan Performance</strong><small>Source: substackcdn.com</small></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn-close-bottom" onclick="toggleGuide()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Guida</span>
+                            <span class="lang-en">↑ Close Guide</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="history-btn" onclick="toggleHistory()">
+                        <span>
+                            <span class="lang-it">Contesto Storico & Artistico</span>
+                            <span class="lang-en">Historical & Artistic Context</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="history-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 1: Il Folk Revival e la Voce di una Generazione (1941-1964)</span>
+                                        <span class="lang-en">Chapter 1: The Folk Revival and the Voice of a Generation (1941-1964)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure full">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774196068/7_p8or6z.jpg" alt="Bob Dylan nel '61" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>Bob Dylan '61</strong>
+                                                    <small>Source: needsomefun.net</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Bob Dylan nel '61</span>
+                                            <span class="lang-en">Bob Dylan in '61</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Nato Robert Allen Zimmerman nel 1941 a Duluth, Minnesota, il futuro cantautore mosse i primi passi assorbendo il rock and roll e il blues trasmessi dalle radio locali.</p>
+                                    <p class="lang-en">Born Robert Allen Zimmerman in 1941 in Duluth, Minnesota, the future singer-songwriter took his first steps absorbing rock and roll and blues broadcast by local radio stations.</p>
+
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774196070/8_tatjvs.jpg" alt="Dylan e Joan Baez" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>Dylan & Baez</strong>
+                                                    <small>Source: tumblr.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Dylan e Joan Baez si esibiscono davanti ad una folla oceanica giunta a Washington per la marcia per i diritti civili, 1963</span>
+                                            <span class="lang-en">Dylan and Joan Baez performing in front of a massive crowd in Washington for the civil rights march, 1963</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Trasferitosi a New York nel 1961 per incontrare il suo idolo musicale Woody Guthrie, si immerse rapidamente nella prolifica scena folk del Greenwich Village. Notato dal produttore John Hammond, firmò il suo primo contratto con la Columbia Records.</p>
+                                    <p class="lang-en">Moving to New York in 1961 to meet his musical idol Woody Guthrie, he quickly immersed himself in the prolific folk scene of Greenwich Village. Noticed by producer John Hammond, he signed his first contract with Columbia Records.</p>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774196070/9_ltotn8.jpg" alt="Joan Baez" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>Joan Baez</strong>
+                                                    <small>Source: flickr.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Joan Baez, di spalle, e la folla</span>
+                                            <span class="lang-en">Joan Baez, from behind, and the crowd</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Fu con il suo secondo album, The Freewheelin' Bob Dylan (1963), che Dylan si impose come figura chiave del nuovo movimento folk e autore di inni generazionali. Brani come Blowin' in the Wind e A Hard Rain's A-Gonna Fall fondevano la struttura della musica tradizionale con testi intrisi di tematiche sociopolitiche e pacifiste, rendendolo un volto di spicco per il movimento dei diritti civili al fianco di Joan Baez.</p>
+                                    <p class="lang-en">It was with his second album, The Freewheelin' Bob Dylan (1963), that Dylan established himself as a key figure of the new folk movement and the author of generational anthems. Tracks like Blowin' in the Wind and A Hard Rain's A-Gonna Fall merged the structure of traditional music with lyrics steeped in sociopolitical and pacifist themes, making him a prominent face of the civil rights movement alongside Joan Baez.</p>
+                                </div>
+
+                                <hr class="wiki-divider">
+
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 2: La Rivoluzione Elettrica e il Ritiro (1965-1966)</span>
+                                        <span class="lang-en">Chapter 2: The Electric Revolution and the Retreat (1965-1966)</span>
+                                    </h3>
+                                    
+                                    <p class="lang-it">L'innovazione più dirompente di Dylan arrivò a metà decennio. Con l'album Bringing It All Back Home (1965), introdusse strumentazioni elettriche, dando di fatto vita al folk-rock. Questa svolta fu inizialmente vista come un "tradimento" dai puristi del folk, culminando nella celebre e contestata esibizione al Newport Folk Festival del 1965, dove Dylan fu accolto dai fischi del pubblico.</p>
+                                    <p class="lang-en">Dylan's most disruptive innovation arrived mid-decade. With the album Bringing It All Back Home (1965), he introduced electric instrumentation, effectively giving birth to folk-rock. This turning point was initially seen as a "betrayal" by folk purists, culminating in the famous and contested performance at the 1965 Newport Folk Festival, where Dylan was met with boos from the audience.</p>
+
+                                    <figure class="wiki-figure full">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774196067/10_gy5qe3.jpg" alt="Newport '65" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>Newport 1965</strong>
+                                                    <small>Source: needsomefun.net</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="curiosity-box" style="margin-top: 15px;">
+                                            <span class="curiosity-label">
+                                                <span class="lang-it">L'INCIDENTE DI NEWPORT:</span>
+                                                <span class="lang-en">THE NEWPORT INCIDENT:</span>
+                                            </span>
+                                            <span class="lang-it">Indignato per l'abbandono del folk acustico a favore del nuovo sound elettrico, un fan tra il pubblico urlò a squarciagola: «Judas!» (Giuda!) . Dylan incassò l'insulto e rispose dal palco con un gelido: «Non ti credo... Sei un bugiardo!». Un istante dopo, si voltò verso la band e ordinò: «Suonate fottutamente forte!» («Play it fucking loud!»), prima di lanciarsi in una versione ferocissima di Like a Rolling Stone.</span>
+                                            <span class="lang-en">Outraged by the abandonment of acoustic folk in favor of the new electric sound, a fan in the audience screamed at the top of their lungs: "Judas!". Dylan took the insult and replied from the stage with a chilling: "I don't believe you... You're a liar!". An instant later, he turned to the band and ordered: "Play it fucking loud!", before launching into a ferocious version of Like a Rolling Stone.</span>
+                                        </div>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Noncurante delle critiche, Dylan pubblicò il singolo da sei minuti Like a Rolling Stone, un capolavoro che alterò radicalmente i confini commerciali e tematici della musica pop. Seguirono due album miliari, Highway 61 Revisited (1965) e il doppio LP Blonde on Blonde (1966). Questa frenetica ascesa creativa si interruppe bruscamente nel luglio del 1966 a causa di un misterioso incidente motociclistico, che spinse Dylan a ritirarsi dalla vita pubblica per quasi un anno e mezzo.</p>
+                                    <p class="lang-en">Heedless of the criticism, Dylan released the six-minute single Like a Rolling Stone, a masterpiece that radically altered the commercial and thematic boundaries of pop music. Two milestone albums followed, Highway 61 Revisited (1965) and the double LP Blonde on Blonde (1966). This frantic creative ascent was abruptly interrupted in July 1966 due to a mysterious motorcycle accident, which prompted Dylan to withdraw from public life for almost a year and a half.</p>
+                                </div>
+
+                                <hr class="wiki-divider">
+
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 3: Sperimentazioni, Ritorni e Svolte Spirituali (1967-1988)</span>
+                                        <span class="lang-en">Chapter 3: Experiments, Returns and Spiritual Turns (1967-1988)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774196066/11_nov2ec.jpg" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>Rolling Thunder Revue</strong>
+                                                    <small>Source: bing.net</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Rolling Thunder Revue: l'estetica del 1975</span>
+                                            <span class="lang-en">Rolling Thunder Revue: the aesthetics of 1975</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Durante l'isolamento, Dylan registrò una serie di storiche sessioni casalinghe con The Band (in seguito note come The Basement Tapes). Al suo ritorno ufficiale, sorprese nuovamente il pubblico adottando prima sonorità scarne e bibliche con John Wesley Harding (1967) e poi abbracciando la musica country tradizionale con Nashville Skyline (1969).</p>
+                                    <p class="lang-en">During isolation, Dylan recorded a series of historic home sessions with The Band (later known as The Basement Tapes). Upon his official return, he surprised the audience again by first adopting stark and biblical sounds with John Wesley Harding (1967) and then embracing traditional country music with Nashville Skyline (1969).</p>
+                                    
+                                    <p class="lang-it">Gli anni settanta furono segnati da un temporaneo allontanamento dalle scene, seguito da un prepotente ritorno creativo e commerciale. Blood on the Tracks (1975) restituì alla critica un autore intimo e dolente, ed è oggi considerato tra i vertici assoluti della sua discografia. Nello stesso anno, Dylan si imbarcò nel colossale e itinerante tour Rolling Thunder Revue.</p>
+                                    <p class="lang-en">The seventies were marked by a temporary withdrawal from the scene, followed by a powerful creative and commercial return. Blood on the Tracks (1975) returned an intimate and sorrowful author to the critics, and is today considered among the absolute peaks of his discography. In the same year, Dylan embarked on the colossal and itinerant Rolling Thunder Revue tour.</p>
+                                    
+                                    <p class="lang-it">Alla fine del decennio, Dylan attraversò una fervente conversione al cristianesimo evangelico, che ispirò album prettamente gospel come il premiato Slow Train Coming (1979), alienando temporaneamente una parte del suo pubblico storico. Nel 1988, decise di stabilizzare la sua presenza live fondando il cosiddetto Never Ending Tour, una tournée ininterrotta che lo avrebbe visto suonare per decenni.</p>
+                                    <p class="lang-en">At the end of the decade, Dylan went through a fervent conversion to evangelical Christianity, which inspired purely gospel albums like the award-winning Slow Train Coming (1979), temporarily alienating a portion of his historical audience. In 1988, he decided to stabilize his live presence by founding the so-called Never Ending Tour, an uninterrupted tour that would see him playing for decades.</p>
+                                </div>
+
+                                <hr class="wiki-divider">
+
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 4: Il Rinascimento Contemporaneo e il Nobel (1989-Oggi)</span>
+                                        <span class="lang-en">Chapter 4: The Contemporary Renaissance and the Nobel (1989-Today)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774196069/12_vsflsi.jpg" alt="Never Ending Tour" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>Never Ending Tour</strong>
+                                                    <small>Source: rollingstone.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Durante una tappa del Never Ending Tour</span>
+                                            <span class="lang-en">During a stop of the Never Ending Tour</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Dopo una fase altalenante negli anni ottanta, Dylan visse una straordinaria rinascita artistica alla fine del millennio. Con l'album Time Out of Mind (1997), prodotto da Daniel Lanois, vinse il Grammy come album solista dell'anno. Il nuovo millennio si aprì con un Premio Oscar per il brano Things Have Changed (2001) e continuò con dischi acclamati come Love and Theft (2001) e Modern Times (2006).</p>
+                                    <p class="lang-en">After a fluctuating phase in the eighties, Dylan experienced an extraordinary artistic rebirth at the end of the millennium. With the album Time Out of Mind (1997), produced by Daniel Lanois, he won the Grammy for Solo Album of the Year. The new millennium opened with an Academy Award for the song Things Have Changed (2001) and continued with acclaimed records like Love and Theft (2001) and Modern Times (2006).</p>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://d3i6fh83elv35t.cloudfront.net/newshour/app/uploads/2016/10/RTR32T3E-1024x708.jpg" alt="Casa Bianca" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>The White House</strong>
+                                                    <small>Source: pbs.org</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Riconoscimento presidenziale: Bob Dylan alla Casa Bianca.</span>
+                                            <span class="lang-en">Presidential recognition: Bob Dylan at the White House.</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Oltre alla carriera prettamente musicale, Dylan ha consolidato la sua figura di intellettuale e artista a tutto tondo: ha pubblicato il primo volume della sua autobiografia, Chronicles, e ha vinto un Premio Pulitzer alla carriera nel 2008. Nel 2016 è stato insignito dello storico Premio Nobel per la Letteratura "per aver creato nuove espressioni poetiche all'interno della grande tradizione della canzone americana". La sua inesauribile urgenza creativa lo ha portato, persino in età avanzata, a pubblicare dischi di grande successo come Rough and Rowdy Ways nel 2020 e a cedere nello stesso anno l'intero catalogo dei suoi diritti d'autore alla Universal per una cifra vicina ai 300 milioni di dollari.</p>
+                                    <p class="lang-en">Beyond his strictly musical career, Dylan has consolidated his figure as an intellectual and all-around artist: he published the first volume of his autobiography, Chronicles, and won a Pulitzer Prize for his career in 2008. In 2016, he was awarded the historic Nobel Prize in Literature "for having created new poetic expressions within the great American song tradition". His inexhaustible creative urgency has led him, even in advanced age, to release highly successful records like Rough and Rowdy Ways in 2020 and to sell his entire songwriting catalog to Universal in the same year for a figure close to 300 million dollars.</p>
+                                </div>
+
+                            </div>
+                        </div>
+                        
+                        <button class="btn-close-bottom" onclick="toggleHistory()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Storia</span>
+                            <span class="lang-en">↑ Close History</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="disclaimer-btn" onclick="toggleDisclaimer()">
+                        <span>
+                            <span class="lang-it">Disclaimer & Note Legali</span>
+                            <span class="lang-en">Disclaimer & Legal Notes</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="disclaimer-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                <h3 class="wiki-title lang-it">Disclaimer e Diritto di Citazione</h3>
+                                <h3 class="wiki-title lang-en">Disclaimer & Fair Use</h3>
+                                
+                                <p class="lang-it">I contenuti multimediali presenti in questa pagina (immagini e video) sono utilizzati esclusivamente per finalità didattiche, critiche e di approfondimento culturale, in conformità con l'Art. 70 della Legge 633/41 (Diritto di citazione e riproduzione per uso didattico o scientifico). L'utilizzo non ha alcuno scopo di lucro e mira a valorizzare l'opera dell'artista e dei relativi autori, citati puntualmente tramite la funzione interattiva sulle singole immagini.<br><br>Qualora i detentori dei diritti d'autore ritenessero inappropriata la pubblicazione o desiderassero la rimozione di specifici contenuti, possono scrivere all'indirizzo: <strong>lorenzo.sciallato@gmail.com</strong>. Provvederò all'immediata rimozione del materiale segnalato.</p>
+                                
+                                <p class="lang-en">The multimedia contents on this page (images and videos) are used exclusively for educational, critical, and cultural purposes, in accordance with international Fair Use principles and national copyright laws. This project is strictly non-commercial and aims to provide historical and artistic context, with full credit given to authors and sources via the interactive photo-flip feature.<br><br>If you are a copyright holder and object to the use of any material, or would like to request its removal, please contact: <strong>lorenzo.sciallato@gmail.com</strong>. Any disputed content will be removed immediately upon request.</p>
+
+                                <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 25px 0;">
+
+                                <p class="lang-it" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Pagina creata con l'assistenza di software di intelligenza artificiale generativa, unendo cura umana e supporto tecnologico per l'apprendimento e la divulgazione culturale.</p>
+                                <p class="lang-en" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Page created with the assistance of generative artificial intelligence software, combining human curation and technological support for educational and cultural dissemination.</p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleDisclaimer()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Disclaimer</span>
+                            <span class="lang-en">↑ Close Disclaimer</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATI PLAYLIST ---
+        const playlist = [
+            { id: "hurricane", title: "Hurricane", ytId: "bpZvg_FjL3Q" },
+            { id: "isis", title: "Isis", ytId: "INilAY6aJTc" },
+            { id: "mozambique", title: "Mozambique", ytId: "4K_YPW-_Vnk" },
+            { id: "one_more_cup", title: "One More Cup of Coffee", ytId: "95cufW4h-gA" },
+            { id: "oh_sister", title: "Oh, Sister", ytId: "Tc2NpNqDgPE" },
+            { id: "joey", title: "Joey", ytId: "Xew67ZHWwLA" },
+            { id: "black_diamond", title: "Black Diamond Bay", ytId: "73N211qQCZU" },
+            { id: "sara", title: "Sara", ytId: "Ma7BK2MJNqo" }
+        ];
+
+        // --- PARAPHRASE DATA ---
+        const paraphraseData = {
+            "hurricane": {
+                it: `Un uomo innocente giace nel buio di una cella mentre il mondo di fuori continua a girare indifferente. Il pugile stava salendo, stava diventando qualcosa — e fu proprio quella grandezza a renderlo un bersaglio comodo. La notte del delitto, altri uomini tenevano le pistole, altri uomini mentivano ai giudici, altri uomini costruivano gabbie con parole invece che con sbarre. La voce del cantante non è quella di un avvocato: è quella di qualcuno che ha letto la verità tra le righe e non riesce a stare in silenzio. Ogni strofa è un colpo sferrato contro l'ipocrisia di un sistema che preferisce un capro espiatorio nero a una giustizia scomoda. Undici minuti di furia civile, violino in testa, che non chiede pietà ma esige risposta.`,
+                en: `An innocent man lies in the dark of a cell while the world outside keeps spinning, indifferent. The boxer was rising, becoming something — and it was precisely that greatness that made him a convenient target. On the night of the crime, other men held the guns, other men lied to the judges, other men built cages out of words instead of iron bars. The singer's voice is not that of a lawyer: it is that of someone who has read the truth between the lines and cannot stay silent. Every verse is a blow struck against the hypocrisy of a system that prefers a Black scapegoat to an uncomfortable justice. Eleven minutes of civil fury, violin leading the charge, that asks for no mercy but demands an answer.`
+            },
+            "isis": {
+                it: `Un uomo sposa una donna e poi la abbandona, trascinato da un impulso vago verso qualcosa che non sa nominare. Si unisce a uno sconosciuto per una spedizione nel freddo del nord, verso una tomba che promette ricchezze e consegna solo il silenzio. Il compagno muore, la tomba è vuota, il tesoro non esiste. E il protagonista capisce — nel gelo assoluto, accanto a un corpo — che non stava cercando oro, ma se stesso. La dea del titolo attende il suo ritorno con una pazienza che non è rassegnazione, ma saggezza. Il viaggio non era verso l'esterno ma verso quel nucleo interiore che si può trovare solo perdendosi completamente.`,
+                en: `A man marries a woman and then abandons her, pulled by a vague impulse toward something he cannot name. He joins a stranger on an expedition into the northern cold, toward a tomb that promises riches and delivers only silence. The companion dies, the tomb is empty, the treasure does not exist. And the protagonist understands — in the absolute freeze, beside a body — that he was not searching for gold, but for himself. The goddess of the title awaits his return with a patience that is not resignation, but wisdom. The journey was never outward but toward that inner core one can only find by becoming completely lost.`
+            },
+            "mozambique": {
+                it: `Un sogno ad occhi aperti, leggero come una brezza marina. Il Mozambico della canzone non è una nazione geografica ma uno stato dell'anima: un luogo dove il sole cade in modo diverso, dove la musica sale dall'acqua e le coppie camminano lente sulla spiaggia senza nessuna urgenza. Dylan e Levy costruiscono un'illusione perfetta di vacanza sentimentale, quasi un cartolina sonora. Ma come tutte le illusioni belle, è sostenuta da una leggerezza consapevole: questo posto forse non esiste, o esiste solo nei momenti in cui ci si lascia andare abbastanza da smettere di pensare.`,
+                en: `A waking dream, light as a sea breeze. The Mozambique of the song is not a geographic nation but a state of mind: a place where the sun falls differently, where music rises from the water and couples walk slowly along the beach with no urgency. Dylan and Levy construct a perfect illusion of sentimental holiday, almost a sonic postcard. But like all beautiful illusions, it is sustained by a knowing lightness: this place perhaps does not exist, or exists only in the moments when one lets go enough to stop thinking altogether.`
+            },
+            "one_more_cup": {
+                it: `Una ragazza bella come una creatura mitologica, cresciuta fuori dal mondo ordinario, con occhi che brillano come gemme nel cielo. Il narratore la osserva con un misto di adorazione e consapevolezza amara: lei non lo vede, non lo vuole, la sua fedeltà appartiene a stelle più antiche di lui. L'ultima tazza di caffè è il gesto minimo di un commiato che non sarà ricordato. Poi la strada scende nella valle, e la valle è buia. La melodia — sospesa tra il deserto messicano e una carovana gitana — avvolge tutto in un profumo di pepe e perdita.`,
+                en: `A girl as beautiful as a mythological creature, raised outside the ordinary world, with eyes that shine like jewels in the sky. The narrator observes her with a mixture of adoration and bitter awareness: she does not see him, does not want him — her loyalty belongs to stars older than he is. The final cup of coffee is the minimum gesture of a farewell that will not be remembered. Then the road descends into the valley, and the valley is dark. The melody — suspended between the Mexican desert and a Romani caravan — wraps everything in a fragrance of pepper and loss.`
+            },
+            "oh_sister": {
+                it: `Un appello accorato, forse fraterno, forse amoroso — il confine tra le due cose qui è deliberatamente sfumato. Il cantante si rivolge a una donna che si è allontanata, invitandola a ricordare che condividono qualcosa di più antico di qualsiasi disputa: la stessa radice, lo stesso padre, la stessa mortalità che incombe su tutti. La resistenza di lei sembra costruita di orgoglio, ma l'orgoglio è fragile. C'è qualcosa che trascende le divisioni ideologiche e politiche, un legame che non si rompe nemmeno quando ci si gira le spalle. La voce di Emmylou Harris intrecciata a quella di Dylan trasforma il monologo in dialogo, e il dialogo in qualcosa che somiglia alla grazia.`,
+                en: `A heartfelt appeal — perhaps fraternal, perhaps amorous — the boundary between the two deliberately blurred. The singer addresses a woman who has drifted away, urging her to remember that they share something older than any dispute: the same root, the same father, the same mortality that looms over everyone. Her resistance seems built of pride, but pride is fragile. There is something that transcends ideological and political divisions — a bond that does not break even when one turns away. Emmylou Harris' voice woven into Dylan's transforms the monologue into a dialogue, and the dialogue into something that resembles grace.`
+            },
+            "joey": {
+                it: `Una ballata epica su un uomo che la storia ufficiale ha archiviato come criminale e la canzone vuole restituire alla complessità. Joey Gallo non è dipinto come innocente — è dipinto come umano, con i suoi codici d'onore contorti e la sua fine violenta in un ristorante di Little Italy. Dylan e Levy percorrono la sua vita come si percorre una strada che si sa già dove porta, eppure si vuole camminare comunque. La controversia che la canzone ha suscitato è parte del suo significato: chi decide chi merita di essere ricordato con pietà? Chi scrive il confine tra l'outlaw romantico e il criminale senza redenzione? Dodici strofe di domande travestite da risposte.`,
+                en: `An epic ballad about a man whom official history filed away as a criminal and whom the song wishes to return to complexity. Joey Gallo is not painted as innocent — he is painted as human, with his twisted codes of honor and his violent end in a Little Italy restaurant. Dylan and Levy walk through his life as one walks a road already known to lead somewhere, yet chooses to walk anyway. The controversy the song stirred is part of its meaning: who decides who deserves to be remembered with compassion? Who draws the line between the romantic outlaw and the criminal without redemption? Twelve stanzas of questions disguised as answers.`
+            },
+            "black_diamond": {
+                it: `Un'isola tropicale sul punto di essere inghiottita dal vulcano, e i suoi abitanti che continuano a fare le loro piccole cose — giocano a carte, pianificano suicidi, litigano per debiti — ignari o quasi di quello che sta per accadere. Dylan osserva la scena da due angolazioni: dall'interno dell'isola, con la precisione quasi cinematografica di un racconto breve, e dall'esterno, dal divano di un appartamento americano dove qualcuno cambia canale e va a prendere un'altra birra. Il punto tagliente della canzone è proprio lì: il disastro e l'indifferenza coesistono, e forse l'indifferenza è il disastro più grande.`,
+                en: `A tropical island on the verge of being swallowed by a volcano, its inhabitants still doing their small things — playing cards, planning suicides, arguing over debts — unaware or nearly so of what is about to happen. Dylan observes the scene from two angles: from inside the island, with the almost cinematic precision of a short story, and from outside, from the couch of an American apartment where someone changes the channel and goes for another beer. The song's sharp point is right there: disaster and indifference coexist, and perhaps indifference is the greater disaster.`
+            },
+            "sara": {
+                it: `Un uomo si volta verso la donna che ama — o che ha amato, o che sta perdendo — e le parla direttamente, senza maschere, senza personaggi interposti. I ricordi si sovrappongono: i bambini sulla spiaggia, le notti di scrittura, le promesse fatte in un momento in cui il futuro sembrava controllabile. La canzone è un atto di resa e di orgoglio mescolati insieme — lui riconosce il dolore che ha causato, ma non abbandona la convinzione che quello che cera tra loro valesse qualcosa di eterno. "Sara" è uno dei rari momenti in cui Dylan smette di essere il cantastorie e diventa semplicemente un marito che cerca parole per qualcosa che le parole non riescono a contenere.`,
+                en: `A man turns toward the woman he loves — or has loved, or is losing — and speaks to her directly, without masks, without interposed characters. Memories layer over one another: children on the beach, nights of writing, promises made in a moment when the future seemed controllable. The song is an act of surrender and pride mixed together — he acknowledges the pain he has caused, yet does not abandon the conviction that what existed between them was worth something eternal. "Sara" is one of the rare moments when Dylan stops being the storyteller and becomes simply a husband searching for words to hold something that words cannot contain.`
+            }
+        };
+
+        // --- GUIDA ALL'ASCOLTO BILINGUE ---
+        const guideData = {
+            "hurricane": {
+                it: `
+                    <h3>Hurricane</h3>
+                    <p><strong>0:00 - L'Attacco Acustico e il Panning:</strong> Il brano si apre in La minore con una pennata aggressiva sulla chitarra acustica di Dylan. Registrata con una microfonazione ravvicinata, puoi sentire chiaramente il rumore del plettro sulle corde (i transienti d'attacco). Il violino di Scarlet Rivera entra quasi subito, non confinato al centro, ma bilanciato in un mix che lascia respiro alle frequenze medio-alte.</p>
+                    <p><strong>0:17 - Stratificazione Ritmica:</strong> Ingresso della sezione ritmica. Presta attenzione al posizionamento stereo: la batteria di Howie Wyeth è centrale e spinta in avanti, mentre le congas suonate da Luther Rix sono pannate lateralmente per allargare l'immagine stereo. Questo accorgimento evita che le frequenze medio-basse dei due strumenti percussivi si "impastino" (fango sonoro) tra loro.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Registrazione "Live" Caotica e Rincisione.</span> Le sessioni iniziali di Desire erano un caos totale, con dozzine di musicisti in studio a improvvisare. Hurricane fu registrata, ma a causa di preoccupazioni legali sui testi (il rischio di diffamazione per i nomi citati), la Columbia costrinse Dylan a riscrivere e re-incidere il brano nell'ottobre del 1975, usando una formazione ridotta e più serrata.</div>
+                    <p><strong>4:10 - Dinamiche "Senza Rete":</strong> Senti come la band abbassa istintivamente il volume durante i passaggi in cui la voce di Dylan o il violino della Rivera devono emergere. Non c'è un massiccio uso di compressione sul master bus ad appiattire tutto; le dinamiche fluttuano in modo naturale. È l'effetto del "suonare insieme nella stessa stanza".</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il bassista come Direttore d'Orchestra.</span> Rob Stoner, il bassista, agiva come direttore musicale non ufficiale. Dylan raramente spiegava gli accordi o gli arrangiamenti prima di registrare. Stoner guardava costantemente le mani di Dylan sul manico della chitarra per intuire i cambi di accordo, segnalandoli poi con lo sguardo al resto della band. Il suono "guidato" del basso in questo brano è dovuto proprio a questa necessità di tenere tutti insieme.</div>
+                    <p><strong>8:33 - Dissolvenza Senza Compromessi:</strong> Il brano mantiene un ritmo 4/4 incalzante fino alla fine. Il fade-out (sfumatura) finale maschera il fatto che la band avrebbe continuato a suonare questa jam ostinata all'infinito. La mancanza di riverberi lunghi (un mix relativamente "dry") mantiene la brutalità e l'urgenza narrativa del suono.</p>
+                `,
+                en: `
+                    <h3>Hurricane</h3>
+                    <p><strong>0:00 - The Acoustic Attack and Panning:</strong> The track opens in A minor with an aggressive strum on Dylan's acoustic guitar. Recorded with close miking, you can clearly hear the sound of the pick on the strings (the attack transients). Scarlet Rivera's violin enters almost immediately, not confined to the center, but balanced in a mix that leaves breathing room for the mid-high frequencies.</p>
+                    <p><strong>0:17 - Rhythmic Layering:</strong> The rhythm section enters. Pay attention to the stereo positioning: Howie Wyeth's drums are central and pushed forward, while the congas played by Luther Rix are panned to the sides to widen the stereo image. This trick prevents the mid-low frequencies of the two percussive instruments from "muddying" each other.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Chaotic "Live" Recording and Re-recording.</span> The initial sessions for Desire were total chaos, with dozens of musicians improvising in the studio. Hurricane was recorded, but due to legal concerns over the lyrics (the risk of defamation for the names mentioned), Columbia forced Dylan to rewrite and re-record the track in October 1975, using a smaller, tighter lineup.</div>
+                    <p><strong>4:10 - "Netless" Dynamics:</strong> Hear how the band instinctively lowers the volume during passages where Dylan's voice or Rivera's violin need to emerge. There is no massive use of compression on the master bus to flatten everything; dynamics fluctuate naturally. It is the effect of "playing together in the same room".</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Bassist as Conductor.</span> Rob Stoner, the bassist, acted as unofficial musical director. Dylan rarely explained chords or arrangements before recording. Stoner constantly watched Dylan's hands on the guitar neck to anticipate chord changes, then signaling them with a glance to the rest of the band. The "guided" bass sound in this track is due precisely to this need to keep everyone together.</div>
+                    <p><strong>8:33 - Uncompromising Fade-out:</strong> The track maintains a relentless 4/4 rhythm to the very end. The final fade-out masks the fact that the band would have continued playing this stubborn jam infinitely. The lack of long reverbs (a relatively "dry" mix) maintains the brutality and narrative urgency of the sound.</p>
+                `
+            },
+            "isis": {
+                it: `
+                    <h3>Isis</h3>
+                    <p><strong>0:00 - Il Groove in 3/4 e l'Ancoraggio del Pianoforte:</strong> A differenza dell'attacco rock di Hurricane, qui entriamo in un tempo dispari, un pesante 3/4 con un feeling quasi da valzer marziale. Il pianoforte detta la progressione armonica con accordi marcati, mentre il basso suona sui battere, dando una sensazione di trascinamento e gravità al suono.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Collaborazione Cinematografica.</span> Dylan scrisse gran parte dell'album, inclusa Isis, a quattro mani con Jacques Levy, un regista teatrale. L'influenza di Levy è evidente nella struttura senza ritornelli: la canzone è costruita come un lungo piano-sequenza cinematografico, dove la tensione è narrativa e non affidata alla classica struttura strofa-ritornello.</div>
+                    <p><strong>1:30 - Call and Response e "Bleed" Microfonico:</strong> Ascolta l'interazione tra la voce di Dylan e il violino. Il violino riempie i silenzi lasciati dalla voce (tecnica del call and response). Poiché stavano suonando live nella stessa stanza, la voce di Dylan e il violino rientravano nei reciproci microfoni (il cosiddetto mic bleed). Questo "difetto" tecnico funge in realtà da "colla", creando una pasta sonora naturale impossibile da replicare con tracce registrate in isolamento.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Un Viaggio Mitologico e Matrimoniale.</span> Nonostante narri di un bizzarro viaggio alla ricerca di un tesoro che non c'è, con tanto di profanazione di tombe nel ghiaccio, Dylan dichiarò in alcune esibizioni live che Isis "è una canzone che parla di matrimonio".</div>
+                    <p><strong>4:00 - Crescendo Dinamico senza Variazione Armonica:</strong> Dal punto di vista della teoria musicale, il brano è un vamp circolare che si ripete senza sosta. L'ingegnere del suono ha evitato l'uso di automazioni di volume post-prodotte: l'aumento di intensità emotiva è dettato esclusivamente dall'esecuzione dei musicisti, che colpiscono gli strumenti con maggiore forza (velocity) man mano che il testo giunge al climax.</p>
+                `,
+                en: `
+                    <h3>Isis</h3>
+                    <p><strong>0:00 - The 3/4 Groove and Piano Anchoring:</strong> Unlike Hurricane's rock attack, here we enter an odd time signature, a heavy 3/4 with an almost martial waltz feeling. The piano dictates the harmonic progression with marked chords, while the bass plays on the downbeats, giving a sense of drag and gravity to the sound.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Cinematic Collaboration.</span> Dylan wrote much of the album, including Isis, alongside Jacques Levy, a theater director. Levy's influence is evident in the chorus-less structure: the song is built like a long cinematic tracking shot, where the tension is narrative and not reliant on the classic verse-chorus structure.</div>
+                    <p><strong>1:30 - Call and Response and Microphone "Bleed":</strong> Listen to the interaction between Dylan's voice and the violin. The violin fills the silences left by the voice (the call and response technique). Because they were playing live in the same room, Dylan's voice and the violin bled into each other's microphones. This technical "flaw" actually acts as "glue", creating a natural sonic paste impossible to replicate with isolated tracks.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: A Mythological and Matrimonial Journey.</span> Despite narrating a bizarre journey in search of a nonexistent treasure, complete with the desecration of graves in the ice, Dylan declared in some live performances that Isis "is a song about marriage".</div>
+                    <p><strong>4:00 - Dynamic Crescendo without Harmonic Variation:</strong> From a music theory perspective, the track is a circular vamp that repeats endlessly. The sound engineer avoided using post-produced volume automations: the increase in emotional intensity is dictated exclusively by the musicians' execution, hitting their instruments with greater force (velocity) as the lyrics reach their climax.</p>
+                `
+            },
+            "mozambique": {
+                it: `
+                    <h3>Mozambique</h3>
+                    <p><strong>0:00 - L'Apertura in Tonalità Maggiore:</strong> Si cambia totalmente registro. L'introduzione è solare, in una luminosa tonalità maggiore. Le chitarre acustiche hanno un equalizzazione molto aperta sulle alte frequenze (probabilmente enfatizzate intorno agli 8-10 kHz) che dona un suono cristallino e "fresco".</p>
+                    <p><strong>0:15 - L'Incastro Vocale e l'EQ:</strong> Entra Emmylou Harris ai cori. La sua voce è posizionata a un volume quasi identico a quello di Dylan. Dal punto di vista tecnico, il mix le affida frequenze più acute rispetto al timbro nasale e ricco di medie frequenze di Dylan. Questo permette alle due voci di non scontrarsi (masking) e di fondersi in modo eccellente.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Un Gioco di Rime da Salotto.</span> Il brano nacque quasi per gioco. Dylan e Levy iniziarono a sfidarsi per vedere quante parole riuscissero a far rimare con il suffisso "-ique" (Mozambique, cheek, peek, week, speak...). Il risultato fu mantenuto così, leggero e giocoso.</div>
+                    <p><strong>1:45 - Trasparenza della Percussione:</strong> Al posto di un backbeat pesante, qui la ritmica è frammentata e leggera. Le percussioni e i piatti della batteria sono registrati catturando più il suono della stanza (room mics) che il fusto in sé, contribuendo a un'atmosfera da jam informale in veranda.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Una Bizzarra Scelta Geopolitica.</span> Molti critici all'epoca rimasero interdetti. Mentre in Mozambico era in corso una sanguinosa guerra di indipendenza, Dylan e Levy scrissero una canzone che descriveva il paese come una paradisiaca meta turistica per coppiette innamorate. Un palese, forse cinico, esercizio di distacco dalla realtà.</div>
+                `,
+                en: `
+                    <h3>Mozambique</h3>
+                    <p><strong>0:00 - The Major Key Opening:</strong> A total change of register. The intro is sunny, in a bright major key. The acoustic guitars have a very open equalization on the high frequencies (probably emphasized around 8-10 kHz) giving a crystalline and "fresh" sound.</p>
+                    <p><strong>0:15 - Vocal Interlocking and EQ:</strong> Emmylou Harris enters on backing vocals. Her voice is placed at a volume almost identical to Dylan's. Technically, the mix assigns her higher frequencies compared to Dylan's nasal, mid-frequency-rich timbre. This prevents the two voices from clashing (masking) and allows them to blend excellently.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: A Parlor Rhyming Game.</span> The track was born almost as a game. Dylan and Levy started challenging each other to see how many words they could rhyme with the suffix "-ique" (Mozambique, cheek, peek, week, speak...). The result was kept as is, light and playful.</div>
+                    <p><strong>1:45 - Percussion Transparency:</strong> Instead of a heavy backbeat, the rhythm here is fragmented and light. The percussion and drum cymbals are recorded capturing more of the room sound (room mics) than the shell itself, contributing to an informal porch-jam atmosphere.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: A Bizarre Geopolitical Choice.</span> Many critics at the time were baffled. While a bloody war of independence was raging in Mozambique, Dylan and Levy wrote a song describing the country as a paradisiacal tourist destination for romantic couples. A blatant, perhaps cynical, exercise in detachment from reality.</div>
+                `
+            },
+            "one_more_cup": {
+                it: `
+                    <h3>One More Cup of Coffee (Valley Below)</h3>
+                    <p><strong>0:00 - La Cadenza Andalusa e il Plettro:</strong> Il brano si apre con una classica discesa armonica in tonalità minore (Lam - Sol - Fa - Mi), nota come "Cadenza Andalusa", che conferisce immediatamente un sapore gitano o ispanico. L'attacco della chitarra acustica è netto: il plettro colpisce le corde vicino al ponte, generando un suono con pochissime frequenze basse e un'enfasi sulle medio-alte (intorno ai 4-5 kHz), perfetto per fendere il mix fin dal primo secondo.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Festival Gitano in Francia.</span> L'ispirazione melodica e armonica nacque il giorno del 34esimo compleanno di Dylan, quando partecipò a un pellegrinaggio e festival gitano a Saintes-Maries-de-la-Mer, nel sud della Francia. L'atmosfera e la musica assorbite lì si tradussero direttamente nell'arrangiamento di questo brano.</div>
+                    <p><strong>1:05 - Il Riverbero Naturale e il "Ghosting" Vocale:</strong> L'ingresso di Emmylou Harris ai cori nei ritornelli è un capolavoro di posizionamento. Rispetto a Mozambique, qui la sua voce sembra arrivare da un'altra stanza. Questo effetto "fantasma" è dovuto a una microfonazione più distante: catturando più aria (il riverbero naturale della stanza, o room sound) e meno l'effetto di prossimità della capsula, la voce perde corpo sulle basse frequenze, fluttuando in modo spettrale sopra quella di Dylan.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Un'Audizione al Buio.</span> Emmylou Harris fu chiamata in studio all'ultimo minuto. Non conosceva i brani e Dylan non le fornì testi né partiture. Il suo approccio vocale esitante ma magnetico è letteralmente il suono di una cantante che guarda le labbra e le mani di Dylan per capire quando entrare e quale nota cantare.</div>
+                    <p><strong>2:15 - Il Vibrato "Grezzo" e l'Attrito dell'Arco:</strong> Presta attenzione all'assolo di violino di Scarlet Rivera. Tecnicamente, utilizza un vibrato molto ampio e irregolare, ignorando volutamente l'intonazione perfetta. In sede di mixaggio non è stata applicata alcuna attenuazione sulle alte frequenze: puoi sentire chiaramente il rumore bianco e ruvido del crine dell'arco che gratta sulle corde, un dettaglio tattile che rende la performance cruda e fisica.</p>
+                `,
+                en: `
+                    <h3>One More Cup of Coffee (Valley Below)</h3>
+                    <p><strong>0:00 - The Andalusian Cadence and the Pick:</strong> The track opens with a classic minor-key harmonic descent (Am - G - F - E), known as the "Andalusian Cadence", which immediately imparts a gypsy or Hispanic flavor. The acoustic guitar attack is sharp: the pick strikes the strings near the bridge, generating a sound with very few low frequencies and an emphasis on the mid-highs (around 4-5 kHz), perfect to cut through the mix from the first second.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Gypsy Festival in France.</span> The melodic and harmonic inspiration was born on Dylan's 34th birthday, when he attended a pilgrimage and gypsy festival in Saintes-Maries-de-la-Mer, in the south of France. The atmosphere and music absorbed there translated directly into the arrangement of this song.</div>
+                    <p><strong>1:05 - Natural Reverb and Vocal "Ghosting":</strong> Emmylou Harris' backing vocal entrance in the choruses is a masterpiece of positioning. Compared to Mozambique, her voice here seems to come from another room. This "ghost" effect is due to more distant miking: capturing more air (the natural room reverb) and less of the capsule's proximity effect, the voice loses body on the low frequencies, floating spectrally above Dylan's.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: A Blind Audition.</span> Emmylou Harris was called into the studio at the last minute. She didn't know the songs and Dylan provided no lyrics or sheet music. Her hesitant but magnetic vocal approach is literally the sound of a singer watching Dylan's lips and hands to figure out when to come in and what note to sing.</div>
+                    <p><strong>2:15 - The "Raw" Vibrato and Bow Friction:</strong> Pay attention to Scarlet Rivera's violin solo. Technically, she uses a very wide and irregular vibrato, deliberately ignoring perfect intonation. In the mixing stage, no attenuation was applied to the high frequencies: you can clearly hear the rough white noise of the bow hair scratching on the strings, a tactile detail that makes the performance raw and physical.</p>
+                `
+            },
+            "oh_sister": {
+                it: `
+                    <h3>Oh, Sister</h3>
+                    <p><strong>0:00 - L'Armonica, l'Overdrive Naturale e l'Aria:</strong> L'intro vede chitarra e armonica insieme. L'armonica è fissata al supporto intorno al collo di Dylan, il che significa che è ripresa dallo stesso microfono destinato alla voce. Quando Dylan soffia con forza, l'impatto dell'aria satura la capsula del microfono vocale, creando un leggero overdrive naturale (distorsione armonica) e schiacciando i transienti. È il classico suono "di strada" impossibile da emulare in post-produzione.</p>
+                    <p><strong>1:00 - Spazializzazione Minimalista e Basso "Flatwound":</strong> Il mix è incredibilmente scarno e centralizzato (quasi mono). L'ancora del brano è il basso di Rob Stoner. Il tono rotondo, privo dell'attacco metallico delle dita sui tasti, suggerisce l'uso di corde lisce (flatwound) e una probabile registrazione tramite DI (Direct Injection) o con un microfono incollato al cono dell'amplificatore per catturare solo la fondamentale (sotto i 100 Hz), evitando sovrapposizioni con la chitarra acustica.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Una Genesi Fulminea in Notturna.</span> La canzone fu scritta in studio, quasi per caso, mentre Dylan e Jacques Levy aspettavano che la band finisse di accordare gli strumenti per un'altra traccia. In pochissime ore fu composta e registrata.</div>
+                    <p><strong>2:00 - "Chorusing" Vocale Organico:</strong> Quando Dylan ed Emmylou Harris cantano l'inciso, le loro voci non sono perfettamente allineate dal punto di vista ritmico (il fraseggio è loose, sciolto). Questa minuscola discrepanza temporale tra le due tracce genera un effetto di chorusing naturale, ispessendo il panorama vocale e dando l'illusione di un coro più ampio di quanto non sia in realtà.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Prove Generali di Vangelo.</span> Sebbene inserita in un album laico, l'invocazione "Oh, sister, am I not a brother to you / And one deserving of affection?" introduce per la prima volta un linguaggio quasi biblico e fraterno che anticiperà la forte svolta spirituale e cristiana di Dylan alla fine del decennio.</div>
+                `,
+                en: `
+                    <h3>Oh, Sister</h3>
+                    <p><strong>0:00 - Harmonica, Natural Overdrive and Air:</strong> The intro features guitar and harmonica together. The harmonica is attached to the rack around Dylan's neck, meaning it's picked up by the same microphone meant for the vocals. When Dylan blows hard, the air's impact saturates the vocal mic's capsule, creating a slight natural overdrive (harmonic distortion) and crushing the transients. It's the classic "street" sound impossible to emulate in post-production.</p>
+                    <p><strong>1:00 - Minimalist Spatialization and "Flatwound" Bass:</strong> The mix is incredibly sparse and centralized (almost mono). The song's anchor is Rob Stoner's bass. The round tone, devoid of the metallic attack of fingers on frets, suggests the use of flatwound strings and likely recorded via DI (Direct Injection) or with a mic glued to the amp cone to capture only the fundamental (under 100 Hz), avoiding overlap with the acoustic guitar.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: A Lightning-Fast Nocturnal Genesis.</span> The song was written in the studio, almost by chance, while Dylan and Jacques Levy waited for the band to finish tuning instruments for another track. It was composed and recorded in just a few hours.</div>
+                    <p><strong>2:00 - Organic Vocal "Chorusing":</strong> When Dylan and Emmylou Harris sing the refrain, their voices are not perfectly aligned rhythmically (the phrasing is loose). This tiny temporal discrepancy between the two tracks generates a natural chorusing effect, thickening the vocal panorama and giving the illusion of a larger choir than it actually is.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Gospel Dress Rehearsal.</span> Although placed on a secular album, the invocation "Oh, sister, am I not a brother to you / And one deserving of affection?" introduces for the first time an almost biblical and fraternal language that would anticipate Dylan's strong spiritual and Christian turn at the end of the decade.</div>
+                `
+            },
+            "joey": {
+                it: `
+                    <h3>Joey</h3>
+                    <p><strong>0:00 - Il Metronomo Acustico e il Tappeto di Fisarmonica:</strong> Questa lunghissima ballata (11 minuti) ha un tempo di 4/4 estremamente dilatato (circa 70 BPM). In assenza di una batteria incalzante, la chitarra acustica fa letteralmente da metronomo. Senti il suono della fisarmonica (suonata da Dom Cortese)? Funziona come un pad sintetico: tiene accordi lunghissimi (drones) per riempire il vuoto armonico sulle frequenze medie e medio-basse (200-500 Hz), dando spessore a un arrangiamento altrimenti scheletrico.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Una Scelta Tematica Esplosiva.</span> Il brano racconta in modo estremamente romanzato la vita del boss mafioso italo-americano Joey Gallo. All'uscita del disco, Dylan fu duramente attaccato dalla stampa e da associazioni civili per aver trasformato un criminale violento in un eroe romantico. Dylan si difese sostenendo di aver usato la figura di Gallo come un archetipo folk, come Robin Hood, e non come resoconto giornalistico.</div>
+                    <p><strong>3:30 - La Gestione dell'Affollamento delle Medie Frequenze:</strong> Con l'avanzare del brano, abbiamo la voce nasale di Dylan, quella di Harris, il violino della Rivera e la fisarmonica. Tutti questi strumenti competono nello stesso range di frequenze critico per l'orecchio umano (1 kHz - 3 kHz). Il tecnico del suono ha risolto l'ingorgo (masking) tramite il panning: spostando la fisarmonica leggermente a sinistra e il violino a destra, ha "scavato" un buco al centro del panorama stereo per garantire l'intelligibilità del testo cantato da Dylan.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Test di Resistenza Senza Click.</span> Registrare un brano di 11 minuti in presa diretta senza metronomo (click track) in cuffia è difficilissimo. I musicisti dovevano mantenere la stessa dinamica emotiva e lo stesso micro-tempo per decine di strofe consecutive, comunicando esclusivamente con lo sguardo e i movimenti del corpo nella sala di registrazione.</div>
+                    <p><strong>7:15 - Compressione Narrativa "Invisibile":</strong> A differenza dei saliscendi drammatici di Hurricane, qui il volume generale rimane ostinatamente piatto. La dinamica statica serve uno scopo: la musica fa solo da tela per il lungo racconto testuale. Sulla traccia vocale è presente un compressore con un tempo di attacco molto rapido, che cattura immediatamente i picchi di volume quando Dylan "sputa" le consonanti più dure, assicurando che nessuna singola parola si perda nel mix lungo tutta l'epopea.</p>
+                `,
+                en: `
+                    <h3>Joey</h3>
+                    <p><strong>0:00 - The Acoustic Metronome and Accordion Bed:</strong> This very long ballad (11 minutes) has an extremely dilated 4/4 tempo (about 70 BPM). In the absence of driving drums, the acoustic guitar literally acts as a metronome. Hear the accordion sound (played by Dom Cortese)? It works like a synthetic pad: it holds very long chords (drones) to fill the harmonic void in the mid and low-mid frequencies (200-500 Hz), adding thickness to an otherwise skeletal arrangement.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: An Explosive Thematic Choice.</span> The track recounts the highly romanticized life of Italian-American mafia boss Joey Gallo. Upon the album's release, Dylan was harshly attacked by the press and civic associations for turning a violent criminal into a romantic hero. Dylan defended himself claiming to have used Gallo's figure as a folk archetype, like Robin Hood, and not as a journalistic report.</div>
+                    <p><strong>3:30 - Managing Mid-Frequency Crowding:</strong> As the track progresses, we have Dylan's nasal voice, Harris's, Rivera's violin, and the accordion. All these instruments compete in the same critical frequency range for the human ear (1 kHz - 3 kHz). The sound engineer solved the jam (masking) via panning: by shifting the accordion slightly to the left and the violin to the right, he "dug" a hole in the center of the stereo panorama to guarantee the intelligibility of Dylan's sung lyrics.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Click-less Endurance Test.</span> Recording an 11-minute track live without a metronome (click track) in your headphones is extremely difficult. The musicians had to maintain the same emotional dynamic and micro-tempo for dozens of consecutive verses, communicating exclusively through eye contact and body movements in the recording room.</div>
+                    <p><strong>7:15 - "Invisible" Narrative Compression:</strong> Unlike Hurricane's dramatic ups and downs, the overall volume here remains stubbornly flat. The static dynamic serves a purpose: the music acts merely as a canvas for the long textual tale. A compressor with a very fast attack time is placed on the vocal track, immediately catching volume peaks when Dylan "spits" harder consonants, ensuring no single word gets lost in the mix throughout the epic.</p>
+                `
+            },
+            "black_diamond": {
+                it: `
+                    <h3>Black Diamond Bay</h3>
+                    <p><strong>0:00 - Il Groove in Levare e il Basso Sincopato:</strong> Il brano si apre con un ritmo atipico per l'album: un 4/4 dal forte sapore calypso/isolano. Il basso di Rob Stoner è fondamentale qui: invece di suonare ostinatamente sul battere, crea una linea sincopata che si incastra perfettamente con le pennate in levare della chitarra acustica. Questa scelta ritmica crea uno "spazio vuoto" (headroom) nelle basse frequenze, alleggerendo l'arrangiamento e spingendo il brano in avanti.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Genesi Letteraria a Quattro Mani.</span> L'impostazione narrativa della canzone fu pesantemente influenzata dalle letture di Jacques Levy. L'ambientazione esotica, il vulcano in eruzione e i personaggi disperati rinchiusi in un hotel sono un omaggio diretto e voluto al romanzo Vittoria (Victory) dello scrittore Joseph Conrad, un autore amato da entrambi.</div>
+                    <p><strong>1:45 - Il Violino "Staccato" e la Gestione dei Transienti:</strong> Ascolta il lavoro di Scarlet Rivera al violino. A differenza dei lunghi tratti legati usati in Isis o One More Cup of Coffee, qui suona in modo molto più percussivo e frammentato (staccato). Dal punto di vista del mix, questo genera dei transienti (picchi di volume iniziale) molto netti che aiutano il violino a tagliare il mix denso di chitarre ritmiche senza doverne alzare eccessivamente il volume sul fader.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Plot Twist Meta-Televisivo.</span> Il brano è costruito come un film catastrofico che culmina con la distruzione dell'isola. Tuttavia, l'ultima strofa svela che il narratore sta in realtà guardando l'evento in televisione da un salotto di Los Angeles, bevendo birra. È uno stratagemma narrativo (il distacco ironico) tipico del teatro di Levy che Dylan assorbì perfettamente.</div>
+                    <p><strong>3:30 - "Dryness" Vocale e Scatola Sonora:</strong> La voce di Dylan è estremamente "dry" (secca), quasi del tutto priva di riverberi o delay artificiali. Il fonico Don DeVito ha posizionato la traccia vocale al centro morto dell'immagine stereo e molto avanti (in faccia all'ascoltatore). L'assenza di code di riverbero assicura che un testo così denso, veloce e ricco di sillabe non diventi una poltiglia incomprensibile (masking) a causa della sovrapposizione delle code sonore delle parole stesse.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Ritorno all'Ordine.</span> Questo brano fu uno di quelli registrati durante le seconde sessioni di Desire (fine luglio 1975). Le prime sessioni della metà del mese avevano visto la partecipazione di Eric Clapton e decine di altri musicisti, producendo un muro di suono fangoso e inutilizzabile. Black Diamond Bay dimostra l'efficacia della drastica decisione di Dylan di licenziare quasi tutti e tenere solo il quartetto base.</div>
+                `,
+                en: `
+                    <h3>Black Diamond Bay</h3>
+                    <p><strong>0:00 - The Upbeat Groove and Syncopated Bass:</strong> The track opens with an atypical rhythm for the album: a 4/4 with a strong calypso/island flavor. Rob Stoner's bass is fundamental here: instead of stubbornly playing on the downbeat, he creates a syncopated line that perfectly locks in with the acoustic guitar's upstrokes. This rhythmic choice creates "empty space" (headroom) in the low frequencies, lightening the arrangement and pushing the song forward.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Four-Handed Literary Genesis.</span> The song's narrative setup was heavily influenced by Jacques Levy's reading. The exotic setting, the erupting volcano, and the desperate characters locked in a hotel are a direct and deliberate homage to the novel Victory by writer Joseph Conrad, an author loved by both.</div>
+                    <p><strong>1:45 - The "Staccato" Violin and Transient Management:</strong> Listen to Scarlet Rivera's violin work. Unlike the long, legato strokes used in Isis or One More Cup of Coffee, here she plays in a much more percussive and fragmented (staccato) way. From a mixing perspective, this generates very sharp transients (initial volume peaks) that help the violin cut through the dense mix of rhythm guitars without having to excessively raise its volume on the fader.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Meta-Televisual Plot Twist.</span> The track is built like a disaster movie culminating in the island's destruction. However, the last stanza reveals that the narrator is actually watching the event on television from a Los Angeles living room, drinking beer. It's a narrative ploy (ironic detachment) typical of Levy's theater that Dylan absorbed perfectly.</div>
+                    <p><strong>3:30 - Vocal "Dryness" and Sonic Box:</strong> Dylan's voice is extremely "dry", almost entirely devoid of artificial reverbs or delays. Sound engineer Don DeVito placed the vocal track dead center in the stereo image and very forward (in the listener's face). The absence of reverb tails ensures that such a dense, fast, syllable-rich lyric doesn't turn into incomprehensible mush (masking) due to the overlapping sound tails of the words themselves.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Return to Order.</span> This track was one of those recorded during the second Desire sessions (late July 1975). The first sessions mid-month featured Eric Clapton and dozens of other musicians, producing a muddy and unusable wall of sound. Black Diamond Bay demonstrates the effectiveness of Dylan's drastic decision to fire almost everyone and keep only the core quartet.</div>
+                `
+            },
+            "sara": {
+                it: `
+                    <h3>Sara</h3>
+                    <p><strong>0:00 - L'Effetto di Prossimità e il Timbro Caldo:</strong> Sara è la chiusura emotiva del disco, e la tecnica di registrazione lo riflette. Il brano è un lento 6/8. Dylan canta vicinissimo al microfono. Questa tecnica sfrutta il cosiddetto "effetto di prossimità" (tipico dei microfoni direzionali), che enfatizza naturalmente le frequenze medio-basse (intorno ai 100-200 Hz) della voce. Il risultato è un timbro vocale eccezionalmente caldo, profondo e intimo, come se Dylan stesse sussurrando direttamente all'orecchio dell'ascoltatore.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Ospite Oltre il Vetro.</span> In uno dei momenti più incredibili della storia del rock, la moglie di Dylan, Sara Lownds (da cui si stava dolorosamente separando), entrò in studio esattamente mentre Bob stava per registrare questo brano. Dylan cantò l'intera canzone, una disperata richiesta di perdono, guardandola direttamente attraverso il vetro della sala di regia.</div>
+                    <p><strong>2:10 - Dinamica Naturale e Rumore di Fondo:</strong> L'assenza di compressione aggressiva è evidente. Ascolta il modo in cui Dylan pizzica la chitarra acustica: i passaggi più dolci sono quasi sussurrati e si fondono con il suono della stanza (room noise). Puoi persino percepire lievi rumori meccanici, come lo sfregamento delle dita sulle corde o leggeri scricchiolii. Il mix non cerca di "pulire" queste imperfezioni con dei noise gate, ma le abbraccia per certificare l'autenticità del momento.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Rivelazione Inedita.</span> Dylan era famoso per non spiegare mai le sue canzoni e per nascondersi dietro metafore. In Sara, rompe ogni sua stessa regola autoriale cantando esplicitamente: "Stayin' up for days in the Chelsea Hotel / Writin' 'Sad-Eyed Lady of the Lowlands' for you". È l'unica volta in tutta la sua carriera in cui Dylan nomina esplicitamente una sua vecchia canzone per confermarne la musa ispiratrice.</div>
+                    <p><strong>4:30 - Il "Bleed" Inseparabile tra Voce e Chitarra:</strong> Nel finale, nota come voce e chitarra siano letteralmente un unico blocco sonoro. Poiché Dylan stava cantando e suonando contemporaneamente nella stessa stanza, il suono della chitarra è rientrato massicciamente nel microfono della voce, e viceversa (il bleed). Qualsiasi tentativo di equalizzare o mutare pesantemente una delle due tracce in fase di mixaggio avrebbe rovinato irrimediabilmente l'altra. Il risultato è un bilanciamento "fissato" nel momento stesso della performance.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Buona la Prima.</span> La versione che ascoltiamo sul disco, con tutta la sua perfezione emotiva e i suoi difetti tecnici, è la primissima take (First Take). Nessuna sovraincisione, nessuna correzione vocale, nessuna giunzione di nastro. Un momento catturato e sigillato per sempre.</div>
+                `,
+                en: `
+                    <h3>Sara</h3>
+                    <p><strong>0:00 - Proximity Effect and Warm Tone:</strong> Sara is the emotional closer of the record, and the recording technique reflects it. The track is a slow 6/8. Dylan sings very close to the microphone. This technique exploits the so-called "proximity effect" (typical of directional microphones), which naturally emphasizes the mid-low frequencies (around 100-200 Hz) of the voice. The result is an exceptionally warm, deep, and intimate vocal tone, as if Dylan were whispering directly into the listener's ear.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Guest Behind the Glass.</span> In one of the most incredible moments in rock history, Dylan's wife, Sara Lownds (from whom he was painfully separating), walked into the studio exactly as Bob was about to record this song. Dylan sang the entire track, a desperate plea for forgiveness, looking directly at her through the control room glass.</div>
+                    <p><strong>2:10 - Natural Dynamics and Background Noise:</strong> The absence of aggressive compression is evident. Listen to the way Dylan plucks the acoustic guitar: the gentlest passages are almost whispered and blend with the room sound (room noise). You can even perceive slight mechanical noises, like fingers rubbing against the strings or light squeaks. The mix doesn't try to "clean up" these imperfections with noise gates, but embraces them to certify the authenticity of the moment.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: An Unprecedented Revelation.</span> Dylan was famous for never explaining his songs and hiding behind metaphors. In Sara, he breaks all his own songwriting rules by singing explicitly: "Stayin' up for days in the Chelsea Hotel / Writin' 'Sad-Eyed Lady of the Lowlands' for you". It is the only time in his entire career that Dylan explicitly names an old song of his to confirm its muse.</div>
+                    <p><strong>4:30 - The Inseparable "Bleed" Between Voice and Guitar:</strong> In the finale, notice how voice and guitar are literally a single block of sound. Because Dylan was singing and playing simultaneously in the same room, the guitar sound bled heavily into the vocal mic, and vice versa (the bleed). Any attempt to heavily EQ or mute one of the two tracks during mixing would have irreparably ruined the other. The result is a balance "locked in" at the very moment of performance.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: First Take.</span> The version we hear on the record, with all its emotional perfection and technical flaws, is the very first take. No overdubs, no vocal corrections, no tape splicing. A moment captured and sealed forever.</div>
+                `
+            }
+        };
+
+        // --- GESTIONE GALLERIA MOBILE (SLIDESHOW) ---
+        let mobileGalleryInterval;
+        let currentImgIndex = 0;
+
+        function startMobileGallery() {
+            const cards = document.querySelectorAll('.band-gallery .flip-card');
+            if (cards.length === 0) return;
+
+            function updateGallery() {
+                if (window.innerWidth <= 900) {
+                    cards.forEach(c => c.classList.remove('mobile-active'));
+                    cards[currentImgIndex].classList.add('mobile-active');
+                    currentImgIndex = (currentImgIndex + 1) % cards.length;
+                }
+            }
+
+            if (window.innerWidth <= 900) {
+                updateGallery();
+                if (!mobileGalleryInterval) {
+                    mobileGalleryInterval = setInterval(updateGallery, 5000);
+                }
+            }
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth <= 900) {
+                    if (!mobileGalleryInterval) {
+                        updateGallery();
+                        mobileGalleryInterval = setInterval(updateGallery, 5000);
+                    }
+                } else {
+                    clearInterval(mobileGalleryInterval);
+                    mobileGalleryInterval = null;
+                    cards.forEach(c => c.classList.remove('mobile-active'));
+                }
+            });
+        }
+
+        // --- INIZIALIZZAZIONE ---
+        window.addEventListener('DOMContentLoaded', () => {
+            renderPlaylist();
+            startMobileGallery();
+            const trackList = document.getElementById('tracklist');
+            if(trackList) trackList.scrollTop = 0;
+        });
+
+        // --- MULTILINGUA ---
+        function setGlobalLang(lang) {
+            document.documentElement.lang = lang;
+            document.querySelectorAll('.global-lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-lang-' + lang).classList.add('active');
+
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentId = ytPlayer ? ytPlayer.getAttribute('data-current-id') : null;
+            
+            if (currentId) {
+                const paraphraseContentHTML = generateParaphraseHTML(currentId);
+                document.getElementById('desktop-lyrics-view').innerHTML = paraphraseContentHTML;
+                document.getElementById('mobile-lyrics-content').innerHTML = paraphraseContentHTML;
+                
+                const guideContent = document.getElementById('guide-content');
+                if (guideData[currentId] && guideData[currentId][lang]) {
+                    guideContent.innerHTML = guideData[currentId][lang];
+                }
+            }
+        }
+
+        // --- GENERAZIONE PARAFRASI ---
+        function generateParaphraseHTML(id) {
+            const data = paraphraseData[id] || { en: "Description not available.", it: "Descrizione non disponibile." };
+            const currentLang = document.documentElement.lang;
+
+            return `
+                <div class="lyrics-wrapper" style="padding: 10px 15px;">
+                    <div class="lyrics-content-area">
+                        <div class="lyrics-col eng active" style="width: 100%; white-space: normal;">
+                            <h4 style="margin: 0 0 2px 0; padding: 0; line-height: 1.2;">
+                                <span class="lang-it">Di cosa parla la canzone?</span>
+                                <span class="lang-en">What is this song about?</span>
+                            </h4><div style="white-space: pre-line; font-style: italic; color: #555; margin: 0; padding: 0; line-height: 1.5;">${data[currentLang]}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- PLAYLIST LOGIC ---
+        function renderPlaylist() {
+            const container = document.getElementById('tracklist');
+            let html = '';
+
+            playlist.forEach((track, index) => {
+                html += `
+                    <div class="track-row" onclick="playTrack('${track.id}', '${track.ytId}', '${track.title.replace(/'/g, "\\'")}', this)">
+                        <div class="track-num">
+                            <span>${index + 1}</span>
+                            <div class="playing-icon">
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                            </div>
+                        </div>
+                        <div class="track-info">
+                            <div class="track-title">${track.title}</div>
+                            <div class="track-artist">Bob Dylan</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function playTrack(id, ytId, title, rowElement) {
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentPlayingId = ytPlayer.getAttribute('data-current-id');
+            const currentLang = document.documentElement.lang;
+
+            if (currentPlayingId !== id) {
+                ytPlayer.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`;
+                ytPlayer.setAttribute('data-current-id', id);
+            }
+
+            const rows = document.querySelectorAll('.track-row');
+            rows.forEach(r => r.classList.remove('active'));
+            if(rowElement) rowElement.classList.add('active');
+
+            // Paraphrase Update
+            const paraphraseContentHTML = generateParaphraseHTML(id);
+            document.getElementById('desktop-lyrics-view').innerHTML = paraphraseContentHTML;
+            document.getElementById('mobile-lyrics-content').innerHTML = paraphraseContentHTML;
+            document.getElementById('tracklist-wrapper').classList.add('lyrics-active');
+            document.getElementById('tracklist').scrollTop = 0;
+
+            // Guide Update
+            const guideContent = document.getElementById('guide-content');
+            if (guideData[id] && guideData[id][currentLang]) {
+                guideContent.innerHTML = guideData[id][currentLang];
+                const gBox = document.querySelector('.guide-box');
+                if(gBox) gBox.scrollTop = 0;
+            } else {
+                guideContent.innerHTML = currentLang === 'it' ? "<p>Guida all'ascolto non disponibile per questo brano.</p>" : "<p>Listening guide not available for this track.</p>";
+            }
+
+            const guidePanel = document.getElementById('guide-panel');
+            if(guidePanel && !guidePanel.classList.contains('open')) {
+                toggleGuide();
+            }
+        }
+
+        function resetTracklist() {
+            document.getElementById('tracklist-wrapper').classList.remove('lyrics-active');
+        }
+
+        function toggleLesson() {
+            const content = document.getElementById('main-content');
+            const videoLayer = document.getElementById('video-layer');
+            const btn = document.getElementById('btn-inizia');
+            const btnTxtIt = document.getElementById('btn-txt-it');
+            const btnTxtEn = document.getElementById('btn-txt-en');
+            const icon = btn.querySelector('.icon-plus');
+
+            const isOpening = !content.classList.contains('active');
+
+            if (isOpening) {
+                content.classList.add('active');
+                btn.classList.add('active');
+                btnTxtIt.textContent = "Chiudi Esperienza"; 
+                btnTxtEn.textContent = "Close Experience";
+                icon.textContent = "×";
+                videoLayer.classList.add('video-hidden');
+            } else {
+                content.classList.remove('active');
+                btn.classList.remove('active');
+                btnTxtIt.textContent = "Inizia Esperienza"; 
+                btnTxtEn.textContent = "Start Experience"; 
+                icon.textContent = "→";
+                videoLayer.classList.remove('video-hidden');
+                
+                const ytPlayer = document.getElementById('youtube-player');
+                if(ytPlayer) ytPlayer.src = "about:blank";
+            }
+        }
+
+        function toggleLyricsAccordion() {
+            const panel = document.getElementById('lyrics-panel');
+            const btn = document.getElementById('lyrics-btn');
+            
+            if (panel.classList.contains('open')) {
+                panel.classList.remove('open');
+                btn.classList.remove('active');
+            } else {
+                panel.classList.add('open');
+                btn.classList.add('active');
+            }
+        }
+
+        function toggleGuide() {
+            const panel = document.getElementById('guide-panel');
+            const btn = document.getElementById('guide-btn');
+            
+            if (panel.classList.contains('open')) {
+                panel.classList.remove('open');
+                btn.classList.remove('active');
+            } else {
+                panel.classList.add('open');
+                btn.classList.add('active');
+            }
+        }
+
+        function toggleHistory() {
+            const panel = document.getElementById('history-panel');
+            const btn = document.getElementById('history-btn');
+            
+            if (panel.classList.contains('open')) {
+                panel.classList.remove('open');
+                btn.classList.remove('active');
+            } else {
+                panel.classList.add('open');
+                btn.classList.add('active');
+            }
+        }
+
+        // FUNZIONE toggleDisclaimer AGGIUNTA
+        function toggleDisclaimer() {
+            const panel = document.getElementById('disclaimer-panel');
+            const btn = document.getElementById('disclaimer-btn');
+            if (panel.classList.contains('open')) {
+                panel.classList.remove('open');
+                btn.classList.remove('active');
+            } else {
+                panel.classList.add('open');
+                btn.classList.add('active');
+            }
+        }
+
+        function toggleMobileTracks() {
+            const trackList = document.getElementById('tracklist');
+            const wrapper = document.getElementById('tracklist-wrapper');
+            const trigger = document.querySelector('.mobile-track-trigger');
+
+            if (trackList.classList.contains('mobile-open')) {
+                trackList.classList.remove('mobile-open');
+                wrapper.classList.remove('opened');
+                wrapper.classList.add('closed');
+                trigger.classList.remove('active');
+            } else {
+                trackList.classList.add('mobile-open');
+                wrapper.classList.remove('closed');
+                wrapper.classList.add('opened');
+                trigger.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sfera Ebbasta | Audio Repertoire</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- VARIABILI & RESET --- */
+        :root {
+            --bg-color: #f0f0f2;
+            --paper-color: #fdfbf7;
+            --ink-color: #1a1a1a;
+            --accent-color: #375a7f;
+            --pop-yellow: #ffee00;
+            --font-title: 'Abril Fatface', cursive;
+            --font-body: 'Inter', sans-serif;
+            --hover-row: rgba(55, 90, 127, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: var(--font-body);
+            color: var(--ink-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px;
+            width: 100%;
+            overflow-x: hidden; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- MULTILINGUA CSS LOGIC --- */
+        html[lang="it"] .lang-en { display: none !important; }
+        html[lang="en"] .lang-it { display: none !important; }
+
+        /* --- BACKGROUND --- */
+        .video-background-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden;
+            background: #e0e0e5; 
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .video-foreground {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; transition: opacity 0.8s ease; opacity: 1;
+        }
+
+        .video-foreground img.bg-image {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.1; 
+            filter: grayscale(100%) sepia(1) hue-rotate(190deg) contrast(1.2);
+            mix-blend-mode: multiply;
+        }
+
+        .video-hidden { opacity: 0; }
+
+        /* --- HEADER --- */
+        header { text-align: center; margin-top: 3rem; margin-bottom: 1rem; padding: 0 1rem; position: relative; z-index: 4; }
+        
+        .main-logo {
+            max-width: 90%; width: 350px; height: auto;
+            display: block; margin: 0 auto;
+        }
+
+        .subtitle-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .subtitle {
+            font-family: var(--font-body); font-size: 1.5rem; color: var(--accent-color); font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 4px;
+        }
+
+        .global-lang-switch {
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .global-lang-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 4px;
+            color: #888;
+            transition: all 0.3s;
+        }
+        
+        .global-lang-btn.active {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        /* --- CONTENITORE PRINCIPALE --- */
+        .content-card {
+            background: var(--paper-color); padding: 3rem; margin: 0 auto;
+            width: 90%; max-width: 1200px; position: relative;
+            border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); z-index: 4;
+            margin-bottom: 2rem; margin-top: 2rem;
+        }
+        @media (max-width: 600px) { 
+            .content-card { padding: 1.5rem; width: 95%; margin-top: 1rem; } 
+            .main-logo { width: 280px; }
+            .subtitle { font-size: 1.2rem; letter-spacing: 2px; }
+            .global-lang-btn { padding: 5px 10px; font-size: 0.8rem; }
+        }
+
+        /* --- ACCORDION GENERALE --- */
+        .accordion-item { margin-bottom: 1rem; border-bottom: none; }
+        
+        .master-header {
+            background: transparent; border: 2px solid var(--accent-color); border-radius: 8px;
+            padding: 15px 20px; justify-content: center; font-size: 1.5rem; 
+            color: var(--accent-color); width: 100%; margin-bottom: 1rem;
+            cursor: pointer; display: flex; align-items: center; font-family: var(--font-title);
+            transition: all 0.3s ease;
+        }
+        .master-header:hover { background: rgba(55, 90, 127, 0.1); }
+        .master-header .icon-plus { margin-left: 15px; font-family: var(--font-body); font-weight: 300; transition: transform 0.3s; }
+
+        .accordion-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, opacity 0.5s;
+            padding: 0; opacity: 0;
+        }
+        .accordion-content.active { max-height: 20000px; opacity: 1; padding-top: 2rem; }
+        .master-header.active .icon-plus { transform: rotate(90deg); }
+
+        /* --- LAYOUT PLAYER --- */
+        .playlist-layout {
+            display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; align-items: start; margin-bottom: 2rem;
+        }
+        @media (max-width: 900px) { .playlist-layout { grid-template-columns: 1fr; } }
+
+        /* --- AUDIO PLAYER CONTAINER --- */
+        .player-wrapper {
+            position: sticky; top: 20px; background: #fff; border-radius: 12px;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 10; border: 1px solid #eee;
+        }
+
+        .youtube-container { 
+            position: relative; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #000; 
+        }
+        .youtube-container iframe { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; 
+        }
+
+        /* --- TRACKLIST E MESSAGGI --- */
+        .tracklist-column { display: flex; flex-direction: column; }
+
+        .scroll-disclaimer {
+            font-size: 0.85rem; color: #665500; margin-bottom: 12px; font-style: italic; text-align: center; 
+            background-color: rgba(255, 238, 0, 0.2); border: 2px dashed #e6c200; padding: 10px; border-radius: 8px; width: 100%;
+        }
+        .msg-desktop { display: block; }
+        .msg-mobile { display: none; }
+        
+        .mobile-track-trigger {
+            display: none; width: 100%; background: #fff; border: 2px dashed #ddd; border-radius: 8px;
+            padding: 12px 20px; font-family: var(--font-title); font-size: 1.2rem; color: var(--accent-color);
+            justify-content: space-between; align-items: center; cursor: pointer; margin-top: 10px; margin-bottom: 10px; transition: all 0.3s;
+        }
+        .mobile-track-trigger:hover { background: #fdfdfd; border-color: var(--accent-color); }
+        .mobile-track-trigger.active { background: #f0f4f8; border-style: solid; border-color: var(--accent-color); }
+        .trigger-arrow { transition: transform 0.3s; font-size: 1rem; }
+        .mobile-track-trigger.active .trigger-arrow { transform: rotate(180deg); }
+
+        .tracklist-container { 
+            width: 100%; max-height: 500px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #ccc #f0f0f2;
+            padding-right: 5px; transition: max-height 0.5s ease-out, opacity 0.5s;
+        }
+        .tracklist-container::-webkit-scrollbar { width: 6px; }
+        .tracklist-container::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+
+        .track-row {
+            display: grid; grid-template-columns: 40px 1fr 40px; padding: 12px 10px; border-bottom: 1px solid rgba(0,0,0,0.05);
+            cursor: pointer; transition: background 0.2s, padding-left 0.2s; border-radius: 6px; align-items: center;
+        }
+        .track-row:hover { background-color: var(--hover-row); padding-left: 15px; }
+        .track-row.active { background-color: var(--hover-row); border-left: 4px solid var(--accent-color); }
+
+        .track-num { font-size: 0.9rem; color: #888; font-weight: 700; }
+        .track-row.active .track-num { display: none; }
+        .track-row.active .playing-icon { display: inline-block; }
+        
+        .playing-icon { display: none; width: 14px; height: 14px; position: relative; }
+        .bar { background: var(--accent-color); bottom: 0; position: absolute; width: 3px; animation: sound 0ms -800ms linear infinite alternate; }
+        .bar:nth-child(1) { left: 0px; height: 10px; animation-duration: 474ms; }
+        .bar:nth-child(2) { left: 5px; height: 6px; animation-duration: 433ms; }
+        .bar:nth-child(3) { left: 10px; height: 12px; animation-duration: 407ms; }
+        @keyframes sound { 0% { opacity: .35; height: 3px; } 100% { opacity: 1; height: 14px; } }
+
+        .track-info { display: flex; flex-direction: column; }
+        .track-title { font-weight: 700; font-size: 1rem; color: var(--ink-color); }
+        .track-row.active .track-title { color: var(--accent-color); }
+        .track-artist { font-size: 0.85rem; color: #666; }
+
+        /* --- STILI TESTI (LYRICS) TOGGLE E PULSANTI --- */
+        .btn-back-tracks {
+            display: none; width: 100%; padding: 8px; margin-bottom: 10px; background: var(--pop-yellow); border: none;
+            color: var(--ink-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; font-weight: 900; transition: background 0.3s; text-align: center;
+        }
+        .btn-back-tracks:hover { background: #e6d600; }
+
+        .desktop-lyrics-view { display: none; }
+        
+        .lyrics-wrapper { background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .lyrics-toggle { display: flex; gap: 10px; margin-bottom: 15px; justify-content: center; }
+        
+        .flag-btn { 
+            background: #f0f0f2; border: 2px solid #ddd; border-radius: 6px; padding: 8px 15px; 
+            font-size: 1rem; cursor: pointer; transition: all 0.3s; color: var(--ink-color); 
+        }
+        .flag-btn:hover { background: #e8e8e8; }
+        .flag-btn.active { 
+            background: #fff; border-color: var(--accent-color); font-weight: bold; 
+            color: var(--accent-color); box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+        }
+
+        .lyrics-content-area { max-height: 350px; overflow-y: auto; scrollbar-width: thin; padding-right: 5px; }
+        .lyrics-content-area::-webkit-scrollbar { width: 6px; }
+        .lyrics-content-area::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 10px; }
+        
+        .lyrics-col { display: none; white-space: pre-wrap; color: #333; font-size: 0.9rem; }
+        .lyrics-col.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        .lyrics-col h4 { color: var(--accent-color); margin-bottom: 10px; font-family: var(--font-title); font-size: 1.1rem; }
+        .lyrics-col.ita { font-style: italic; color: #555; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* GESTIONE LOGICA DESKTOP (Mostra Lyrics, Nascondi Lista) */
+        @media (min-width: 901px) {
+            .tracklist-wrapper.lyrics-active #tracklist { display: none; }
+            .tracklist-wrapper.lyrics-active #desktop-lyrics-view { display: block; }
+            .tracklist-wrapper.lyrics-active #btn-back-tracks { display: block; }
+            .tracklist-wrapper.lyrics-active .msg-desktop { display: none; }
+            .mobile-lyrics-accordion { display: none; } 
+        }
+
+        /* GESTIONE LOGICA MOBILE */
+        @media (max-width: 900px) {
+            .tracklist-wrapper.lyrics-active #desktop-lyrics-view { display: none !important; }
+            .tracklist-wrapper.lyrics-active #btn-back-tracks { display: none !important; }
+            
+            /* Su mobile l'accordion dei testi è visibile */
+            .mobile-lyrics-accordion { display: block; margin-top: 1rem; border-top: 1px solid #eee; }
+        }
+
+        /* --- ACCORDIONS COMUNI (Guida, Storia, Mobile Lyrics) --- */
+        .guide-accordion-wrapper { margin-top: 1rem; border-top: 1px solid #eee; }
+        .guide-trigger {
+            background: #fff; border: 2px dashed #ddd; border-radius: 8px; width: 100%; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s; margin-top: 1rem;
+        }
+        .guide-trigger:hover { border-color: var(--accent-color); background: #fdfdfd; }
+        .guide-trigger.active { border-color: var(--accent-color); background: #f0f4f8; border-style: solid; }
+        .guide-trigger span { font-family: var(--font-title); font-size: 1.4rem; color: var(--accent-color); }
+        .guide-arrow { font-size: 1.2rem; transition: transform 0.3s; color: var(--accent-color); }
+        .guide-trigger.active .guide-arrow { transform: rotate(180deg); }
+
+        .guide-panel { max-height: 0; overflow: hidden; transition: max-height 0.6s ease-out, opacity 0.5s; opacity: 0; background: #fff; border-radius: 0 0 8px 8px; }
+        .guide-panel.open { max-height: 80000px; opacity: 1; padding: 20px 0; }
+
+        .guide-grid { display: grid; grid-template-columns: 2fr 1.5fr; gap: 2rem; align-items: start; }
+        .guide-box { background: #fff; padding: 1rem 0; max-height: 600px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--accent-color) #f0f0f2; padding-right: 15px; }
+        .guide-box::-webkit-scrollbar { width: 8px; }
+        .guide-box::-webkit-scrollbar-thumb { background-color: var(--accent-color); border-radius: 10px; }
+        
+        .guide-content p { margin-bottom: 1rem; font-size: 1rem; color: #333; }
+        .guide-content strong { color: var(--accent-color); font-weight: 900; }
+
+        .curiosity-box { background: #fffcf0; border-left: 4px solid var(--pop-yellow); padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0; font-size: 0.95rem; font-style: italic; color: #554; }
+        .curiosity-label { font-weight: bold; font-style: normal; color: #d4a000; text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 5px; }
+
+        /* --- FLIP CARDS CHIRURGICHE --- */
+        .flip-card {
+            perspective: 1000px;
+            cursor: pointer;
+            width: 100%;
+            display: block;
+            margin-bottom: 15px;
+        }
+        .wiki-figure .flip-card { margin-bottom: 0; } /* Reset dentro al testo */
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-card-front, .flip-card-back {
+            width: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        
+        /* Il front detta l'altezza del blocco in modo naturale */
+        .flip-card-front {
+            position: relative;
+            height: auto;
+            z-index: 2;
+        }
+        
+        /* Il back si sovrappone esattamente e si adatta all'altezza */
+        .flip-card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: var(--accent-color);
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .flip-card-back strong { color: var(--pop-yellow); font-family: var(--font-title); font-size: 1.1rem; margin-bottom: 5px; line-height: 1.2; }
+        .flip-card-back small { font-size: 0.85rem; opacity: 0.9; }
+
+        /* Applica i bordi arrotondati alle facce, l'immagine li erediterà */
+        .flip-card-front img, .flip-card-back { border-radius: inherit; }
+        
+        .band-gallery .flip-card-front, .band-gallery .flip-card-back {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .wiki-figure .flip-card-front, .wiki-figure .flip-card-back {
+            border-radius: 4px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #ccc;
+        }
+        .wiki-figure .flip-card-back { border: none; }
+
+        /* Immagini base */
+        .gallery-img, .wiki-img { display: block; width: 100%; height: auto; object-fit: cover; }
+        .wiki-img { filter: sepia(0.1) contrast(1.05); transition: all 0.3s; border: none; box-shadow: none; border-radius: 0; }
+        .gallery-img { border: none; box-shadow: none; border-radius: 0; }
+        .flip-card-front:hover .wiki-img { filter: none; }
+
+        /* --- STILE GALLERIA IMMAGINI --- */
+        .band-gallery { display: flex; flex-direction: column; gap: 20px; max-height: 650px; overflow-y: auto; padding-right: 10px; }
+        .band-gallery::-webkit-scrollbar { width: 4px; }
+        .band-gallery::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
+        .band-gallery .flip-card { height: auto; margin-bottom: 0; }
+
+        /* --- STILE WIKI / STORIA --- */
+        .wiki-content { font-family: 'Inter', sans-serif; color: #333; line-height: 1.7; padding: 0 10px; text-align: justify; }
+        .wiki-title { font-family: var(--font-title); color: var(--accent-color); font-size: 1.4rem; margin-top: 10px; margin-bottom: 5px; letter-spacing: 1px; }
+        .wiki-subtitle { font-weight: 900; color: #d4a000; text-transform: uppercase; font-size: 0.85rem; margin-top: 40px; margin-bottom: 10px; clear: both; }
+        .wiki-divider { border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)); margin: 30px 0; clear: both; }
+        .wiki-figure { margin: 15px 0; width: 100%; }
+        .wiki-figure figcaption { font-size: 0.75rem; color: #666; font-style: italic; text-align: center; margin-top: 5px; display: block; }
+        .wiki-gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 30px 0 40px 0; }
+        .wiki-gallery-grid .wiki-figure { height: 100%; margin: 0; }
+        .wiki-gallery-grid .wiki-img { height: 100%; object-fit: cover; }
+
+        .btn-close-bottom { width: 100%; padding: 12px; margin-top: 15px; background: #fff; border: 1px solid #ddd; color: var(--accent-color); border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; font-weight: 700; transition: background 0.3s; text-align: center; }
+        .btn-close-bottom:hover { background: #f0f4f8; border-color: var(--accent-color); }
+        .track-close-desktop-hidden { display: none; }
+
+        @media (min-width: 901px) {
+            .wiki-figure.right { float: right; width: 40%; margin-left: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.left { float: left; width: 40%; margin-right: 25px; margin-bottom: 20px; margin-top: 5px; }
+            .wiki-figure.full { clear: both; width: 100%; margin: 30px 0; }
+            .wiki-chapter::after { content: ""; display: table; clear: both; }
+        }
+
+        @media (max-width: 900px) {
+            .msg-desktop { display: none !important; }
+            .msg-mobile { display: block !important; text-align: center; }
+            .guide-grid { grid-template-columns: 1fr; }
+            .band-gallery { display: block; order: -1; max-height: none; overflow: hidden; padding-right: 0; margin-bottom: 10px; }
+            
+            /* Gestione Flip Card Slider su mobile */
+            .band-gallery .flip-card { display: none; animation: fadeInSlide 0.5s ease-in-out; margin-bottom: 0; }
+            .band-gallery .flip-card.mobile-active { display: block; }
+            
+            @keyframes fadeInSlide { from { opacity: 0; } to { opacity: 1; } }
+            .wiki-gallery-grid { grid-template-columns: 1fr; gap: 20px; }
+            .mobile-track-trigger { display: flex; } 
+            .tracklist-wrapper.opened .track-close-desktop-hidden { display: block; }
+            .tracklist-container { max-height: 0; overflow: hidden; opacity: 0; }
+            .tracklist-container.mobile-open { max-height: 5000px; overflow-y: visible; opacity: 1; margin-bottom: 1rem; }
+            .tracklist-wrapper.closed .scroll-disclaimer { display: none; }
+            .tracklist-wrapper.opened .scroll-disclaimer { display: block; }
+            .guide-box { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+            /* INTERVENTO CHIRURGICO: rimuovo lo scroll annidato dei lyrics su mobile */
+            .lyrics-content-area { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-background-wrapper" id="bg-wrapper">
+        <div class="video-foreground" id="video-layer">
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774293524/sfondo_w9ycnn.jpg" alt="Sfera Ebbasta Background" class="bg-image">
+        </div>
+        <div class="video-filter-overlay"></div>
+    </div>
+
+    <header>
+        <h1>
+            <img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774293524/logo_xugvyc.webp" alt="Sfera Ebbasta Logo" class="main-logo">
+        </h1>
+        <div class="subtitle-wrapper">
+            <div class="subtitle">
+                <span class="lang-it">Repertorio</span>
+                <span class="lang-en">Full Repertoire</span>
+            </div>
+            <div class="global-lang-switch">
+                <button id="btn-lang-it" class="global-lang-btn active" onclick="setGlobalLang('it')">ITA</button>
+                <button id="btn-lang-en" class="global-lang-btn" onclick="setGlobalLang('en')">ENG</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-card">
+        
+        <div class="accordion-item">
+            <button class="master-header" id="btn-inizia" onclick="toggleLesson()">
+                <span id="btn-text">
+                    <span class="lang-it" id="btn-txt-it">Inizia Esperienza</span>
+                    <span class="lang-en" id="btn-txt-en">Start Experience</span>
+                </span> 
+                <span class="icon-plus">→</span>
+            </button>
+            
+            <div class="accordion-content" id="main-content">
+                
+                <div class="playlist-layout">
+                    <div class="player-wrapper" id="player-wrapper-ui">
+                        <div class="youtube-container">
+                            <iframe id="youtube-player" src="about:blank" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+                    </div>
+
+                    <div class="tracklist-column tracklist-wrapper closed" id="tracklist-wrapper">
+                        
+                        <button class="mobile-track-trigger" onclick="toggleMobileTracks()">
+                            <span>
+                                <span class="lang-it">Brani</span>
+                                <span class="lang-en">Tracks</span>
+                            </span>
+                            <span class="trigger-arrow">▼</span>
+                        </button>
+
+                        <div class="scroll-disclaimer msg-desktop">
+                            <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere l'intera lista di brani</span>
+                            <span class="lang-en">Use your keyboard or mouse wheel to scroll through the full tracklist</span>
+                        </div>
+                        <div class="scroll-disclaimer msg-mobile">
+                            <span class="lang-it">Clicca e scorri per vedere l'intera lista di brani</span>
+                            <span class="lang-en">Tap and scroll to see the full tracklist</span>
+                        </div>
+
+                        <button class="btn-back-tracks" id="btn-back-tracks" onclick="resetTracklist()">
+                            <span class="lang-it">← Torna alla lista brani</span>
+                            <span class="lang-en">← Back to tracklist</span>
+                        </button>
+
+                        <div class="desktop-lyrics-view" id="desktop-lyrics-view">
+                            </div>
+
+                        <div class="tracklist-container" id="tracklist">
+                            </div>
+                        
+                        <button class="btn-close-bottom track-close-desktop-hidden" onclick="toggleMobileTracks()">
+                            <span class="lang-it">↑ Chiudi Lista Brani</span>
+                            <span class="lang-en">↑ Close Tracklist</span>
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper mobile-lyrics-accordion" style="border-top: none;">
+                    <button class="guide-trigger" id="lyrics-btn" onclick="toggleLyricsAccordion()">
+                        <span>
+                            <span class="lang-it">Parafrasi</span>
+                            <span class="lang-en">Paraphrase</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="lyrics-panel">
+                        <div class="guide-box" style="max-height: none; overflow: visible;">
+                            <div id="mobile-lyrics-content">
+                                <p style="text-align:center; color:#888; margin-top:30px; margin-bottom:30px;">
+                                    <span class="lang-it">Seleziona un brano dalla playlist per visualizzare la parafrasi.</span>
+                                    <span class="lang-en">Select a track from the playlist to view the paraphrase.</span>
+                                </p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleLyricsAccordion()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Parafrasi</span>
+                            <span class="lang-en">↑ Close Paraphrase</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper">
+                    <button class="guide-trigger" id="guide-btn" onclick="toggleGuide()">
+                        <span>
+                            <span class="lang-it">Guida all'Ascolto & Curiosità</span>
+                            <span class="lang-en">Listening Guide & Trivia</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="guide-panel">
+                        <div class="guide-grid">
+                            <div>
+                                <div class="guide-box">
+                                    <div id="guide-content" class="guide-content">
+                                        <p style="text-align:center; color:#888; margin-top:50px;">
+                                            <span class="lang-it">Seleziona un brano dalla playlist per visualizzare qui i dettagli.</span>
+                                            <span class="lang-en">Select a track from the playlist to view details here.</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="scroll-disclaimer msg-desktop" style="margin-top: 10px;">
+                                    <span class="lang-it">Usa i tasti o la rotellina del mouse per scorrere la guida</span>
+                                    <span class="lang-en">Use your keyboard or mouse wheel to scroll through the guide</span>
+                                </div>
+                            </div>
+
+                            <div class="band-gallery">
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774293525/1_xkxltv.jpg" alt="Sfera Ebbasta Famoso Film"></div>
+                                        <div class="flip-card-back"><strong>Sfera Ebbasta Famoso</strong><small>Source: sorrisi.com</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774293526/2_rvulkc.jpg" alt="Sfera Ebbasta Live"></div>
+                                        <div class="flip-card-back"><strong>Live Performance</strong><small>Source: bing.net</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774293525/3_vcliem.jpg" alt="Sfera Ebbasta Style"></div>
+                                        <div class="flip-card-back"><strong>Trap Style</strong><small>Source: bing.net</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774293525/4_nxuitc.jpg" alt="Sfera Ebbasta Concert"></div>
+                                        <div class="flip-card-back"><strong>Concert Crowd</strong><small>Source: bing.net</small></div>
+                                    </div>
+                                </div>
+                                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner">
+                                        <div class="flip-card-front"><img class="gallery-img" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774293525/5_a07ex5.jpg" alt="Sfera Ebbasta Portrait"></div>
+                                        <div class="flip-card-back"><strong>Sfera Ebbasta</strong><small>Source: studionord.news (Ph. Virginia Bettoja)</small></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn-close-bottom" onclick="toggleGuide()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Guida</span>
+                            <span class="lang-en">↑ Close Guide</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="history-btn" onclick="toggleHistory()">
+                        <span>
+                            <span class="lang-it">Contesto Storico & Artistico</span>
+                            <span class="lang-en">Historical & Artistic Context</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="history-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 1: Le Origini e la Formazione (1992–2013)</span>
+                                        <span class="lang-en">Chapter 1: Origins and Formation (1992–2013)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure full">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774293523/6_i9ywwn.jpg" alt="Cinisello Balsamo" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Cinisello Balsamo</span><span class="lang-en">Cinisello Balsamo</span></strong>
+                                                    <small>Source: altervista.org</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Cinisello Balsamo, la periferia nord di Milano dove tutto ha avuto inizio.</span>
+                                            <span class="lang-en">Cinisello Balsamo, the northern outskirts of Milan where it all began.</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Gionata Boschetti nasce il 7 dicembre 1992 a Sesto San Giovanni, comune dell'hinterland milanese, da madre di origini siciliane. La sua infanzia è segnata fin dall'inizio da una precarietà esistenziale concreta: i genitori si separano quando ha appena due anni, e il padre muore nel 2006. Cresce principalmente a Cinisello Balsamo, periferia nord di Milano, spostandosi più volte insieme alla madre Valentina e alla sorella Andrea. Il percorso scolastico si interrompe presto: bocciato in prima media, abbandona il liceo dopo soli quattro mesi. Lavora come elettricista e fattorino per la consegna delle pizze.</p>
+                                    <p class="lang-en">Gionata Boschetti was born on December 7, 1992, in Sesto San Giovanni, a municipality in the Milanese hinterland, to a mother of Sicilian origins. His childhood was marked from the beginning by concrete existential precariousness: his parents separated when he was just two years old, and his father died in 2006. He grew up primarily in Cinisello Balsamo, the northern outskirts of Milan, moving several times with his mother Valentina and sister Andrea. His educational path was cut short early: failing his first year of middle school, he dropped out of high school after only four months. He worked as an electrician and a pizza delivery boy.</p>
+
+                                    <p class="lang-it">Nel frattempo, attraverso le cuffie, costruisce il proprio universo di riferimento: Eminem, 50 Cent, Gucci Mane, e più vicino a casa i Club Dogo e i Gemelli DiVersi. Tra il 2011 e il 2012 comincia a caricare video su YouTube senza ottenere alcun riscontro. È però in questo periodo di silenzio e sperimentazione che avviene l'incontro decisivo: in occasione di una festa di Hip Hop TV, Gionata conosce il produttore Charlie Charles, con cui costruirà nel tempo una delle collaborazioni più fruttuose della musica italiana contemporanea.</p>
+                                    <p class="lang-en">Meanwhile, through his headphones, he built his own universe of reference: Eminem, 50 Cent, Gucci Mane, and closer to home, Club Dogo and Gemelli DiVersi. Between 2011 and 2012, he began uploading videos to YouTube without getting any response. However, it was during this period of silence and experimentation that the decisive meeting took place: at an Hip Hop TV party, Gionata met producer Charlie Charles, with whom he would eventually build one of the most fruitful collaborations in contemporary Italian music.</p>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774293523/7_rkpblj.jpg" alt="YouTube nel 2011" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>YouTube 2011</strong>
+                                                    <small>Source: bing.net</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">L'interfaccia di YouTube dei primi anni '10, piattaforma da cui Sfera Ebbasta ha mosso i primi passi.</span>
+                                            <span class="lang-en">The YouTube interface in the early '10s, the platform from which Sfera Ebbasta took his first steps.</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Nel settembre 2013 pubblica il suo primo mixtape, Emergenza Mixtape Vol. 1, distribuito gratuitamente, composto da 18 brani con ospiti tra cui i futuri protagonisti della scena rap italiana Ghali ed Ernia.</p>
+                                    <p class="lang-en">In September 2013 he released his first mixtape, Emergenza Mixtape Vol. 1, distributed for free, consisting of 18 tracks with guests including future protagonists of the Italian rap scene Ghali and Ernia.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 2: La Fondazione: XDVR e l'Irruzione della Trap in Italia (2014–2015)</span>
+                                        <span class="lang-en">Chapter 2: The Foundation: XDVR and the Eruption of Trap in Italy (2014–2015)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774293525/8_gumkqw.jpg" alt="Copertina di XDVR" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Copertina XDVR</span><span class="lang-en">XDVR Cover</span></strong>
+                                                    <small>Source: discogs.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">La copertina iconica di XDVR, l'album manifesto della trap italiana.</span>
+                                            <span class="lang-en">The iconic cover of XDVR, the manifesto album of Italian trap.</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Dal novembre 2014, Sfera Ebbasta e Charlie Charles intensificano la produzione, pubblicando brani su YouTube con i relativi video. Il singolo Panette innesca le prime attenzioni delle etichette discografiche. Nello stesso anno esce Emergenza Mixtape Vol. 2, con la partecipazione di Capo Plaza.</p>
+                                    <p class="lang-en">Since November 2014, Sfera Ebbasta and Charlie Charles intensified their production, publishing tracks on YouTube with their respective videos. The single Panette sparked the initial attention of record labels. In the same year, Emergenza Mixtape Vol. 2 was released, featuring Capo Plaza.</p>
+                                    
+                                    <p class="lang-it">L'11 giugno 2015 segna la data di nascita ufficiale del fenomeno: esce XDVR, album realizzato interamente con Charlie Charles, inizialmente rilasciato in download gratuito. Il disco — imperniato sulla vita di quartiere a Cinisello Balsamo, con riferimenti espliciti alla realtà di strada, al consumo di codeina e marijuana — ottiene un'accoglienza entusiastica nell'underground e solleva immediatamente polemiche nel dibattito pubblico.</p>
+                                    <p class="lang-en">June 11, 2015 marks the official birth date of the phenomenon: XDVR is released, an album made entirely with Charlie Charles, initially released for free download. The record — centered on neighborhood life in Cinisello Balsamo, with explicit references to street reality, codeine and marijuana consumption — received an enthusiastic reception in the underground and immediately raised controversies in public debate.</p>
+
+                                    <p class="lang-it">Il 23 novembre viene ripubblicato in versione Reloaded dall'etichetta indipendente Roccia Music di Marracash e Shablo, con l'aggiunta di brani inediti tra cui XDVRMX con Marracash e Luchè. Supera le 100.000 vendite e arriva al novantesimo posto nella classifica italiana degli album, un risultato straordinario per un disco trap in un mercato ancora impreparato al genere. XDVR rappresenta un momento fondativo: non è solo un album di successo, è il documento che certifica l'ingresso ufficiale della trap nel mainstream italiano, aprendo una strada che migliaia di artisti percorreranno nei decenni successivi.</p>
+                                    <p class="lang-en">On November 23 it was re-released in a Reloaded version by the independent label Roccia Music, founded by Marracash and Shablo, with the addition of unreleased tracks including XDVRMX with Marracash and Luchè. It exceeded 100,000 sales and reached the ninetieth place in the Italian album chart, an extraordinary result for a trap record in a market still unprepared for the genre. XDVR represents a founding moment: it's not just a successful album, it's the document that certifies the official entry of trap into the Italian mainstream, paving a way that thousands of artists will travel in the following decades.</p>
+                                </div>
+                                
+                                <hr class="wiki-divider">
+                                
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 3: La Consacrazione: L'Album Omonimo, Rockstar e l'Esplosione Globale (2016-2019)</span>
+                                        <span class="lang-en">Chapter 3: Consecration: The Self-Titled Album, Rockstar, and Global Explosion (2016-2019)</span>
+                                    </h3>
+                                    
+                                    <figure class="wiki-figure full">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774293525/9_afufum.jpg" alt="Copertina Rockstar" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Copertina Rockstar</span><span class="lang-en">Rockstar Cover</span></strong>
+                                                    <small>Source: universalmusic.it</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">La copertina di Rockstar (2018), l'album che ha infranto ogni record nazionale.</span>
+                                            <span class="lang-en">The cover of Rockstar (2018), the album that broke every national record.</span>
+                                        </figcaption>
+                                    </figure>
+                                    
+                                    <p class="lang-it">Il 9 settembre 2016 esce Sfera Ebbasta, primo album in studio da solista, distribuito dalla major Universal in collaborazione con Def Jam. È un cambio di passo netto: le tematiche si ampliano rispetto alla durezza gangsta di XDVR, la produzione si affina, la promozione diventa televisiva. Il disco esordisce al primo posto nella classifica italiana. Tra ottobre 2016 e marzo 2017 il rapper porta la musica in tour in tutta Italia, portando la trap nei club e nei palazzetti di ogni città.</p>
+                                    <p class="lang-en">On September 9, 2016, Sfera Ebbasta was released, his first solo studio album, distributed by major label Universal in collaboration with Def Jam. It's a clear change of pace: the themes broaden compared to the gangsta hardness of XDVR, the production is refined, the promotion becomes televised. The record debuted at number one on the Italian chart. Between October 2016 and March 2017 the rapper took his music on tour throughout Italy, bringing trap to clubs and arenas in every city.</p>
+
+                                    <p class="lang-it">Il 19 gennaio 2018 esce Rockstar, terzo album in studio, prodotto ancora da Charlie Charles. È il momento della rottura definitiva di ogni confine: l'album viene commercializzato in edizione italiana e in una versione internazionale con collaborazioni eccellenti — Quavo, Tinie Tempah, Rich the Kid. Stabilisce un record difficilmente replicabile: tutti e undici i brani conquistano simultaneamente le prime dodici posizioni della Top Singoli. Grazie a Rockstar, Sfera Ebbasta diventa il primo artista italiano a entrare nella Top 100 mondiale di Spotify.</p>
+                                    <p class="lang-en">On January 19, 2018, Rockstar was released, his third studio album, produced once again by Charlie Charles. It's the moment of the definitive breaking of all boundaries: the album is marketed in an Italian edition and an international version with excellent collaborations — Quavo, Tinie Tempah, Rich the Kid. It established a record that is hard to replicate: all eleven tracks simultaneously conquered the top twelve positions of the Top Singles chart. Thanks to Rockstar, Sfera Ebbasta became the first Italian artist to enter Spotify's Global Top 100.</p>
+                                    
+                                    <figure class="wiki-figure right">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774293523/10_syavhx.webp" alt="Tragedia Lanterna Azzurra" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong><span class="lang-it">Lanterna Azzurra</span><span class="lang-en">Lanterna Azzurra</span></strong>
+                                                    <small>Source: occhioallanotizia.it</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">Carabinieri davanti alla discoteca Lanterna Azzurra di Corinaldo, teatro della tragica notte dell'8 dicembre 2018.</span>
+                                            <span class="lang-en">Carabinieri in front of the Lanterna Azzurra nightclub in Corinaldo, scene of the tragic night of December 8, 2018.</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Il 2018 è però anche l'anno della tragedia più buia. L'8 dicembre, presso la discoteca Lanterna Azzurra di Corinaldo, dove Sfera avrebbe dovuto esibirsi, alcuni individui spruzzano spray al peperoncino provocando il panico. Il cedimento di una balaustra causa la morte di sei persone e numerosi feriti. La vicenda getta un'ombra pesante sull'artista, che diventa bersaglio di accuse e polemiche nazionali. A marzo 2019 risponde con il singolo Mademoiselle, mentre affronta un'indagine (poi archiviata) per «istigazione all'uso di sostanze stupefacenti».</p>
+                                    <p class="lang-en">However, 2018 was also the year of the darkest tragedy. On December 8, at the Lanterna Azzurra nightclub in Corinaldo, where Sfera was scheduled to perform, some individuals sprayed pepper spray causing panic. The collapse of a balustrade caused the death of six people and numerous injuries. The event cast a heavy shadow on the artist, who became the target of national accusations and controversies. In March 2019 he responded with the single Mademoiselle, while facing an investigation (later dismissed) for "instigating the use of narcotic substances".</p>
+                                </div>
+
+                                <hr class="wiki-divider">
+
+                                <div class="wiki-chapter">
+                                    <h3 class="wiki-title">
+                                        <span class="lang-it">Cap. 4: La Maturità e San Siro (2020-2024)</span>
+                                        <span class="lang-en">Chapter 4: Maturity and San Siro (2020-2024)</span>
+                                    </h3>
+                                    
+                                    <p class="lang-it">Il 20 novembre 2020 esce Famoso, quarto album in studio, accompagnato da un documentario omonimo in esclusiva su Prime Video. Il disco è arricchito da un cast internazionale di primo piano: Offset, Future, Steve Aoki, Diplo, J Balvin, Lil Mosey. Nel 2020 arriva anche la certificazione storica: Sfera Ebbasta viene riconosciuto come l'artista che ha venduto più dischi in Italia nell'intero decennio 2010–2019, con oltre 4,2 milioni di copie tra album e singoli digitali. È la consacrazione definitiva di una carriera costruita senza rete di protezione, partendo da YouTube e dalla strada.</p>
+                                    <p class="lang-en">On November 20, 2020, Famoso was released, his fourth studio album, accompanied by a homonymous documentary exclusively on Prime Video. The record is enriched by a premier international cast: Offset, Future, Steve Aoki, Diplo, J Balvin, Lil Mosey. In 2020 also came historical certification: Sfera Ebbasta was recognized as the artist who sold the most records in Italy in the entire 2010–2019 decade, with over 4.2 million copies between albums and digital singles. It's the definitive consecration of a career built without a safety net, starting from YouTube and the streets.</p>
+                                    
+                                    <figure class="wiki-figure left">
+                                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                                            <div class="flip-card-inner">
+                                                <div class="flip-card-front"><img src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774293523/11_s4q4if.jpg" alt="Live San Siro" class="wiki-img"></div>
+                                                <div class="flip-card-back">
+                                                    <strong>San Siro 2024</strong>
+                                                    <small>Source: youtube.com</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <figcaption>
+                                            <span class="lang-it">L'imponente concerto allo Stadio San Siro nel 2024.</span>
+                                            <span class="lang-en">The massive concert at San Siro Stadium in 2024.</span>
+                                        </figcaption>
+                                    </figure>
+
+                                    <p class="lang-it">Il 17 novembre 2023 esce X2VR, quinto album in studio, presentato come ideale sequel spirituale di XDVR. A differenza dei lavori precedenti, le collaborazioni includono esclusivamente artisti italiani in una scelta che si legge come dichiarazione di appartenenza e maturità identitaria. Il 24 e 25 giugno 2024 Sfera Ebbasta si esibisce per la prima volta nella sua carriera allo Stadio Giuseppe Meazza — San Siro di Milano, in due date distinte: diventa il primo rapper italiano a esibirsi a San Siro in due concerti separati.</p>
+                                    <p class="lang-en">On November 17, 2023, X2VR was released, his fifth studio album, presented as the ideal spiritual sequel to XDVR. Unlike previous works, the collaborations exclusively include Italian artists in a choice that reads as a declaration of belonging and identity maturity. On June 24 and 25, 2024, Sfera Ebbasta performed for the first time in his career at the Giuseppe Meazza Stadium — San Siro in Milan, on two separate dates: he became the first Italian rapper to perform at San Siro in two separate concerts.</p>
+
+                                    <p class="lang-it">Al 2024, Sfera Ebbasta detiene il record del maggior numero di brani al primo posto della Top Singoli (28), del maggior numero di settimane trascorse in prima posizione (50) e del maggior numero di dischi di platino certificati dalla FIMI nella storia della musica italiana. La sua storia è, al tempo stesso, una biografia individuale e un documento sociologico: quella di un ragazzo che ha trasformato la periferia milanese in un linguaggio universale capace di attraversare i confini nazionali e generazionali.</p>
+                                    <p class="lang-en">As of 2024, Sfera Ebbasta holds the record for the most number one tracks on the Top Singles chart (28), the most weeks spent at number one (50), and the most platinum records certified by FIMI in the history of Italian music. His story is, at the same time, an individual biography and a sociological document: that of a boy who transformed the Milanese suburbs into a universal language capable of crossing national and generational boundaries.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleHistory()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Storia</span>
+                            <span class="lang-en">↑ Close History</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-accordion-wrapper" style="border-top: none;">
+                    <button class="guide-trigger" id="disclaimer-btn" onclick="toggleDisclaimer()">
+                        <span>
+                            <span class="lang-it">Disclaimer & Note Legali</span>
+                            <span class="lang-en">Disclaimer & Legal Notes</span>
+                        </span>
+                        <span class="guide-arrow">▼</span>
+                    </button>
+                    
+                    <div class="guide-panel" id="disclaimer-panel">
+                        <div class="guide-box">
+                            <div class="wiki-content">
+                                <h3 class="wiki-title lang-it">Disclaimer e Diritto di Citazione</h3>
+                                <h3 class="wiki-title lang-en">Disclaimer & Fair Use</h3>
+                                
+                                <p class="lang-it">I contenuti multimediali presenti in questa pagina (immagini e video) sono utilizzati esclusivamente per finalità didattiche, critiche e di approfondimento culturale, in conformità con l'Art. 70 della Legge 633/41 (Diritto di citazione e riproduzione per uso didattico o scientifico). L'utilizzo non ha alcuno scopo di lucro e mira a valorizzare l'opera dell'artista e dei relativi autori, citati puntualmente tramite la funzione interattiva sulle singole immagini.<br><br>Qualora i detentori dei diritti d'autore ritenessero inappropriata la pubblicazione o desiderassero la rimozione di specifici contenuti, possono scrivere all'indirizzo: <strong>lorenzo.sciallato@gmail.com</strong>. Provvederò all'immediata rimozione del materiale segnalato.</p>
+                                
+                                <p class="lang-en">The multimedia contents on this page (images and videos) are used exclusively for educational, critical, and cultural purposes, in accordance with international Fair Use principles and national copyright laws. This project is strictly non-commercial and aims to provide historical and artistic context, with full credit given to authors and sources via the interactive photo-flip feature.<br><br>If you are a copyright holder and object to the use of any material, or would like to request its removal, please contact: <strong>lorenzo.sciallato@gmail.com</strong>. Any disputed content will be removed immediately upon request.</p>
+
+                                <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 25px 0;">
+
+                                <p class="lang-it" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Pagina creata con l'assistenza di software di intelligenza artificiale generativa, unendo cura umana e supporto tecnologico per l'apprendimento e la divulgazione culturale.</p>
+                                <p class="lang-en" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Page created with the assistance of generative artificial intelligence software, combining human curation and technological support for educational and cultural dissemination.</p>
+                            </div>
+                        </div>
+                        <button class="btn-close-bottom" onclick="toggleDisclaimer()" style="margin-bottom: 10px;">
+                            <span class="lang-it">↑ Chiudi Disclaimer</span>
+                            <span class="lang-en">↑ Close Disclaimer</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const playlist = [
+            { id: "xdvr", title: "XDVR (Prod. Charlie Charles)", ytId: "bCfS9PO9hB0" },
+            { id: "sg4m1", title: "Sg4m1 (Prod. Charlie Charles)", ytId: "gelvH9ybB_0" },
+            { id: "panette", title: "Panette (Prod. Charlie Charles)", ytId: "H_7DiZVSVRE" },
+            { id: "no_champagne", title: "No Champagne (Prod. Charlie Charles)", ytId: "s7lRxuWp3sw" },
+            { id: "mercedes_nero", title: "Mercedes Nero ft Tedua, Izi", ytId: "y2eejWX4ZGw" },
+            { id: "private_video", title: "[Private video]", ytId: "m_q78zczMsg" },
+            { id: "te_lo_do", title: "Te Lo Do (Prod. Charlie Charles)", ytId: "v0hYvrRDXM0" },
+            { id: "brutti_sogni", title: "Brutti Sogni (Prod. Charlie Charles)", ytId: "yViMr71NbVU" },
+            { id: "piu_forte", title: "Più Forte (Prod. Charlie Charles)", ytId: "tA8fimP4H2M" },
+            { id: "tutti_scemi", title: "Tutti Scemi (Prod. Charlie Charles)", ytId: "IY0o5nJwsKM" },
+            { id: "rapina", title: "Rapina (Prod. Charlie Charles)", ytId: "ct8s2uH3mTc" },
+            { id: "zero", title: "Zero (Prod. Charlie Charles)", ytId: "QaaEI4T--Wg" },
+            { id: "marshmallow", title: "Marshmallow (Prod. by Charlie Charles)", ytId: "wog-GSooeSE" },
+            { id: "ciny", title: "Ciny (Prod. by Charlie Charles)", ytId: "LD3twV19uAo" },
+            { id: "xdvrmx", title: "XDVRMX ft. Luche, Marracash", ytId: "9lo25cFiigw" },
+            { id: "trap_kings", title: "Trap Kings (Prod. Charlie Charles)", ytId: "zzEY6lb8PA4" }
+        ];
+
+        // PARAPHRASE DATA
+        const paraphraseData = {
+            "xdvr": {
+                it: `Un titolo che è già un codice — qualcosa da decifrare per chi appartiene, da ignorare per chi non capisce. Il brano è un manifesto scritto prima che ci fosse qualcosa da manifestare: arroganza come programma, non come risultato. Sfera racconta un mondo in costruzione con la certezza di chi sa già come andrà a finire. Il beat di Charlie Charles è asciutto come un pugno — niente fronzoli, niente abbellimenti — e su quella scabrosità la voce si appoggia con una nonchalance che è la postura più difficile da imparare e più facile da perdere.`,
+                en: `A title that is already a code — something to decipher for those who belong, to ignore for those who do not. The track is a manifesto written before there was anything to manifest: arrogance as a program, not as a result. Sfera describes a world under construction with the certainty of someone who already knows how it will end. Charlie Charles' beat is dry as a punch — no frills, no ornament — and on that roughness the voice rests with a nonchalance that is the hardest posture to learn and the easiest to lose.`
+            },
+            "sg4m1": {
+                it: `Un altro codice nel titolo, un'altra porta con serratura invisibile. Il brano abita lo spazio stretto tra la minaccia e la promessa — non si sa mai esattamente se quello che viene detto è un avvertimento o un invito. La trap di Charlie Charles costruisce un pavimento di bassi che non ti lascia mai completamente a tuo agio, e su quel pavimento instabile Sfera cammina come se fosse casa sua, che è esattamente il punto. Cinisma e magnetismo nello stesso verso, separati da meno di una sillaba.`,
+                en: `Another code in the title, another door with an invisible lock. The track inhabits the narrow space between threat and promise — one never knows exactly whether what is being said is a warning or an invitation. Charlie Charles' trap builds a floor of bass that never lets you feel completely at ease, and on that unstable floor Sfera walks as though it were his home — which is exactly the point. Cynicism and magnetism in the same line, separated by less than a syllable.`
+            },
+            "panette": {
+                it: `Il titolo è slang milanese per i soldi — non i soldi astratti della ricchezza come concetto, ma i soldi fisici, quelli che si tengono in mano, quelli che si contano. Il brano è un racconto del presente che sa già di memoria: questi momenti — queste strade, queste facce, questa fame — verranno ricordati quando tutto sarà cambiato. C'è qualcosa di malinconico nascosto sotto la bravata, qualcosa che sa che la velocità con cui tutto sta accelerando ha un costo che ancora non si è presentato.`,
+                en: `The title is Milanese slang for money — not the abstract money of wealth as concept, but physical money, the kind held in hand, the kind that gets counted. The track is a story of the present that already feels like memory: these moments — these streets, these faces, this hunger — will be remembered when everything has changed. There is something melancholic hidden beneath the bravado, something that knows that the speed at which everything is accelerating has a cost not yet presented.`
+            },
+            "no_champagne": {
+                it: `Il lusso come linguaggio, ma anche come ironia: non c'è lo champagne, eppure si sta comunque qui, comunque si beve, comunque si vive come se ci fosse. Il brano racconta la fase di transizione — non ancora abbastanza per il simbolo, ma abbastanza per non curarsi del simbolo. È la postura di chi sta salendo e lo sa, e trova più interessante il viaggio che l'arrivo. Il beat sincopato di Charlie Charles crea una tensione ritmica che è la versione sonora di quella stessa sospensione.`,
+                en: `Luxury as language, but also as irony: there is no champagne, yet here one stands anyway, drinking anyway, living as though it were there. The track describes the transition phase — not yet enough for the symbol, but enough not to care about the symbol. It is the posture of someone climbing and knowing it, finding the journey more interesting than the arrival. Charlie Charles' syncopated beat creates a rhythmic tension that is the sonic version of that same suspension.`
+            },
+            "mercedes_nero": {
+                it: `Tre voci, tre città, tre modi diversi di abitare la stessa estetica. Il Mercedes nero è un totem — non l'automobile, ma quello che rappresenta: l'arrivo silenzioso, il potere che non ha bisogno di urlare. Tedua porta Genova con sé come una giacca che non si toglie mai; Izi porta una ironia tagliente che smaschera mentre costruisce; Sfera tiene il centro con quella qualità di chi ha convocato tutti e aspetta. La collaborazione non è una somma ma un prisma — la stessa luce spezzata in tre angolazioni diverse.`,
+                en: `Three voices, three cities, three different ways of inhabiting the same aesthetic. The black Mercedes is a totem — not the car itself, but what it represents: the silent arrival, the power that needs no shouting. Tedua carries Genoa with him like a jacket never removed; Izi brings a sharp irony that unmasks while it constructs; Sfera holds the center with the quality of one who called everyone together and is simply waiting. The collaboration is not a sum but a prism — the same light broken into three different angles.`
+            },
+            "private_video": {
+                it: `Brano non accessibile — video privato. Parafrasi non disponibile.`,
+                en: `Track not accessible — private video. Paraphrase not available.`
+            },
+            "te_lo_do": {
+                it: `Un'offerta che è anche una dimostrazione. Il titolo contiene tutta la struttura del brano: io ho qualcosa che tu vuoi, e la questione non è se te la darò ma a quali condizioni. C'è una generosità di superficie che nasconde una transazione — non nel senso cinico, ma nel senso reale: tutto quello che viene dato viene dato da qualcuno che sa esattamente cosa sta dando e perché. Il beat costruisce una tensione che non si risolve mai del tutto, e quella irrisolutezza è la risposta alla domanda implicita nel titolo.`,
+                en: `An offer that is also a demonstration. The title contains the entire structure of the track: I have something you want, and the question is not whether I will give it to you but on what terms. There is a surface generosity that conceals a transaction — not in the cynical sense, but in the real sense: everything given is given by someone who knows exactly what they are giving and why. The beat builds a tension that never fully resolves, and that irresolution is the answer to the question implicit in the title.`
+            },
+            "brutti_sogni": {
+                it: `Il lato notturno di un mondo che di giorno si presenta sempre con la faccia migliore. I brutti sogni non sono metafora — sono il momento in cui la guardia cade e quello che si è tenuto fuori durante il giorno entra comunque. Il brano ha una qualità onirica nel senso letterale: la logica è quella del sogno, dove le cose non devono spiegarsi per essere vere. Charlie Charles costruisce un beat con più spazio del solito, più aria — come una stanza svuotata di notte — e Sfera ci entra con una voce leggermente diversa, meno corazzata.`,
+                en: `The nocturnal side of a world that by day always presents its best face. The bad dreams are not metaphor — they are the moment when the guard falls and what was kept out during the day enters anyway. The track has a dreamlike quality in the literal sense: the logic is that of dreams, where things need not explain themselves to be true. Charlie Charles builds a beat with more space than usual, more air — like a room emptied at night — and Sfera enters it with a voice slightly different, less armored.`
+            },
+            "piu_forte": {
+                it: `Un'escalation dichiarata: più forte di prima, più forte di adesso, sempre più forte. Non è arroganza — è una postura darwiniana, la logica di un ambiente in cui fermarsi equivale a scendere. Il brano è energico nel senso fisico del termine — si sente nell'attacco delle sillabe, nel modo in cui le rime cadono come colpi invece di atterrare come piume. È musica che non ti chiede di seguirla: ti trascina, e poi se ne preoccupa.`,
+                en: `A declared escalation: stronger than before, stronger than now, always stronger. It is not arrogance — it is a Darwinian posture, the logic of an environment where stopping is equivalent to descending. The track is energetic in the physical sense of the term — one feels it in the attack of the syllables, in the way the rhymes fall like blows instead of landing like feathers. It is music that does not ask you to follow it: it drags you, and worries about it later.`
+            },
+            "tutti_scemi": {
+                it: `Un titolo che è già un verdetto pronunciato prima che il processo inizi. Il mondo intorno è popolato da persone che non capiscono, che non vedono, che giocano con regole che Sfera ha già smesso di considerare vincolanti. Non è superiorità intellettuale — è distanza emotiva, il senso di chi si è allontanato abbastanza da una situazione da non riuscire più a prendere sul serio chi ci è ancora dentro. Il beat ha una qualità quasi comica nella sua essenzialità, come se la musica stessa condividesse il giudizio del testo.`,
+                en: `A title that is already a verdict pronounced before the trial begins. The surrounding world is populated by people who do not understand, who do not see, who play by rules Sfera has already stopped considering binding. It is not intellectual superiority — it is emotional distance, the feeling of one who has moved far enough from a situation to no longer take seriously those still inside it. The beat has an almost comic quality in its essentialness, as though the music itself shared the judgment of the lyrics.`
+            },
+            "rapina": {
+                it: `Non una rapina nel senso letterale — o almeno, non solo. È la logica della rapina come metafora dell'ascesa: prendere velocemente quello che il sistema non ti avrebbe mai dato lentamente, uscire prima che qualcuno si accorga di cosa è successo. C'è una violenza nella velocità stessa del brano, nell'urgenza con cui le rime si accavallano senza respiro. Charlie Charles costruisce un beat che sembra già in fuga — non da qualcosa di specifico, ma dalla staticità in generale.`,
+                en: `Not a robbery in the literal sense — or at least, not only. It is the logic of robbery as metaphor for ascent: taking quickly what the system would never have given slowly, getting out before anyone notices what happened. There is a violence in the speed of the track itself, in the urgency with which rhymes pile up without breath. Charlie Charles builds a beat that seems already in flight — not from anything specific, but from stillness in general.`
+            },
+            "zero": {
+                it: `Il punto di partenza nominato con precisione: zero. Non la povertà come vittimismo, non la mancanza come alibi, ma lo zero come coordinate precise da cui misurare la distanza percorsa. Il brano ha la qualità del bilancio — non emotivo, ma aritmetico. Da zero a qui: questa è la matematica che conta, l'unica che Sfera riconosce come valida. Il beat essenziale di Charlie Charles lascia spazio alla contabilità senza distrazioni.`,
+                en: `The starting point named with precision: zero. Not poverty as victimhood, not lack as alibi, but zero as precise coordinates from which to measure the distance traveled. The track has the quality of an audit — not emotional, but arithmetic. From zero to here: this is the mathematics that matters, the only one Sfera recognizes as valid. Charlie Charles' essential beat leaves space for the accounting without distraction.`
+            },
+            "marshmallow": {
+                it: `Un titolo morbido per un brano che non lo è del tutto. Il marshmallow è una texture — qualcosa che cede al tatto, che non resiste, che si trasforma sotto pressione. Ma c'è una tensione tra quella morbidezza evocata e la durezza del contesto in cui viene nominata. Il brano gioca su questa contraddizione: dolcezza di superficie, calcolo sottostante. È uno dei momenti più ambigui dell'album — non si capisce mai del tutto se si sta parlando di una persona, di uno stile di vita, o di entrambi simultaneamente.`,
+                en: `A soft title for a track that is not entirely so. The marshmallow is a texture — something that yields to touch, that does not resist, that transforms under pressure. But there is a tension between that evoked softness and the hardness of the context in which it is named. The track plays on this contradiction: surface sweetness, underlying calculation. It is one of the most ambiguous moments on the album — one never entirely understands whether the subject is a person, a lifestyle, or both simultaneously.`
+            },
+            "ciny": {
+                it: `Un nome — o qualcosa che suona come un nome — che apre uno spazio narrativo più personale rispetto al resto dell'album. Il brano si avvicina di più alla storia individuale, al ritratto di qualcuno o qualcosa di specifico invece che all'affermazione di un'identità collettiva. C'è una qualità più vulnerabile qui, nascosta sotto lo stesso vestito stilistico degli altri brani ma percepibile nelle scelte melodiche della voce, nei momenti in cui il ritmo cede leggermente e lascia passare qualcosa di non del tutto corazzato.`,
+                en: `A name — or something that sounds like a name — that opens a more personal narrative space compared to the rest of the album. The track moves closer to individual story, to the portrait of someone or something specific rather than the assertion of a collective identity. There is a more vulnerable quality here, hidden beneath the same stylistic clothing of the other tracks but perceptible in the melodic choices of the voice, in the moments where the rhythm gives slightly and lets through something not entirely armored.`
+            },
+            "xdvrmx": {
+                it: `Il manifesto originale viene ripreso, espanso, consegnato a mani più grandi. Marracash porta la Milano che viene da più lontano — quella del rap degli anni Duemila, della scuola, della costruzione paziente di un linguaggio — e la sua presenza dà al brano una profondità storica che la versione originale non aveva bisogno di avere ma che questa versione può permettersi di mostrare. Luche porta Napoli, un altro Sud, un'altra grammatica. I tre non competono: si riconoscono. Il codice del titolo adesso ha più chiavi, e ognuna apre una porta diversa dello stesso edificio.`,
+                en: `The original manifesto is taken up again, expanded, handed to larger hands. Marracash brings the Milan that comes from further back — the one from rap of the early two-thousands, from the school of it, from the patient construction of a language — and his presence gives the track a historical depth the original did not need to have but this version can afford to show. Luche brings Naples, another South, another grammar. The three do not compete: they recognize each other. The code of the title now has more keys, and each opens a different door of the same building.`
+            },
+            "trap_kings": {
+                it: `Una coronazione che non aspetta il consenso di nessuno — si auto-proclama, e quella auto-proclamazione è essa stessa la prova della regalità. I Trap Kings non sono re per nomina o per eredità: lo sono per comportamento, per postura, per il fatto che il mondo intorno ha cominciato a muoversi secondo i loro ritmi senza che nessuno abbia firmato un decreto. Il brano chiude l'album con la stessa certezza con cui lo ha aperto — il cerchio si chiude, ma il punto è che non si chiude davvero, continua a girare e ad allargarsi.`,
+                en: `A coronation that waits for no one's consent — it self-proclaims, and that self-proclamation is itself the proof of royalty. The Trap Kings are not kings by appointment or inheritance: they are kings by behavior, by posture, by the fact that the world around them has begun to move according to their rhythms without anyone signing a decree. The track closes the album with the same certainty with which it opened — the circle closes, but the point is that it does not really close, it keeps turning and widening.`
+            }
+        };
+
+        // GUIDA (Completely BILINGUAL)
+        const guideData = {
+            "xdvr": {
+                it: `
+                    <h3>XDVR</h3>
+                    <p><strong>0:00 — Il Beat Come Dichiarazione</strong><br>Charlie Charles apre con un kick drum 808 — lo strumento definitivo della trap — che non annuncia, non introduce: semplicemente inizia. Il kick 808 è diverso da qualsiasi altro basso nella storia della musica popolare: non è suonato, è sintetizzato, e la sua frequenza si sente più nello sterno che nelle orecchie. Su sistemi audio mediocri suona come un colpo sordo; su sistemi con subwoofer adeguati diventa fisico, corporeo, quasi scomodo.</p>
+                    <p><strong>0:08 — L'Hi-Hat Come Motore</strong><br>Charlie Charles costruisce il suo ritmo con hi-hat in sedicesimi irregolari — non il pattern meccanico della drum machine tradizionale, ma una sequenza con variazioni ritmiche che creano una sensazione di accelerazione e frenata costante. Questa tecnica — chiamata "rolling hi-hat" o "hi-hat triplet" nella produzione trap — fu sviluppata dai produttori di Atlanta e portata in Italia da Charlie Charles prima di chiunque altro nel contesto mainstream.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Primo Album Trap Italiano.</span>XDVR è considerato il primo album trap italiano nel senso pieno del termine — non solo per le influenze stilistiche, ma per la coerenza estetica totale tra produzione, testi, immagine e attitudine. Charlie Charles aveva studiato i producer di Atlanta (Metro Boomin, Southside, Zaytoven) e applicato quella grammatica sonora a un contesto milanese senza forzature. Il titolo stesso — scritto in caratteri che sembrano un codice alfanumerico — rispecchiava quella estetica visiva criptica tipica della scena trap americana.</div>
+                    <p><strong>0:20 — La Voce Come Strumento Ritmico</strong><br>Sfera non usa la voce in modo melodico tradizionale: le sillabe cadono sul beat con una precisione ritmica che è più vicina al rap che al canto, ma con variazioni di altezza che creano una melodia implicita. È una tecnica chiamata "melodic rap" o "mumble rap" dai critici — termini che descrivono male una cosa precisa: la voce come elemento che occupa simultaneamente lo spazio ritmico e quello melodico senza appartenere completamente a nessuno dei due.</p>
+                    <p><strong>1:15 — Il Drop</strong><br>Il momento in cui il beat "apre" — tutti gli elementi presenti si ritirano temporaneamente per poi rientrare insieme — è la struttura narrativa centrale della trap. In XDVR questo momento è costruito con minimalismo: non c'è un grande build-up prima, non c'è un'esplosione dopo. Il drop è quasi discreto, il che lo rende più efficace di una costruzione più ovvia.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Registrazione in Casa.</span>XDVR fu registrato in condizioni quasi domestiche, con un budget minimo. Quella qualità "lo-fi" che si percepisce nel mix — la voce leggermente più vicina del necessario, certi elementi che non hanno il trattamento levigato della produzione professionale — non fu una scelta estetica deliberata inizialmente, ma divenne parte del carattere del disco. La rozzezza era autentica, e l'autenticità si sentiva.</div>
+                `,
+                en: `
+                    <h3>XDVR</h3>
+                    <p><strong>0:00 — The Beat As Declaration</strong><br>Charlie Charles opens with an 808 kick drum — the definitive trap instrument — that doesn't announce, doesn't introduce: it simply begins. The 808 kick is unlike any other bass in the history of popular music: it's not played, it's synthesized, and its frequency is felt more in the sternum than in the ears. On mediocre audio systems it sounds like a dull thud; on systems with adequate subwoofers it becomes physical, corporeal, almost uncomfortable.</p>
+                    <p><strong>0:08 — The Hi-Hat As Engine</strong><br>Charlie Charles builds his rhythm with hi-hats in irregular sixteenths — not the mechanical pattern of a traditional drum machine, but a sequence with rhythmic variations that create a sensation of constant acceleration and braking. This technique — called "rolling hi-hat" or "hi-hat triplet" in trap production — was developed by Atlanta producers and brought to Italy by Charlie Charles before anyone else in the mainstream context.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The First Italian Trap Album.</span>XDVR is considered the first Italian trap album in the full sense of the term — not only for its stylistic influences, but for the total aesthetic coherence between production, lyrics, image, and attitude. Charlie Charles had studied Atlanta producers (Metro Boomin, Southside, Zaytoven) and applied that sonic grammar to a Milanese context without forcing it. The title itself — written in characters that look like an alphanumeric code — reflected that cryptic visual aesthetic typical of the American trap scene.</div>
+                    <p><strong>0:20 — The Voice As Rhythmic Instrument</strong><br>Sfera doesn't use his voice in a traditional melodic way: the syllables fall on the beat with a rhythmic precision that is closer to rap than singing, but with pitch variations that create an implicit melody. It's a technique called "melodic rap" or "mumble rap" by critics — terms that poorly describe a precise thing: the voice as an element that simultaneously occupies rhythmic and melodic space without fully belonging to either.</p>
+                    <p><strong>1:15 — The Drop</strong><br>The moment when the beat "opens" — all present elements temporarily withdraw to then re-enter together — is the central narrative structure of trap. In XDVR this moment is constructed with minimalism: there is no big build-up before, there is no explosion after. The drop is almost discreet, which makes it more effective than a more obvious construction.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Home Recording.</span>XDVR was recorded in almost domestic conditions, with a minimal budget. That "lo-fi" quality perceived in the mix — the voice slightly closer than necessary, certain elements lacking the polished treatment of professional production — was not an initially deliberate aesthetic choice, but became part of the record's character. The rawness was authentic, and the authenticity could be felt.</div>
+                `
+            },
+            "sg4m1": {
+                it: `
+                    <h3>Sg4m1</h3>
+                    <p><strong>0:00 — Il Sintetizzatore Come Atmosfera</strong><br>Charlie Charles apre con un pad sintetico nelle frequenze alte — un suono quasi metallico, freddo, che crea immediatamente un'atmosfera di tensione prima che qualsiasi elemento ritmico entri. Questo approccio — stabilire il mood atmosferico prima del groove — è caratteristico della sua produzione: l'emozione del brano viene comunicata prima che il corpo abbia il tempo di rispondere al ritmo.</p>
+                    <p><strong>0:10 — Il Kick 808 Come Basso</strong><br>Nella trap il kick 808 non è solo percussione: è il basso del brano. Non c'è una linea di basso separata — il kick sintetizzato copre sia la funzione ritmica che quella armonica nelle frequenze basse. In Sg4m1 il kick ha un "pitch" — un'altezza tonale — che si sente chiaramente: non è una frequenza neutra, ma una nota specifica che si integra con l'armonia del pad. Questa tecnica di "tuned 808" è una delle firme sonore più riconoscibili della trap moderna.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Titolo Come Codice.</span>"Sg4m1" è una delle prime manifestazioni dell'estetica dei titoli criptici di Sfera Ebbasta — parole o concetti scritti con sostituzioni alfanumeriche (lettere sostituite da numeri, vocali eliminate) che creano una barriera di leggibilità. Non è oscurantismo: è un sistema di appartenenza. Chi capisce il codice appartiene; chi non lo capisce non ha bisogno di capirlo. Questa logica dell'in-group/out-group è centrale nell'identità culturale della trap italiana di questa generazione.</div>
+                    <p><strong>1:00 — La Struttura Ripetitiva Come Ipnosi</strong><br>Il brano non ha una struttura narrativa nel senso tradizionale — non c'è un bridge che porta da qualche parte di diverso, non c'è un climax che risolve una tensione. È costruito sulla ripetizione di un hook che ritorna con variazioni minime. Questa struttura non è povertà compositiva: è una tecnica di ipnosi ritmica derivata dall'hip-hop americano, dove la ripetizione del hook crea familiarità immediata e, con la familiarità, appartenenza.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Charlie Charles e il Suono di Milano.</span>Prima di XDVR, la musica rap italiana aveva un suono prevalentemente influenzato dall'hip-hop della costa est americana o dalla scuola francese. Charlie Charles fu il primo produttore italiano a costruire un'estetica sonora riconoscibilmente italiana dentro il framework trap di Atlanta — non attraverso l'uso di strumenti tradizionali italiani, ma attraverso una sensibilità melodica nei pad e nei sintetizzatori che aveva qualcosa di diverso dall'originale americano senza potersi facilmente descrivere.</div>
+                `,
+                en: `
+                    <h3>Sg4m1</h3>
+                    <p><strong>0:00 — The Synthesizer As Atmosphere</strong><br>Charlie Charles opens with a synthetic pad in the high frequencies — an almost metallic, cold sound that immediately creates an atmosphere of tension before any rhythmic element enters. This approach — establishing the atmospheric mood before the groove — is characteristic of his production: the emotion of the track is communicated before the body has time to respond to the rhythm.</p>
+                    <p><strong>0:10 — The 808 Kick As Bass</strong><br>In trap, the 808 kick is not just percussion: it is the bass of the track. There is no separate bassline — the synthesized kick covers both the rhythmic and harmonic functions in the low frequencies. In Sg4m1 the kick has a "pitch" — a tonal height — that is clearly heard: it is not a neutral frequency, but a specific note that integrates with the harmony of the pad. This "tuned 808" technique is one of the most recognizable sonic signatures of modern trap.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Title As Code.</span>"Sg4m1" is one of the first manifestations of Sfera Ebbasta's cryptic title aesthetic — words or concepts written with alphanumeric substitutions (letters replaced by numbers, vowels eliminated) that create a barrier to legibility. It's not obscurantism: it's a system of belonging. Those who understand the code belong; those who don't understand it don't need to understand it. This in-group/out-group logic is central to the cultural identity of this generation's Italian trap.</div>
+                    <p><strong>1:00 — Repetitive Structure As Hypnosis</strong><br>The track does not have a narrative structure in the traditional sense — there is no bridge leading somewhere different, no climax resolving a tension. It is built on the repetition of a hook that returns with minimal variations. This structure is not compositional poverty: it is a technique of rhythmic hypnosis derived from American hip-hop, where the repetition of the hook creates immediate familiarity and, with familiarity, belonging.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Charlie Charles and the Sound of Milan.</span>Before XDVR, Italian rap music had a sound predominantly influenced by American East Coast hip-hop or the French school. Charlie Charles was the first Italian producer to build a recognizably Italian sonic aesthetic within the Atlanta trap framework — not through the use of traditional Italian instruments, but through a melodic sensibility in pads and synthesizers that had something different from the American original without being easily described.</div>
+                `
+            },
+            "panette": {
+                it: `
+                    <h3>Panette</h3>
+                    <p><strong>0:00 — Il Sample Come Fondamenta</strong><br>Charlie Charles costruisce Panette su un loop campionato — un frammento di musica esistente processato e trasformato fino a diventare materia prima invece che citazione. La tecnica del campionamento è centrale nella storia dell'hip-hop fin dagli anni Ottanta, ma nell'uso che ne fa Charlie Charles c'è qualcosa di diverso dalla tradizione americana: il sample viene usato come texture atmosferica invece che come elemento melodico riconoscibile.</p>
+                    <p><strong>0:15 — Il Contrasto Frequenziale</strong><br>Il brano gioca su un contrasto netto tra frequenze basse (il kick 808, profondo e fisico) e frequenze alte (il sample, aereo e distante). Le frequenze medie — il registro della voce parlata, degli strumenti armoniosi — sono deliberatamente svuotate, creando uno spazio in cui la voce di Sfera si inserisce come elemento che riempie il vuoto invece di competere con gli strumenti.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Titolo e il Contesto.</span>"Panette" è slang milanese per banconote — il linguaggio della strada milanese anni Dieci che Sfera portava nella musica con la stessa naturalezza con cui i rapper americani usavano l'AAVE (African American Vernacular English). Prima di XDVR, il rap italiano tendeva a un linguaggio più formale o deliberatamente letterario. Sfera e la sua generazione introdussero il dialetto urbano milanese come linguaggio musicale legittimo, senza scuse e senza traduzioni.</div>
+                    <p><strong>1:20 — La Melodia Vocale</strong><br>Sfera usa una melodia vocale semplice ma orecchiabile nell'hook — poche note, intervalli piccoli, qualcosa che si memorizza dopo due ascolti. Non è scrittura melodica nel senso della canzone pop italiana: è melodia come hook, come elemento che si fissa nell'orecchio attraverso la ripetizione invece che attraverso la complessità. La semplicità è una scelta tecnica, non una limitazione.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Distribuzione Digitale Come Rivoluzione.</span>XDVR fu distribuito principalmente attraverso piattaforme digitali in un momento in cui l'industria discografica italiana era ancora fortemente orientata ai supporti fisici e alle radio tradizionali. Sfera e Charlie Charles bypassarono completamente questi canali, costruendo un pubblico direttamente attraverso YouTube e i social media. Panette — con il suo video semplice ma efficace — fu uno dei brani che dimostrò che questo modello funzionava anche in Italia.</div>
+                `,
+                en: `
+                    <h3>Panette</h3>
+                    <p><strong>0:00 — The Sample As Foundation</strong><br>Charlie Charles builds Panette on a sampled loop — a fragment of existing music processed and transformed until it becomes raw material rather than a quotation. The sampling technique has been central to the history of hip-hop since the 1980s, but in Charlie Charles' use of it there is something different from the American tradition: the sample is used as an atmospheric texture rather than as a recognizable melodic element.</p>
+                    <p><strong>0:15 — Frequency Contrast</strong><br>The track plays on a sharp contrast between low frequencies (the 808 kick, deep and physical) and high frequencies (the sample, airy and distant). The mid-frequencies — the register of the spoken voice, of harmonious instruments — are deliberately emptied, creating a space into which Sfera's voice inserts itself as an element that fills the void instead of competing with the instruments.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Title and Context.</span>"Panette" is Milanese slang for banknotes — the language of the Milanese streets of the 2010s that Sfera brought into the music with the same naturalness with which American rappers used AAVE (African American Vernacular English). Before XDVR, Italian rap tended toward a more formal or deliberately literary language. Sfera and his generation introduced the urban Milanese dialect as a legitimate musical language, without apologies and without translations.</div>
+                    <p><strong>1:20 — The Vocal Melody</strong><br>Sfera uses a simple but catchy vocal melody in the hook — a few notes, small intervals, something that is memorized after two listens. It is not melodic writing in the sense of the Italian pop song: it is melody as a hook, as an element that fixes itself in the ear through repetition rather than through complexity. The simplicity is a technical choice, not a limitation.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Digital Distribution As Revolution.</span>XDVR was distributed primarily through digital platforms at a time when the Italian record industry was still strongly oriented toward physical media and traditional radio. Sfera and Charlie Charles completely bypassed these channels, building an audience directly through YouTube and social media. Panette — with its simple but effective video — was one of the tracks that proved this model worked in Italy too.</div>
+                `
+            },
+            "no_champagne": {
+                it: `
+                    <h3>No Champagne</h3>
+                    <p><strong>0:00 — Il Beat Più Lento</strong><br>No Champagne ha un BPM leggermente inferiore rispetto agli altri brani dell'album — una scelta che crea spazio, che dà alla voce più tempo per respirare tra le sillabe. Nella trap, la velocità del beat non è solo una questione di energia: determina la densità dell'informazione ritmica e, di conseguenza, il tipo di fraseggio vocale che è possibile sopra di esso. Un beat più lento permette frasi più lunghe, più articolate, con più dettaglio interno.</p>
+                    <p><strong>0:20 — I Synth Come Lusso</strong><br>Charlie Charles usa in questo brano sintetizzatori con un timbro più "costoso" rispetto ad altri brani dell'album — suoni più levigati, più brillanti, con una qualità che evoca immediatamente un'estetica di lusso senza usare direttamente elementi musicali tradizionalmente associati ad essa (archi, pianoforte, ecc.). È la versione sonora del testo: l'atmosfera del lusso senza necessariamente il lusso stesso.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Ironia del Titolo.</span>"No Champagne" come titolo di un brano di un artista emergente che parla di stile di vita aspirazionale è una mossa comunicativa sofisticata: riconosce la distanza tra l'aspirazione e la realtà attuale senza rinunciare all'aspirazione. È più onesto — e paradossalmente più credibile — di dichiarare di avere già tutto. Il pubblico di Sfera era fatto di persone nella stessa posizione: ancora in crescita, ancora in costruzione, capaci di riconoscersi in quella onestà.</div>
+                    <p><strong>1:30 — L'Hook Come Mantra</strong><br>Il ritornello viene ripetuto un numero di volte superiore alla media dei brani dell'album. Questa ripetizione non è riempitivo: è costruzione di un mantra, nel senso tecnico del termine — una frase che attraverso la ripetizione cambia qualità, da informazione a sensazione. Dopo la quinta ripetizione non si sta più "ascoltando" l'hook: lo si sta abitando.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Pubblico Come Co-Autore.</span>No Champagne fu uno dei brani di XDVR più cantati dal pubblico nei concerti — un fatto significativo per un artista che all'epoca dei concerti ne faceva ancora pochi e piccoli. Quella capacità del pubblico di memorizzare e riprodurre il testo è in parte un effetto tecnico: l'hook semplice e ripetuto si memorizza involontariamente, come una pubblicità che non si sceglie di imparare ma si scopre di sapere.</div>
+                `,
+                en: `
+                    <h3>No Champagne</h3>
+                    <p><strong>0:00 — The Slower Beat</strong><br>No Champagne has a slightly lower BPM than the other tracks on the album — a choice that creates space, giving the voice more time to breathe between syllables. In trap, the speed of the beat is not just a question of energy: it determines the density of rhythmic information and, consequently, the type of vocal phrasing that is possible over it. A slower beat allows for longer, more articulated phrases with more internal detail.</p>
+                    <p><strong>0:20 — Synths As Luxury</strong><br>In this track, Charlie Charles uses synthesizers with a more "expensive" tone than other tracks on the album — smoother, brighter sounds, with a quality that immediately evokes an aesthetic of luxury without directly using musical elements traditionally associated with it (strings, piano, etc.). It is the sonic version of the lyrics: the atmosphere of luxury without necessarily the luxury itself.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Irony of the Title.</span>"No Champagne" as the title of a track by an emerging artist talking about an aspirational lifestyle is a sophisticated communicative move: it recognizes the distance between aspiration and current reality without renouncing the aspiration. It is more honest — and paradoxically more credible — than claiming to already have everything. Sfera's audience was made up of people in the same position: still growing, still building, capable of recognizing themselves in that honesty.</div>
+                    <p><strong>1:30 — The Hook As Mantra</strong><br>The chorus is repeated a higher number of times than the average track on the album. This repetition is not filler: it is the construction of a mantra, in the technical sense of the term — a phrase that through repetition changes quality, from information to sensation. After the fifth repetition, you are no longer "listening" to the hook: you are inhabiting it.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Audience As Co-Author.</span>No Champagne was one of the XDVR tracks most sung by the audience at concerts — a significant fact for an artist who at the time was still doing few, small concerts. That ability of the audience to memorize and reproduce the lyrics is partly a technical effect: the simple and repeated hook is memorized involuntarily, like a commercial you don't choose to learn but discover you know.</div>
+                `
+            },
+            "mercedes_nero": {
+                it: `
+                    <h3>Mercedes Nero ft. Tedua, Izi</h3>
+                    <p><strong>0:00 — Il Beat Come Territorio Neutro</strong><br>Charlie Charles costruisce un beat che deve funzionare per tre voci molto diverse — Sfera da Milano, Tedua da Genova, Izi da Torino. La soluzione è un beat con meno elementi caratteristici del solito — più spazio, meno texture specifica — che lascia a ciascun artista la libertà di portare la propria personalità senza competere con una produzione già troppo definita.</p>
+                    <p><strong>0:20 — Sfera: Il Proprietario di Casa</strong><br>Sfera apre il brano con un fraseggio che stabilisce il mood prima che gli ospiti arrivino. Vocalmente è più diretto del solito — meno variazione melodica, più attacco sillabico — come qualcuno che sta presentando qualcosa invece di esibirsi. La sua parte ha la qualità di una cornice che viene costruita prima che i quadri vengano appesi.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Collaborazione Come Mappa Geografica.</span>Mercedes Nero riunisce tre artisti che stavano definendo la trap italiana in tre città diverse. Quella geografia non è casuale: Milano (Sfera), Genova (Tedua) e Torino (Izi) rappresentavano tre centri di gravità della scena emergente, tre modi diversi di abitare la stessa estetica. La canzone funzionò come documento di un momento preciso — prima che la scena si istituzionalizzasse, quando era ancora un insieme di individui che si riconoscevano senza ancora sapere esattamente cosa stessero costruendo insieme.</div>
+                    <p><strong>1:00 — Tedua: La Voce di Genova</strong><br>Tedua porta un fraseggio più denso — più sillabe per battuta, più informazione compressa nel tempo. La sua voce ha una qualità più aggressiva nell'attacco rispetto a Sfera, e il suo verso ha una costruzione più complessa internamente — rime interne, assonanze, riferimenti che si appoggiano l'uno sull'altro. È rap nel senso tradizionale del termine dentro un contesto trap.</p>
+                    <p><strong>1:40 — Izi: L'Ironia Come Tecnica</strong><br>Izi porta un registro diverso — più ironico, più distaccato, con una qualità quasi comica in certi passaggi che contrasta con la serietà degli altri due. Questa variazione tonale non è dissonanza: è la caratteristica che dà al brano la sua tridimensionalità. Un brano con tre voci identiche nel tono sarebbe meno interessante di uno con tre personalità percepibili.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Video Come Manifesto Visivo.</span>Il video di Mercedes Nero fu uno dei primi video della trap italiana a costruire un'estetica visiva coerente con il suono — location urbane milanesi, palette cromatica scura, montaggio ritmicamente sincronizzato con il beat. Prima di questo, i video rap italiani tendevano a imitare l'estetica americana senza adattarla al contesto italiano. Mercedes Nero fu uno dei primi esempi di un'estetica visiva specificatamente italiana dentro il framework trap.</div>
+                `,
+                en: `
+                    <h3>Mercedes Nero ft. Tedua, Izi</h3>
+                    <p><strong>0:00 — The Beat As Neutral Territory</strong><br>Charlie Charles builds a beat that must work for three very different voices — Sfera from Milan, Tedua from Genoa, Izi from Turin. The solution is a beat with fewer characteristic elements than usual — more space, less specific texture — which leaves each artist the freedom to bring their own personality without competing with an already too defined production.</p>
+                    <p><strong>0:20 — Sfera: The Host</strong><br>Sfera opens the track with phrasing that establishes the mood before the guests arrive. Vocally he is more direct than usual — less melodic variation, more syllabic attack — like someone presenting something instead of performing. His part has the quality of a frame being built before the pictures are hung.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Collaboration As a Geographical Map.</span>Mercedes Nero brings together three artists who were defining Italian trap in three different cities. That geography is not random: Milan (Sfera), Genoa (Tedua), and Turin (Izi) represented three centers of gravity of the emerging scene, three different ways of inhabiting the same aesthetic. The song functioned as a document of a precise moment — before the scene institutionalized, when it was still a collection of individuals who recognized each other without yet knowing exactly what they were building together.</div>
+                    <p><strong>1:00 — Tedua: The Voice of Genoa</strong><br>Tedua brings denser phrasing — more syllables per bar, more information compressed into time. His voice has a more aggressive attack quality compared to Sfera, and his verse has a more internally complex construction — internal rhymes, assonances, references leaning on each other. It is rap in the traditional sense of the term within a trap context.</p>
+                    <p><strong>1:40 — Izi: Irony As Technique</strong><br>Izi brings a different register — more ironic, more detached, with an almost comic quality in certain passages that contrasts with the seriousness of the other two. This tonal variation is not dissonance: it is the characteristic that gives the track its three-dimensionality. A track with three identical voices in tone would be less interesting than one with three perceptible personalities.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Video As Visual Manifesto.</span>The video for Mercedes Nero was one of the first videos in Italian trap to build a visual aesthetic coherent with the sound — urban Milanese locations, dark color palette, editing rhythmically synchronized with the beat. Before this, Italian rap videos tended to imitate American aesthetics without adapting them to the Italian context. Mercedes Nero was one of the first examples of a specifically Italian visual aesthetic within the trap framework.</div>
+                `
+            },
+            "private_video": {
+                it: `<p>Guida all'ascolto non disponibile per questo brano.</p>`,
+                en: `<p>Listening guide not available for this track.</p>`
+            },
+            "te_lo_do": {
+                it: `
+                    <h3>Te Lo Do</h3>
+                    <p><strong>0:00 — Il Pad Come Colore</strong><br>Charlie Charles apre con un pad sintetico che ha un timbro insolito nel contesto dell'album — più morbido, con un attacco più lento e un decadimento più lungo. Questa qualità "soft" del suono crea un'atmosfera diversa dai brani più duri dell'album, preparando un contesto in cui la voce può permettersi più variazione melodica.</p>
+                    <p><strong>0:15 — Il Kick Più Morbido</strong><br>Anche il kick 808 in questo brano è trattato diversamente — meno pitch, frequenza più neutra, attacco più soft. Non è il colpo fisico di XDVR o Rapina: è qualcosa di più rotondo, che sostiene invece di spingere. La scelta dello strumento ritmico determina la postura emotiva del brano più di qualsiasi elemento testuale.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Dualità dell'Album.</span>Te Lo Do è uno dei brani che rivela la dualità di XDVR come progetto: da un lato l'aggressività della trap, dall'altro una sensibilità melodica che viene dalla tradizione della canzone italiana e dal R&B americano. Sfera non ha mai nascosto le sue influenze pop — ha sempre rivendicato il diritto di fare musica ballabile e melodica dentro un'estetica urbana. Te Lo Do è il punto dell'album dove quella dualità è più visibile.</div>
+                    <p><strong>1:00 — La Melodia dell'Hook</strong><br>L'hook di Te Lo Do è il più melodicamente sviluppato dell'album — la voce si muove su un arco più ampio, con intervalli più grandi e una struttura più vicina al canto tradizionale. Questa scelta lo rende immediatamente accessibile a un pubblico più vasto di quello prettamente trap, e probabilmente contribuì alla diffusione dell'album oltre i confini della scena underground.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Precursore del Successo Mainstream.</span>Guardando retrospettivamente la carriera di Sfera Ebbasta, Te Lo Do appare come il brano che anticipava la direzione del suo sviluppo futuro — verso una fusione di trap e pop che avrebbe raggiunto il mainstream italiano con Rockstar (2017) e i lavori successivi. La sensibilità melodica che qui emerge timidamente sarebbe diventata il centro della sua identità commerciale.</div>
+                `,
+                en: `
+                    <h3>Te Lo Do</h3>
+                    <p><strong>0:00 — The Pad As Color</strong><br>Charlie Charles opens with a synthetic pad that has an unusual tone in the context of the album — softer, with a slower attack and longer decay. This "soft" quality of the sound creates a different atmosphere from the harder tracks on the album, preparing a context where the voice can afford more melodic variation.</p>
+                    <p><strong>0:15 — The Softer Kick</strong><br>The 808 kick in this track is also treated differently — less pitch, more neutral frequency, softer attack. It's not the physical blow of XDVR or Rapina: it's something rounder, that supports instead of pushing. The choice of rhythmic instrument determines the emotional posture of the track more than any textual element.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Duality of the Album.</span>Te Lo Do is one of the tracks that reveals the duality of XDVR as a project: on one hand the aggressiveness of trap, on the other a melodic sensibility that comes from the Italian song tradition and American R&B. Sfera has never hidden his pop influences — he has always claimed the right to make danceable, melodic music within an urban aesthetic. Te Lo Do is the point on the album where that duality is most visible.</div>
+                    <p><strong>1:00 — The Hook's Melody</strong><br>The hook of Te Lo Do is the most melodically developed on the album — the voice moves over a wider arc, with larger intervals and a structure closer to traditional singing. This choice makes it immediately accessible to a wider audience than the strictly trap one, and likely contributed to the album's spread beyond the borders of the underground scene.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Precursor of Mainstream Success.</span>Looking retrospectively at Sfera Ebbasta's career, Te Lo Do appears as the track that anticipated the direction of his future development — toward a fusion of trap and pop that would reach the Italian mainstream with Rockstar (2017) and subsequent works. The melodic sensibility that timidly emerges here would become the center of his commercial identity.</div>
+                `
+            },
+            "brutti_sogni": {
+                it: `
+                    <h3>Brutti Sogni</h3>
+                    <p><strong>0:00 — L'Apertura Più Lenta dell'Album</strong><br>Brutti Sogni ha il tempo più lento di tutti i brani di XDVR — un BPM che scende verso il confine tra la trap e qualcosa che non ha ancora un nome preciso. Quella lentezza crea una qualità onirica nel senso letterale: il rallentamento del ritmo è associato neuropsicologicamente allo stato ipnagogico, la zona di transizione tra veglia e sonno.</p>
+                    <p><strong>0:20 — I Synth Come Atmosfera Notturna</strong><br>Charlie Charles usa sintetizzatori con un timbro scuro — frequenze medie abbassate, alte presenti ma non aggressive, qualcosa che suona come una stanza illuminata da una sola fonte di luce in un angolo. Non è un suono "triste" nel senso convenzionale: è un suono che appartiene alla notte, all'interno, alla privacità.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Vulnerabilità Come Scelta Estetica.</span>Brutti Sogni è il brano di XDVR in cui Sfera si avvicina di più a qualcosa che potrebbe essere definito vulnerabilità — non nel senso della confessione esplicita, ma nel senso di un abbassamento della guardia che si percepisce nella qualità vocale, nel modo in cui certe frasi vengono dette invece che cantate. Nella trap — un genere codificato su posture di forza e indifferenza — questo abbassamento della guardia è una mossa coraggiosa quanto qualsiasi bravata.</div>
+                    <p><strong>1:30 — Il Falsetto Come Sfumatura</strong><br>In alcuni passaggi dell'hook Sfera usa il registro alto della voce — non un falsetto pieno, ma un passaggio di registro che alleggerisce il suono vocale. Questa tecnica — comune nel R&B e nell'hip-hop melodico americano — era insolita nel contesto del rap italiano dell'epoca e divenne una delle caratteristiche distintive dello stile vocale di Sfera.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Influenza del Cloud Rap.</span>Brutti Sogni porta l'influenza del "cloud rap" americano — un sottogenere sviluppato da artisti come Lil B e A$AP Rocky che combinava beat eterei e rallentati con un approccio vocale quasi monocromatico. Charlie Charles aveva assorbito questa influenza e la stava applicando al contesto italiano prima che questo stile diventasse mainstream a livello globale. È uno dei momenti dell'album in cui si percepisce più chiaramente quanto avanti fossero rispetto alla scena italiana contemporanea.</div>
+                `,
+                en: `
+                    <h3>Brutti Sogni</h3>
+                    <p><strong>0:00 — The Slowest Opening of the Album</strong><br>Brutti Sogni has the slowest tempo of all the tracks on XDVR — a BPM that drops toward the border between trap and something that doesn't yet have a precise name. That slowness creates a dreamlike quality in the literal sense: the slowing of the rhythm is neuropsychologically associated with the hypnagogic state, the transition zone between wakefulness and sleep.</p>
+                    <p><strong>0:20 — Synths As Nocturnal Atmosphere</strong><br>Charlie Charles uses synthesizers with a dark tone — lowered mid-frequencies, present but non-aggressive highs, something that sounds like a room illuminated by a single light source in a corner. It's not a "sad" sound in the conventional sense: it's a sound that belongs to the night, to the indoors, to privacy.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Vulnerability As Aesthetic Choice.</span>Brutti Sogni is the track on XDVR where Sfera comes closest to something that could be defined as vulnerability — not in the sense of explicit confession, but in the sense of dropping his guard, which is perceptible in the vocal quality, in the way certain phrases are spoken rather than sung. In trap — a genre codified by postures of strength and indifference — this dropping of the guard is a move as brave as any bravado.</div>
+                    <p><strong>1:30 — Falsetto As Nuance</strong><br>In some passages of the hook, Sfera uses the high register of his voice — not a full falsetto, but a register shift that lightens the vocal sound. This technique — common in American R&B and melodic hip-hop — was unusual in the context of Italian rap at the time and became one of the distinctive characteristics of Sfera's vocal style.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Influence of Cloud Rap.</span>Brutti Sogni bears the influence of American "cloud rap" — a subgenre developed by artists like Lil B and A$AP Rocky that combined ethereal, slowed-down beats with an almost monochromatic vocal approach. Charlie Charles had absorbed this influence and was applying it to the Italian context before this style became mainstream globally. It is one of the moments on the album where it's most clearly perceived how far ahead they were compared to the contemporary Italian scene.</div>
+                `
+            },
+            "piu_forte": {
+                it: `
+                    <h3>Più Forte</h3>
+                    <p><strong>0:00 — Il Beat Come Energia Cinetica</strong><br>Charlie Charles apre con uno dei beat più veloci dell'album — hi-hat in sedicesimi serrati, kick 808 che attacca con più aggressività del solito, niente spazio tra gli elementi. È una scelta di densità ritmica che crea immediatamente una sensazione di accelerazione: il corpo risponde prima che la mente abbia processato cosa sta succedendo. Nella trap, la velocità degli hi-hat è uno dei parametri più precisi per comunicare l'intensità emotiva — più veloci, più urgenti.</p>
+                    <p><strong>0:10 — Il Layering Vocale</strong><br>Sfera usa più layer della sua voce sovrapposti — la voce principale più una o due doppie che non sono perfettamente sincronizzate, creando un leggero effetto di chorus naturale. Questa tecnica — chiamata "vocal doubling" o "stacking" — dà alla voce una qualità più grande, più fisica, come se stesse occupando più spazio nel mix. Non è un effetto artificiale: è la stessa voce registrata più volte.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Escalation Come Struttura.</span>Più Forte è costruito su un principio compositivo semplice ma efficace: ogni sezione è leggermente più intensa della precedente. Non attraverso cambi drammatici di arrangiamento, ma attraverso micro-variazioni nel mix — un elemento che si alza di un dB, un hi-hat che diventa leggermente più presente, una voce che attacca con più forza. L'escalation si percepisce come emozione senza essere riconoscibile come tecnica.</div>
+                    <p><strong>1:20 — Il Break Minimalista</strong><br>A circa metà brano Charlie Charles toglie quasi tutto — rimane solo il kick e un pad distante — per due battute prima di rientrare. Quel vuoto improvviso è la mossa più efficace del brano: la densità che lo precede rende il silenzio relativo fisicamente percepibile, e il rientro degli elementi suona come un'irruzione invece che come una ripresa. È la stessa tecnica dei drop nella musica elettronica applicata alla trap.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Brano come Dichiarazione di Crescita.</span>Più Forte fu uno dei brani di XDVR più citati dai fan come "inno" personale — una canzone che funzionava come motivazione, come soundtrack di un momento di determinazione. Questo non era un effetto collaterale ma un obiettivo preciso: Sfera stava scrivendo per un pubblico di coetanei che si trovavano nella stessa fase di costruzione, e quella risonanza era calcolata quanto qualsiasi scelta produttiva.</div>
+                `,
+                en: `
+                    <h3>Più Forte</h3>
+                    <p><strong>0:00 — The Beat As Kinetic Energy</strong><br>Charlie Charles opens with one of the fastest beats on the album — tight sixteenth-note hi-hats, an 808 kick that attacks with more aggression than usual, no space between the elements. It's a choice of rhythmic density that immediately creates a sensation of acceleration: the body responds before the mind has processed what is happening. In trap, the speed of the hi-hats is one of the most precise parameters to communicate emotional intensity — the faster, the more urgent.</p>
+                    <p><strong>0:10 — Vocal Layering</strong><br>Sfera uses multiple overlapping layers of his voice — the main vocal plus one or two doubles that are not perfectly synchronized, creating a slight natural chorus effect. This technique — called "vocal doubling" or "stacking" — gives the voice a larger, more physical quality, as if it were occupying more space in the mix. It's not an artificial effect: it's the same voice recorded multiple times.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Escalation As Structure.</span>Più Forte is built on a simple but effective compositional principle: each section is slightly more intense than the last. Not through dramatic arrangement changes, but through micro-variations in the mix — an element raised by a dB, a hi-hat becoming slightly more present, a voice attacking with more force. The escalation is perceived as emotion without being recognizable as technique.</div>
+                    <p><strong>1:20 — The Minimalist Break</strong><br>About halfway through the track, Charlie Charles removes almost everything — leaving only the kick and a distant pad — for two bars before re-entering. That sudden emptiness is the track's most effective move: the density that precedes it makes the relative silence physically perceptible, and the return of the elements sounds like an irruption rather than a resumption. It's the same technique as electronic music drops applied to trap.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Track as a Declaration of Growth.</span>Più Forte was one of the XDVR tracks most cited by fans as a personal "anthem" — a song that functioned as motivation, as the soundtrack to a moment of determination. This was not a side effect but a precise goal: Sfera was writing for an audience of peers who were in the same phase of building themselves, and that resonance was as calculated as any production choice.</div>
+                `
+            },
+            "tutti_scemi": {
+                it: `
+                    <h3>Tutti Scemi</h3>
+                    <p><strong>0:00 — Il Synth Come Sarcasmo Sonoro</strong><br>Il brano apre con un synth lead che ha una qualità quasi cartoonesca — un timbro brillante e leggermente esagerato che non suona come qualcosa che si prenderebbe troppo sul serio. Quella qualità leggermente ironica del suono corrisponde perfettamente al titolo: il sarcasmo del testo ha un equivalente sonoro nella scelta timbrica di Charlie Charles.</p>
+                    <p><strong>0:12 — La Struttura Più Semplice dell'Album</strong><br>Tutti Scemi ha l'arrangiamento più essenziale di XDVR: kick 808, hi-hat, synth lead, voce. Niente pad di supporto, niente layer aggiuntivi, niente costruzioni. Quella essenzialità non è pigrizia — è una scelta che corrisponde al contenuto del testo: se tutto intorno è complicato inutilmente, la risposta è la semplicità radicale.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Titolo Come Postura Generazionale.</span>"Tutti Scemi" esprime un sentimento generazionale preciso — la sensazione di chi è cresciuto guardando un sistema che non funzionava e aveva smesso di fingere che funzionasse. Non è nichilismo: è una forma di chiarezza, di rifiuto di partecipare a finzioni collettive. Quella postura — il distacco ironico come meccanismo di sopravvivenza — è caratteristica di una generazione cresciuta con internet e la consapevolezza dell'ipocrisia istituzionalizzata.</div>
+                    <p><strong>1:00 — L'Hook Come Sfogo</strong><br>Il ritornello di Tutti Scemi ha una qualità catartica — è il tipo di frase che si vuole urlare invece di cantare. Charlie Charles lo sostiene con un beat che si alleggerisce leggermente nell'hook, creando uno spazio dove la voce può espandersi invece di essere compressa dagli strumenti. È il momento del brano in cui il pubblico smette di ascoltare e inizia a partecipare.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Video Come Commento.</span>Il video di Tutti Scemi gioca sulla stessa ironia del titolo — situazioni assurde, personaggi caricaturali, un umorismo visivo che amplifica il sarcasmo del testo invece di illustrarlo letteralmente. Fu uno dei primi video della trap italiana a usare il linguaggio visivo del meme e dell'internet humor, anticipando un'estetica che sarebbe diventata dominante negli anni successivi.</div>
+                `,
+                en: `
+                    <h3>Tutti Scemi</h3>
+                    <p><strong>0:00 — Synth As Sonic Sarcasm</strong><br>The track opens with a synth lead that has an almost cartoonish quality — a bright and slightly exaggerated tone that doesn't sound like something that takes itself too seriously. That slightly ironic quality of the sound corresponds perfectly to the title: the sarcasm of the lyrics has a sonic equivalent in Charlie Charles' timbral choice.</p>
+                    <p><strong>0:12 — The Simplest Structure on the Album</strong><br>Tutti Scemi has the most essential arrangement on XDVR: 808 kick, hi-hat, synth lead, voice. No supporting pads, no extra layers, no complex builds. That essentiality is not laziness — it's a choice that corresponds to the content of the lyrics: if everything around is needlessly complicated, the answer is radical simplicity.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Title As Generational Posture.</span>"Tutti Scemi" expresses a precise generational feeling — the sensation of someone who grew up watching a broken system and had stopped pretending it worked. It is not nihilism: it is a form of clarity, of refusing to participate in collective fictions. That posture — ironic detachment as a survival mechanism — is characteristic of a generation raised with the internet and an awareness of institutionalized hypocrisy.</div>
+                    <p><strong>1:00 — The Hook As Release</strong><br>The chorus of Tutti Scemi has a cathartic quality — it's the kind of phrase you want to scream rather than sing. Charlie Charles supports it with a beat that lightens slightly in the hook, creating a space where the voice can expand instead of being compressed by the instruments. It's the moment in the track where the audience stops listening and starts participating.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Video As Commentary.</span>The music video for Tutti Scemi plays on the same irony as the title — absurd situations, caricatured characters, a visual humor that amplifies the sarcasm of the lyrics rather than illustrating it literally. It was one of the first Italian trap videos to use the visual language of memes and internet humor, anticipating an aesthetic that would become dominant in subsequent years.</div>
+                `
+            },
+            "rapina": {
+                it: `
+                    <h3>Rapina</h3>
+                    <p><strong>0:00 — Il Beat Come Urgenza</strong><br>Charlie Charles costruisce il beat di Rapina con una densità ritmica tra le più alte dell'album — hi-hat in terzine (tre colpi per ogni beat invece di due o quattro), kick 808 con attacco molto veloce, nessuna pausa. La sensazione è quella di qualcosa che corre senza fermarsi mai, che non può permettersi di rallentare. È la versione sonora della metafora del titolo: la fuga è incorporata nella struttura ritmica prima ancora che il testo la descriva.</p>
+                    <p><strong>0:15 — Il Pitch dell'808</strong><br>Il kick 808 di Rapina ha un pitch particolarmente basso — una frequenza che scende verso i 40-50 Hz, ai limiti della percezione uditiva e dentro il range della percezione fisica. Su cuffie di qualità o impianti con subwoofer, questo kick non si sente soltanto: si sente nel petto, nelle mascelle, nel corpo. È una scelta tecnica precisa che produce un effetto fisico calcolato.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Tradizione del Crime Rap.</span>Rapina si inserisce in una tradizione lunga nella storia del rap — il brano che usa il crimine come metafora o come narrativa diretta per descrivere la logica di sopravvivenza in contesti di marginalizzazione economica. Dalla tradizione gangsta rap di Los Angeles agli anni Ottanta al drill di Chicago degli anni Dieci, quella narrativa è stata costantemente dibattuta tra chi la vede come glorificazione e chi la vede come documentazione. Nel contesto italiano, Sfera portava quella conversazione per la prima volta in modo mainstream.</div>
+                    <p><strong>1:30 — La Variazione del Flow</strong><br>A differenza di brani come Tutti Scemi dove il flow è relativamente costante, Rapina ha variazioni di densità sillabica significative — passaggi dove le parole si addensano (più sillabe per battuta) alternati a passaggi dove il fraseggio si apre (meno sillabe, più spazio). Questa variazione crea tensione e rilascio ritmico che mantiene l'attenzione attiva invece di permettere all'ascolto di diventare automatico.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Suono Prima del Testo.</span>Charlie Charles ha raccontato in interviste che il processo compositivo con Sfera partiva quasi sempre dal beat — Sfera ascoltava la produzione e sviluppava melodia e testo in risposta al suono invece di portare testi pre-scritti. In Rapina questo processo è particolarmente visibile: il flow di Sfera sembra modellato dall'urgenza ritmica del beat invece di essere stato scritto indipendentemente e poi adattato.</div>
+                `,
+                en: `
+                    <h3>Rapina</h3>
+                    <p><strong>0:00 — The Beat As Urgency</strong><br>Charlie Charles builds the beat for Rapina with one of the highest rhythmic densities on the album — hi-hats in triplets (three hits per beat instead of two or four), 808 kick with a very fast attack, no pauses. The feeling is of something running without ever stopping, that can't afford to slow down. It is the sonic version of the title's metaphor: the escape is embedded in the rhythmic structure even before the lyrics describe it.</p>
+                    <p><strong>0:15 — The 808's Pitch</strong><br>The 808 kick in Rapina has a particularly low pitch — a frequency that drops towards 40-50 Hz, at the limits of auditory perception and well into the range of physical perception. On quality headphones or subwoofer systems, this kick isn't just heard: it's felt in the chest, in the jaw, in the body. It's a precise technical choice that produces a calculated physical effect.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Crime Rap Tradition.</span>Rapina fits into a long tradition in hip-hop history — the track that uses crime as a metaphor or direct narrative to describe the logic of survival in contexts of economic marginalization. From the gangsta rap tradition of 1980s Los Angeles to the Chicago drill of the 2010s, that narrative has been constantly debated between those who see it as glorification and those who see it as documentation. In the Italian context, Sfera was bringing that conversation into the mainstream for the first time.</div>
+                    <p><strong>1:30 — Flow Variation</strong><br>Unlike tracks like Tutti Scemi where the flow is relatively constant, Rapina has significant variations in syllabic density — passages where the words thicken (more syllables per bar) alternating with passages where the phrasing opens up (fewer syllables, more space). This variation creates rhythmic tension and release that keeps the listener's attention active instead of allowing the listening experience to become automatic.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Sound Before Lyrics.</span>Charlie Charles has mentioned in interviews that the songwriting process with Sfera almost always started from the beat — Sfera would listen to the production and develop melody and lyrics in response to the sound instead of bringing pre-written lyrics. In Rapina this process is particularly visible: Sfera's flow seems shaped by the beat's rhythmic urgency rather than having been written independently and then adapted.</div>
+                `
+            },
+            "zero": {
+                it: `
+                    <h3>Zero</h3>
+                    <p><strong>0:00 — L'Apertura Più Silenziosa</strong><br>Zero inizia con meno elementi degli altri brani — solo un pad molto discreto e il click del kick prima che arrivi il beat completo. Quella apertura spoglia è coerente con il contenuto: zero è il punto prima di tutto, e il suono di zero non può essere denso.</p>
+                    <p><strong>0:20 — Il Beat Come Fondamenta</strong><br>Quando il beat entra completo, ha una qualità diversa dagli altri brani dell'album — più "quadrato", meno sincopato, come se stesse cercando solidità invece di movimento. È il suono di qualcosa che si costruisce dal basso invece di correre avanti. Charlie Charles usa meno variazioni nell'hi-hat rispetto ai brani più energici, creando una stabilità ritmica che corrisponde al tema della ripartenza da zero.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Funzione Narrativa nell'Album.</span>Zero è posizionato verso la fine di XDVR, e quella posizione retroattivamente illumina il brano in modo diverso rispetto a come suonerebbe all'inizio: dopo aver sentito tutto quello che precede — l'arroganza, l'energia, le collaborazioni, le dichiarazioni — tornare al punto di partenza non è regressione ma riflessione. È il bilancio che si fa dopo il viaggio, non prima.</div>
+                    <p><strong>1:15 — La Voce Come Autobiografia</strong><br>Zero è il brano di XDVR in cui il testo è più esplicitamente autobiografico — riferimenti concreti a luoghi, situazioni, persone che appartengono alla storia personale di Sfera prima della musica. Vocalmente lo si sente: c'è meno "personaggio" e più persona, meno costruzione e più racconto. La qualità vocale si abbassa leggermente, si avvicina alla parlata, come qualcuno che sta dicendo qualcosa di importante invece di performarlo.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Punto di Partenza Come Punto di Forza.</span>La trap americana aveva codificato la narrativa del "coming from nothing" — venire dal niente — come elemento fondamentale dell'autenticità di un artista. Zero è la versione italiana di quella narrativa, adattata a un contesto diverso: non Compton o Atlanta, ma Cinisello Balsamo, la periferia nord di Milano. La specificità geografica fu parte di ciò che rese il brano credibile al suo pubblico.</div>
+                `,
+                en: `
+                    <h3>Zero</h3>
+                    <p><strong>0:00 — The Quietest Opening</strong><br>Zero begins with fewer elements than the other tracks — just a very discreet pad and the click of the kick before the full beat drops. That bare opening is consistent with the content: zero is the point before everything, and the sound of zero cannot be dense.</p>
+                    <p><strong>0:20 — The Beat As Foundation</strong><br>When the full beat enters, it has a different quality than the other tracks on the album — more "square", less syncopated, as if seeking solidity instead of movement. It's the sound of something being built from the ground up instead of running forward. Charlie Charles uses fewer variations in the hi-hat compared to the more energetic tracks, creating a rhythmic stability that corresponds to the theme of starting over from zero.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Narrative Function on the Album.</span>Zero is placed towards the end of XDVR, and that position retroactively illuminates the track differently than how it would sound at the beginning: after hearing everything that preceded it — the arrogance, the energy, the collaborations, the declarations — returning to the starting point is not regression but reflection. It's the audit you do after the journey, not before.</div>
+                    <p><strong>1:15 — The Voice As Autobiography</strong><br>Zero is the track on XDVR where the lyrics are most explicitly autobiographical — concrete references to places, situations, and people that belong to Sfera's personal history before music. Vocally, you can hear it: there is less "character" and more person, less construction and more storytelling. The vocal quality lowers slightly, approaching speech, like someone saying something important instead of performing it.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Starting Point As a Strength.</span>American trap had codified the "coming from nothing" narrative as a fundamental element of an artist's authenticity. Zero is the Italian version of that narrative, adapted to a different context: not Compton or Atlanta, but Cinisello Balsamo, the northern outskirts of Milan. The geographical specificity was part of what made the track credible to its audience.</div>
+                `
+            },
+            "marshmallow": {
+                it: `
+                    <h3>Marshmallow</h3>
+                    <p><strong>0:00 — Il Timbro Più Insolito dell'Album</strong><br>Charlie Charles apre Marshmallow con un synth che ha una qualità timbrica davvero insolita nel contesto di XDVR — morbido, quasi soffice, con un attacco lento e un sustain lungo. Non è il synth tagliente di XDVR o quello atmosferico di Brutti Sogni: è qualcosa di più vicino a certi suoni del R&B contemporaneo americano, qualcosa che suona deliberatamente "nice" invece di duro.</p>
+                    <p><strong>0:15 — Il Groove Più Funky</strong><br>Il pattern ritmico di Marshmallow ha un elemento di swing — le suddivisioni non cadono perfettamente sul tempo matematico ma sono leggermente "groovate", con un micro-ritardo che crea una sensazione di movimento invece di meccanicità. È uno dei pochi momenti dell'album in cui la produzione di Charlie Charles si avvicina esplicitamente al funk e all'R&B invece di rimanere dentro il perimetro della trap pura.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Titolo Come Estetica.</span>La scelta di "Marshmallow" come titolo in un album di trap — un genere associato a durezza e aggressività — è una mossa comunicativa deliberata. Il marshmallow è morbido, dolce, letteralmente non resistente alla pressione. Usarlo come titolo rivendica il diritto di essere anche questo, di non dover essere sempre duro, di poter occupare spazi estetici diversi senza perdere credibilità. È la stessa logica che guida la diversità emotiva dell'album.</div>
+                    <p><strong>1:45 — L'Hook Come Earworm</strong><br>L'hook di Marshmallow è costruito per essere memorizzato involontariamente — melodia semplice, range vocale stretto, testo ripetuto. In termini di psicologia della musica, è un "earworm" deliberato: una frase musicale che si installa nella memoria uditiva e ritorna spontaneamente. La semplicità della melodia non è una limitazione: è una tecnica di diffusione.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Eredità Commerciale.</span>Guardando retrospettivamente, Marshmallow anticipa il Sfera Ebbasta di Rockstar e dei lavori successivi più di qualsiasi altro brano di XDVR — nella morbidezza del suono, nella melodicità dell'hook, nel rifiuto della durezza come unica modalità espressiva. È il seme da cui cresce la fase commerciale della sua carriera, già piantato nel primo album.</div>
+                `,
+                en: `
+                    <h3>Marshmallow</h3>
+                    <p><strong>0:00 — The Most Unusual Tone on the Album</strong><br>Charlie Charles opens Marshmallow with a synth that has a truly unusual tonal quality in the context of XDVR — soft, almost fluffy, with a slow attack and a long sustain. It is not the cutting synth of XDVR or the atmospheric one of Brutti Sogni: it is something closer to certain sounds of contemporary American R&B, something that deliberately sounds "nice" rather than hard.</p>
+                    <p><strong>0:15 — The Funkiest Groove</strong><br>The rhythmic pattern of Marshmallow has an element of swing — the subdivisions do not fall perfectly on the mathematical beat but are slightly "grooved", with a micro-delay that creates a sensation of movement instead of mechanicalness. It is one of the few moments on the album where Charlie Charles' production explicitly approaches funk and R&B instead of remaining within the perimeter of pure trap.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Title As Aesthetic.</span>The choice of "Marshmallow" as a title on a trap album — a genre associated with hardness and aggression — is a deliberate communicative move. A marshmallow is soft, sweet, literally non-resistant to pressure. Using it as a title claims the right to also be this, to not always have to be hard, to be able to occupy different aesthetic spaces without losing credibility. It is the same logic that guides the album's emotional diversity.</div>
+                    <p><strong>1:45 — The Hook As Earworm</strong><br>Marshmallow's hook is built to be memorized involuntarily — simple melody, narrow vocal range, repeated lyrics. In terms of music psychology, it is a deliberate "earworm": a musical phrase that installs itself in auditory memory and returns spontaneously. The simplicity of the melody is not a limitation: it is a dissemination technique.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Commercial Legacy.</span>Looking back, Marshmallow anticipates the Sfera Ebbasta of Rockstar and subsequent works more than any other track on XDVR — in the softness of the sound, the melodic nature of the hook, the rejection of hardness as the only expressive mode. It is the seed from which the commercial phase of his career grows, already planted in his first album.</div>
+                `
+            },
+            "ciny": {
+                it: `
+                    <h3>Ciny</h3>
+                    <p><strong>0:00 — Il Beat Come Intimità</strong><br>Charlie Charles costruisce il beat di Ciny con più spazio del solito tra gli elementi — kick 808 con più sustain, hi-hat più rarefatto, pad quasi assente nelle prime battute. Quella spazialità crea una qualità di intimità: non c'è nulla che riempie lo spazio intorno alla voce, e quella voce si trova esposta in modo diverso rispetto agli altri brani dell'album.</p>
+                    <p><strong>0:20 — Il Timbro Vocale</strong><br>La voce di Sfera in Ciny ha una qualità più ravvicinata — il microfono sembra più vicino, o il trattamento del segnale è diverso, creando una presenza nella stanza invece di una proiezione verso il pubblico. È la differenza tra un artista che si esibisce e uno che parla. Questa intimità vocale cambia la relazione tra chi canta e chi ascolta in modo che nessuna parola nel testo potrebbe produrre da sola.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Nome Come Persona.</span>Ciny è presumibilmente un nome — o un soprannome — di una persona reale nel contesto della storia personale di Sfera. A differenza dei brani che usano la seconda persona generica o il testo come dichiarazione universale, Ciny è indirizzato a qualcuno di specifico, e quella specificità si percepisce nella qualità del testo: i dettagli sono troppo concreti per essere inventati, troppo particolari per essere metafore.</div>
+                    <p><strong>2:00 — La Struttura Aperta</strong><br>Ciny ha una struttura meno rigida degli altri brani dell'album — i confini tra strofa e ritornello sono meno netti, le transizioni più fluide. Questa fluidità formale corrisponde al contenuto: i brani più strutturati di XDVR hanno una qualità di performance, di dichiarazione pubblica. Ciny ha la qualità di qualcosa che si scopre mentre lo si dice.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Contrasto con il Resto dell'Album.</span>Posizionato vicino alla fine di XDVR, Ciny funziona come momento di abbassamento della pressione prima della chiusura — un respiro tra la densità di brani come Rapina e la conclusione di Trap Kings. Quella funzione strutturale nell'album non è accidentale: Charlie Charles e Sfera avevano pensato XDVR come un percorso, non come una raccolta, e Ciny è il momento in cui quel percorso fa una pausa prima dell'arrivo.</div>
+                `,
+                en: `
+                    <h3>Ciny</h3>
+                    <p><strong>0:00 — The Beat As Intimacy</strong><br>Charlie Charles builds the beat for Ciny with more space than usual between the elements — 808 kick with more sustain, more sparse hi-hats, pad almost absent in the first bars. That spaciousness creates a quality of intimacy: there is nothing filling the space around the voice, and that voice is exposed differently than in the other tracks on the album.</p>
+                    <p><strong>0:20 — Vocal Tone</strong><br>Sfera's voice in Ciny has a closer quality — the microphone seems closer, or the signal treatment is different, creating a presence in the room instead of a projection toward the audience. It is the difference between an artist performing and one speaking. This vocal intimacy changes the relationship between singer and listener in a way no word in the lyrics could produce alone.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Name As Person.</span>Ciny is presumably a name — or nickname — of a real person in the context of Sfera's personal history. Unlike tracks that use the generic second person or lyrics as a universal declaration, Ciny is addressed to someone specific, and that specificity is perceived in the quality of the lyrics: the details are too concrete to be invented, too particular to be metaphors.</div>
+                    <p><strong>2:00 — Open Structure</strong><br>Ciny has a less rigid structure than the other tracks on the album — the boundaries between verse and chorus are less clear, transitions are more fluid. This formal fluidity corresponds to the content: the more structured tracks on XDVR have a quality of performance, of public declaration. Ciny has the quality of something being discovered as it is being said.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Contrast with the Rest of the Album.</span>Positioned near the end of XDVR, Ciny functions as a moment of lowering the pressure before the close — a breath between the density of tracks like Rapina and the conclusion of Trap Kings. That structural function on the album is not accidental: Charlie Charles and Sfera conceived XDVR as a journey, not a collection, and Ciny is the moment where that journey takes a pause before arrival.</div>
+                `
+            },
+            "xdvrmx": {
+                it: `
+                    <h3>XDVRMX ft. Luche, Marracash</h3>
+                    <p><strong>0:00 — Il Beat Originale Espanso</strong><br>Charlie Charles prende il beat di XDVR e lo riconfigura — stessi elementi di base, ma con un trattamento più elaborato, più "prodotto". Il kick 808 è leggermente più definito, i synth hanno più presenza nelle frequenze medie, lo spazio stereo è più ampio. È la stessa struttura portante con una finiture diversa — come il progetto originale di un edificio costruito con materiali migliori.</p>
+                    <p><strong>0:25 — Marracash: La Storia Come Contesto</strong><br>Marracash porta al brano una dimensione storica che nessun altro artista nella scena italiana potrebbe portare — è il rapper italiano che aveva costruito la credibilità del genere nel corso di un decennio prima che la trap esistesse come categoria. La sua presenza sulla remix di XDVR non è una collaborazione tra pari: è un passaggio di testimone, un riconoscimento esplicito che qualcosa di nuovo stava prendendo il posto di qualcosa di precedente.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Significato del Featuring.</span>Nella cultura hip-hop, un featuring non è solo una collaborazione musicale: è una dichiarazione di affiliazione, un riconoscimento reciproco di status. Avere Marracash sulla remix di XDVR nel 2015 significava che il rap italiano "ufficiale" stava riconoscendo la legittimità della trap italiana emergente. Fu un momento di legittimazione che accelerò l'accettazione mainstream di Sfera e del suo mondo.</div>
+                    <p><strong>1:10 — Luche: Il Sud Come Voce</strong><br>Luche — rapper napoletano con una carriera consolidata nel rap italiano — porta una qualità vocale e un approccio al fraseggio che viene da una tradizione diversa da quella milanese. Il suo verso ha più peso nelle consonanti, una musicalità diversa nelle vocali, una relazione con il ritmo che viene dalla tradizione orale napoletana quanto dall'hip-hop americano.</p>
+                    <p><strong>2:00 — La Struttura Come Conversazione</strong><br>La remix funziona come una conversazione tra generazioni e geografie — non un confronto competitivo ma un riconoscimento reciproco. Charlie Charles costruisce il beat in modo che tutte e tre le voci abbiano spazio senza compromessi: non alza o abbassa nessuno nel mix, lasciando che la forza di ciascuno si affermi da sola.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: Il Documento di un Momento.</span>XDVRMX è rimasto nel catalogo come documento di un preciso momento nella storia del rap italiano — il 2015, l'anno in cui la vecchia guardia e la nuova si trovarono nello stesso spazio senza che nessuna delle due dovesse cedere territorio all'altra. Quei momenti di transizione nella storia di una scena musicale sono rari e preziosi, e avere un documento sonoro di uno di essi è più che un feat commerciale.</div>
+                `,
+                en: `
+                    <h3>XDVRMX ft. Luche, Marracash</h3>
+                    <p><strong>0:00 — The Original Beat Expanded</strong><br>Charlie Charles takes the XDVR beat and reconfigures it — same basic elements, but with a more elaborate, more "produced" treatment. The 808 kick is slightly more defined, the synths have more mid-frequency presence, the stereo space is wider. It's the same supporting structure with a different finish — like the original blueprint of a building constructed with better materials.</p>
+                    <p><strong>0:25 — Marracash: History As Context</strong><br>Marracash brings a historical dimension to the track that no other artist in the Italian scene could bring — he is the Italian rapper who had built the genre's credibility over a decade before trap existed as a category. His presence on the XDVR remix is not a collaboration between equals: it is a passing of the torch, an explicit recognition that something new was taking the place of what came before.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Meaning of the Feature.</span>In hip-hop culture, a feature is not just a musical collaboration: it is a declaration of affiliation, a mutual recognition of status. Having Marracash on the XDVR remix in 2015 meant that "official" Italian rap was recognizing the legitimacy of the emerging Italian trap. It was a moment of legitimization that accelerated the mainstream acceptance of Sfera and his world.</div>
+                    <p><strong>1:10 — Luche: The South As Voice</strong><br>Luche — a Neapolitan rapper with an established career in Italian rap — brings a vocal quality and an approach to phrasing that comes from a different tradition than the Milanese one. His verse has more weight in the consonants, a different musicality in the vowels, a relationship with rhythm that comes as much from the Neapolitan oral tradition as from American hip-hop.</p>
+                    <p><strong>2:00 — Structure As Conversation</strong><br>The remix works as a conversation between generations and geographies — not a competitive confrontation but mutual recognition. Charlie Charles builds the beat so that all three voices have space without compromise: he doesn't raise or lower anyone in the mix, letting the strength of each assert itself.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Documenting a Moment.</span>XDVRMX has remained in the catalog as a document of a precise moment in the history of Italian rap — 2015, the year the old guard and the new found themselves in the same space without either having to cede territory to the other. Those moments of transition in the history of a music scene are rare and precious, and having a sonic document of one is more than just a commercial feat.</div>
+                `
+            },
+            "trap_kings": {
+                it: `
+                    <h3>Trap Kings</h3>
+                    <p><strong>0:00 — La Chiusura Come Riapertura</strong><br>Charlie Charles costruisce il beat di Trap Kings con una qualità circolare — elementi che si ripetono in modo da richiamare l'apertura dell'album senza citarla direttamente. Non è un callback esplicito: è una coerenza di atmosfera che fa sentire che il cerchio si sta chiudendo pur continuando a girare. Il kick 808 ha la stessa aggressività di XDVR, gli hi-hat hanno la stessa urgenza dei brani più veloci — è un ritorno alla forma originale dopo le esplorazioni del percorso.</p>
+                    <p><strong>0:20 — Il Titolo Come Auto-Coronazione</strong><br>"Trap Kings" — Sfera usa il plurale, non il singolare. Non è la corona di uno solo: è la dichiarazione di un gruppo, di una scena, di un momento. La prima persona plurale usata nel titolo trasforma quello che potrebbe essere narcisismo individuale in dichiarazione collettiva. Charlie Charles è incluso, la scena è inclusa, il pubblico è incluso. È una tecnica retorica antica — il "noi" come strumento di appartenenza — applicata a un contesto contemporaneo.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: La Trap Come Identità Culturale.</span>Il titolo Trap Kings non si riferisce solo a un genere musicale ma a un modo di stare nel mondo — un'estetica totale che comprende musica, stile, linguaggio, valori. Alla fine di XDVR, Sfera non sta solo rivendicando un successo commerciale: sta dichiarando l'esistenza di una cultura. Quella dichiarazione — nel 2015, quando la trap italiana era ancora un fenomeno underground — fu profetica. Cinque anni dopo, quella cultura era diventata la cultura pop italiana dominante.</div>
+                    <p><strong>1:30 — La Produzione Come Sintesi</strong><br>Nel suo brano finale Charlie Charles porta tutti gli elementi che ha sviluppato nel corso dell'album — il kick 808 fisico, gli hi-hat irregolari, i synth atmosferici, lo spazio calibrato intorno alla voce — in una sintesi che non è complessità ma chiarezza. È come se il produttore avesse imparato nel corso dell'album cosa stava cercando, e Trap Kings fosse la risposta trovata.</p>
+                    <p><strong>2:30 — Il Finale Senza Risoluzione</strong><br>Trap Kings non si chiude con una risoluzione narrativa o armonica — semplicemente finisce, come una conversazione che si interrompe invece di concludersi. Quella apertura finale è coerente con tutta la logica dell'album: XDVR non è la fine di qualcosa, è il documento del suo inizio. Il punto non è arrivare — è partire, e il finale aperto dice esattamente questo.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">CURIOSITÀ: L'Eredità di XDVR.</span>Dieci anni dopo la sua pubblicazione, XDVR è riconosciuto come uno dei dischi più importanti della storia della musica italiana degli anni Dieci — non per i numeri di streaming (che all'epoca erano irrilevanti), non per i premi (che non arrivarono), ma per l'impatto culturale che ebbe sulla generazione successiva di artisti italiani. Praticamente ogni rapper o trapper italiano emerso tra il 2016 e il 2020 ha citato XDVR come punto di riferimento. Charlie Charles è diventato il produttore più ricercato d'Italia. E Sfera Ebbasta è diventato l'artista italiano più ascoltato al mondo sulle piattaforme digitali. Tutto iniziò qui, con questo suono, in questo momento.</div>
+                `,
+                en: `
+                    <h3>Trap Kings</h3>
+                    <p><strong>0:00 — Closing As Reopening</strong><br>Charlie Charles builds the beat for Trap Kings with a circular quality — elements repeating in a way that recalls the opening of the album without quoting it directly. It is not an explicit callback: it is a coherence of atmosphere that makes you feel the circle is closing while continuing to turn. The 808 kick has the same aggression as XDVR, the hi-hats have the same urgency as the fastest tracks — it's a return to the original form after the explorations of the journey.</p>
+                    <p><strong>0:20 — The Title As Self-Coronation</strong><br>"Trap Kings" — Sfera uses the plural, not the singular. It is not the crown of just one: it is the declaration of a group, of a scene, of a moment. The first person plural used in the title transforms what could be individual narcissism into a collective declaration. Charlie Charles is included, the scene is included, the audience is included. It's an ancient rhetorical technique — "we" as a tool of belonging — applied to a contemporary context.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: Trap As Cultural Identity.</span>The title Trap Kings refers not just to a musical genre but to a way of being in the world — a total aesthetic encompassing music, style, language, values. At the end of XDVR, Sfera is not just claiming commercial success: he is declaring the existence of a culture. That declaration — in 2015, when Italian trap was still an underground phenomenon — was prophetic. Five years later, that culture had become the dominant Italian pop culture.</div>
+                    <p><strong>1:30 — Production As Synthesis</strong><br>In his final track, Charlie Charles brings all the elements he has developed over the course of the album — the physical 808 kick, irregular hi-hats, atmospheric synths, the calibrated space around the voice — into a synthesis that is not complexity but clarity. It is as if the producer had learned over the course of the album what he was looking for, and Trap Kings was the answer he found.</p>
+                    <p><strong>2:30 — The Unresolved Finale</strong><br>Trap Kings does not close with a narrative or harmonic resolution — it simply ends, like a conversation that breaks off instead of concluding. That final openness is consistent with the whole logic of the album: XDVR is not the end of something, it is the document of its beginning. The point is not to arrive — it is to depart, and the open ending says exactly this.</p>
+                    <div class="curiosity-box"><span class="curiosity-label">TRIVIA: The Legacy of XDVR.</span>Ten years after its release, XDVR is recognized as one of the most important records in the history of Italian music of the 2010s — not for streaming numbers (which were irrelevant at the time), not for awards (which didn't come), but for the cultural impact it had on the next generation of Italian artists. Practically every Italian rapper or trapper who emerged between 2016 and 2020 has cited XDVR as a reference point. Charlie Charles became the most sought-after producer in Italy. And Sfera Ebbasta became the most listened-to Italian artist in the world on digital platforms. It all started here, with this sound, in this moment.</div>
+                `
+            }
+        };
+
+        let mobileGalleryInterval;
+        let currentImgIndex = 0;
+
+        function startMobileGallery() {
+            const images = document.querySelectorAll('.band-gallery .flip-card');
+            if (images.length === 0) return;
+
+            function updateGallery() {
+                if (window.innerWidth <= 900) {
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                    images[currentImgIndex].classList.add('mobile-active');
+                    currentImgIndex = (currentImgIndex + 1) % images.length;
+                }
+            }
+
+            if (window.innerWidth <= 900) {
+                updateGallery();
+                if (!mobileGalleryInterval) {
+                    mobileGalleryInterval = setInterval(updateGallery, 5000);
+                }
+            }
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth <= 900) {
+                    if (!mobileGalleryInterval) {
+                        updateGallery();
+                        mobileGalleryInterval = setInterval(updateGallery, 5000);
+                    }
+                } else {
+                    clearInterval(mobileGalleryInterval);
+                    mobileGalleryInterval = null;
+                    images.forEach(img => img.classList.remove('mobile-active'));
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderPlaylist();
+            startMobileGallery();
+            
+            const trackList = document.getElementById('tracklist');
+            if(trackList) trackList.scrollTop = 0;
+        });
+
+        // GESTIONE CAMBIO LINGUA GLOBALE
+        function setGlobalLang(lang) {
+            document.documentElement.lang = lang;
+            
+            document.querySelectorAll('.global-lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-lang-' + lang).classList.add('active');
+
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentId = ytPlayer ? ytPlayer.getAttribute('data-current-id') : null;
+            
+            if (currentId) {
+                const paraphraseContentHTML = generateParaphraseHTML(currentId);
+                document.getElementById('desktop-lyrics-view').innerHTML = paraphraseContentHTML;
+                document.getElementById('mobile-lyrics-content').innerHTML = paraphraseContentHTML;
+                
+                const guideContent = document.getElementById('guide-content');
+                if (guideData[currentId] && guideData[currentId][lang]) {
+                    guideContent.innerHTML = guideData[currentId][lang];
+                }
+            }
+        }
+
+        // Funzione per generare il blocco HTML della Parafrasi
+        function generateParaphraseHTML(id) {
+            const data = paraphraseData[id] || { en: "Description not available.", it: "Descrizione non disponibile." };
+            const currentLang = document.documentElement.lang;
+
+            return `
+                <div class="lyrics-wrapper" style="padding: 10px 15px;">
+                    <div class="lyrics-content-area">
+                        <div class="lyrics-col eng active" style="width: 100%; white-space: normal;">
+                            <h4 style="margin: 0 0 2px 0; padding: 0; line-height: 1.2;">
+                                <span class="lang-it">Di cosa parla la canzone?</span>
+                                <span class="lang-en">What is this song about?</span>
+                            </h4><div style="white-space: pre-line; font-style: italic; color: #555; margin: 0; padding: 0; line-height: 1.5;">${data[currentLang]}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPlaylist() {
+            const container = document.getElementById('tracklist');
+            let html = '';
+
+            playlist.forEach((track, index) => {
+                html += `
+                    <div class="track-row" id="track-${track.id}" onclick="playTrack('${track.id}', '${track.ytId}', '${track.title.replace(/'/g, "\\'")}', this)">
+                        <div class="track-num">
+                            <span>${index + 1}</span>
+                            <div class="playing-icon">
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                            </div>
+                        </div>
+                        <div class="track-info">
+                            <div class="track-title">${track.title}</div>
+                            <div class="track-artist">Sfera Ebbasta</div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function playTrack(id, ytId, title, rowElement) {
+            const ytPlayer = document.getElementById('youtube-player');
+            const currentPlayingId = ytPlayer.getAttribute('data-current-id');
+            const currentLang = document.documentElement.lang;
+
+            if (currentPlayingId !== id) {
+                ytPlayer.src = `https://www.youtube.com/embed/${ytId}?autoplay=1`;
+                ytPlayer.setAttribute('data-current-id', id);
+            }
+
+            const rows = document.querySelectorAll('.track-row');
+            rows.forEach(r => r.classList.remove('active'));
+            if(rowElement) rowElement.classList.add('active');
+
+            // Parafrasi
+            const paraphraseContentHTML = generateParaphraseHTML(id);
+            document.getElementById('desktop-lyrics-view').innerHTML = paraphraseContentHTML;
+            document.getElementById('mobile-lyrics-content').innerHTML = paraphraseContentHTML;
+            document.getElementById('tracklist-wrapper').classList.add('lyrics-active');
+            document.getElementById('tracklist').scrollTop = 0;
+
+            // Guida
+            const guideContent = document.getElementById('guide-content');
+            if (guideData[id] && guideData[id][currentLang]) {
+                guideContent.innerHTML = guideData[id][currentLang];
+                const gBox = document.querySelector('.guide-box');
+                if(gBox) gBox.scrollTop = 0;
+            } else {
+                guideContent.innerHTML = currentLang === 'it' ? "<p>Guida all'ascolto non disponibile.</p>" : "<p>Listening guide not available.</p>";
+            }
+
+            const guidePanel = document.getElementById('guide-panel');
+            if(guidePanel && !guidePanel.classList.contains('open')) {
+                toggleGuide();
+            }
+        }
+
+        function resetTracklist() {
+            document.getElementById('tracklist-wrapper').classList.remove('lyrics-active');
+        }
+
+        // --- FUNZIONI ACCORDION MASTER ---
+        function toggleLesson() { 
+            const content = document.getElementById('main-content');
+            const videoLayer = document.getElementById('video-layer');
+            const btn = document.getElementById('btn-inizia');
+            const btnTxtIt = document.getElementById('btn-txt-it');
+            const btnTxtEn = document.getElementById('btn-txt-en');
+            const icon = btn.querySelector('.icon-plus');
+            
+            const isOpening = !content.classList.contains('active');
+            
+            if (isOpening) {
+                content.classList.add('active'); 
+                btn.classList.add('active'); 
+                btnTxtIt.textContent = "Chiudi Esperienza"; 
+                btnTxtEn.textContent = "Close Experience";
+                icon.textContent = "×"; 
+                videoLayer.classList.add('video-hidden');
+            } else {
+                content.classList.remove('active'); 
+                btn.classList.remove('active'); 
+                btnTxtIt.textContent = "Inizia Esperienza"; 
+                btnTxtEn.textContent = "Start Experience"; 
+                icon.textContent = "→"; 
+                videoLayer.classList.remove('video-hidden');
+                
+                const ytPlayer = document.getElementById('youtube-player');
+                if(ytPlayer) ytPlayer.src = "about:blank";
+            }
+        }
+
+        function toggleLyricsAccordion() {
+            const panel = document.getElementById('lyrics-panel');
+            const btn = document.getElementById('lyrics-btn');
+            if (panel.classList.contains('open')) { 
+                panel.classList.remove('open'); btn.classList.remove('active'); 
+            } else { 
+                panel.classList.add('open'); btn.classList.add('active'); 
+            }
+        }
+
+        function toggleGuide() {
+            const panel = document.getElementById('guide-panel');
+            const btn = document.getElementById('guide-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleHistory() {
+            const panel = document.getElementById('history-panel');
+            const btn = document.getElementById('history-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleDisclaimer() {
+            const panel = document.getElementById('disclaimer-panel');
+            const btn = document.getElementById('disclaimer-btn');
+            if (panel.classList.contains('open')) { panel.classList.remove('open'); btn.classList.remove('active'); } 
+            else { panel.classList.add('open'); btn.classList.add('active'); }
+        }
+
+        function toggleMobileTracks() {
+            const trackList = document.getElementById('tracklist');
+            const wrapper = document.getElementById('tracklist-wrapper');
+            const trigger = document.querySelector('.mobile-track-trigger');
+            if (trackList.classList.contains('mobile-open')) {
+                trackList.classList.remove('mobile-open'); wrapper.classList.remove('opened'); wrapper.classList.add('closed'); trigger.classList.remove('active');
+            } else {
+                trackList.classList.add('mobile-open'); wrapper.classList.remove('closed'); wrapper.classList.add('opened'); trigger.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

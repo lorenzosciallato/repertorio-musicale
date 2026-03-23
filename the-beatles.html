@@ -166,6 +166,16 @@
         .youtube-container iframe { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; 
         }
+        /* Questa regola dice all'immagine di coprire tutto e stare SOPRA */
+#cover-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Mantiene la proporzione dell'immagine senza distorcerla */
+    z-index: 10;       /* Numero alto = sta sopra */
+}
 
         /* --- TRACKLIST E MESSAGGI --- */
         .tracklist-column { display: flex; flex-direction: column; }
@@ -500,6 +510,7 @@
                 <div class="playlist-layout">
                     <div class="player-wrapper" id="player-wrapper-ui">
                         <div class="youtube-container">
+                            <img id="cover-placeholder" src="https://res.cloudinary.com/dlppkpjqs/image/upload/v1774304953/beatles_xxwq3c.jpg" alt="Copertina The Beatles">
                             <iframe id="youtube-player" src="about:blank" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                         </div>
                     </div>
@@ -1755,7 +1766,12 @@
             container.innerHTML = html;
         }
 
-        function playTrack(id, ytId, title, rowElement) {
+        
+            function playTrack(id, ytId, title, rowElement) {
+    // Al click, nascondi la copertina
+    document.getElementById('cover-placeholder').style.display = 'none';
+
+    // ... tutto il resto del codice rimane identico ...
             const ytPlayer = document.getElementById('youtube-player');
             const currentPlayingId = ytPlayer.getAttribute('data-current-id');
             const currentLang = document.documentElement.lang;
@@ -1796,7 +1812,7 @@
             document.getElementById('tracklist-wrapper').classList.remove('lyrics-active');
         }
 
-        // --- FUNZIONI ACCORDION MASTER ---
+     // --- FUNZIONI ACCORDION MASTER ---
         function toggleLesson() { 
             const content = document.getElementById('main-content');
             const videoLayer = document.getElementById('video-layer');
@@ -1824,6 +1840,10 @@
                 
                 const ytPlayer = document.getElementById('youtube-player');
                 if(ytPlayer) ytPlayer.src = "about:blank";
+                
+                // Riaccende l'immagine copertina se si chiude l'esperienza
+                const cover = document.getElementById('cover-placeholder');
+                if (cover) cover.style.display = 'block';
             }
         }
 

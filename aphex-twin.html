@@ -367,6 +367,44 @@
             .tracklist-wrapper.opened .scroll-disclaimer { display: block; }
             .guide-box { max-height: none !important; overflow-y: visible !important; padding-right: 0; }
         }
+        /* --- PULSANTE TORNA AL MENU --- */
+        .back-to-menu {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            text-decoration: none;
+            color: var(--ink-color);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            z-index: 100;
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-to-menu:hover {
+            background: var(--accent-color);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+
+        @media (max-width: 900px) {
+            .back-to-menu {
+                position: relative;
+                top: 0;
+                left: 0;
+                display: inline-flex;
+                margin-bottom: 20px;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -379,6 +417,10 @@
     </div>
 
     <header>
+        <a href="index.html" class="back-to-menu">
+            <span class="lang-it">← Torna al Menu</span>
+            <span class="lang-en">← Back to Menu</span>
+        </a>
         <h1>
             <span class="main-title-text">Aphex Twin</span>
         </h1>

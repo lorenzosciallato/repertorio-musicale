@@ -65,7 +65,7 @@
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
             gap: 1.5rem;
-            padding-bottom: 5rem;
+            padding-bottom: 3rem;
             animation: fadeIn 0.6s ease-out forwards;
         }
 
@@ -83,8 +83,6 @@
             box-shadow: 0 6px 16px rgba(0,0,0,0.05);
             position: relative;
             border: 1px solid var(--border-color); 
-            
-            /* TRUCCO 1: Altezza identica per tutte le card e divieto di sformare la colonna */
             height: 100%;
             min-width: 0; 
         }
@@ -96,7 +94,6 @@
             transform: translateY(-2px);
         }
 
-        /* Il contenitore dell'immagine */
         .image-wrapper {
             width: 100%;
             aspect-ratio: 1 / 1;
@@ -143,19 +140,9 @@
             z-index: 2;
         }
 
-        .lesson-card:hover .play-btn {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .lesson-card:hover .play-btn:hover {
-            transform: scale(1.05); 
-            background-color: #2b4766; 
-        }
-
-        .lesson-card:hover .image-wrapper img {
-            transform: scale(1.05);
-        }
+        .lesson-card:hover .play-btn { opacity: 1; transform: translateY(0); }
+        .lesson-card:hover .play-btn:hover { transform: scale(1.05); background-color: #2b4766; }
+        .lesson-card:hover .image-wrapper img { transform: scale(1.05); }
 
         /* --- TESTI SOTTO LA COPERTINA --- */
         .card-title {
@@ -167,7 +154,7 @@
             white-space: nowrap; 
             overflow: hidden;
             text-overflow: ellipsis; 
-            width: 100%; /* Obbliga il testo lungo a rispettare il margine */
+            width: 100%;
         }
 
         .card-subtitle {
@@ -182,19 +169,109 @@
             width: 100%;
         }
 
+        /* --- ACCORDION DISCLAIMER --- */
+        .disclaimer-section {
+            width: 90%;
+            max-width: 800px;
+            margin: 0 auto 5rem auto;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+            overflow: hidden;
+            font-family: var(--font-body);
+        }
+
+        .accordion-header {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            background: transparent;
+            border: none;
+            text-align: left;
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background: rgba(0,0,0,0.03);
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s ease;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+        }
+
+        /* Animazione fluida con CSS Grid */
+        .accordion-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s ease-out;
+            background: #fff;
+        }
+
+        .accordion-content.open {
+            grid-template-rows: 1fr;
+        }
+
+        .accordion-inner {
+            overflow: hidden;
+            padding: 0 1.5rem; /* Padding gestito dinamicamente tramite classi per non sformare la grid */
+        }
+
+        .accordion-content.open .accordion-inner {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 0.5rem;
+        }
+
+        /* --- TOGGLE LINGUA --- */
+        .lang-toggle-btn {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lang-toggle-btn:hover {
+            background-color: #e0e0e5;
+        }
+
+        .lang-en { display: none; } /* Nascosto di default */
+
         /* --- MOBILE GRID FIX --- */
         @media (max-width: 600px) {
             #main-menu {
-                /* TRUCCO 2: Forza le colonne a essere matematicamente del 50% esatto */
                 grid-template-columns: repeat(2, minmax(0, 1fr)); 
                 gap: 1rem;
-                padding: 0 0.5rem;
+                padding: 0 0.5rem 2rem 0.5rem;
             }
             .lesson-card { padding: 0.8rem; }
             .image-wrapper { padding: 1rem; margin-bottom: 0.8rem; }
             .play-btn { display: none; } 
             .card-title { font-size: 0.95rem; margin-bottom: 0.2rem; }
             .card-subtitle { font-size: 0.75rem; }
+            
+            .disclaimer-section { width: 95%; margin-bottom: 3rem; }
+            .accordion-header { padding: 1rem; font-size: 1rem; }
+            .accordion-content.open .accordion-inner { padding: 0 1rem 1rem 1rem; }
         }
     </style>
 </head>
@@ -301,5 +378,67 @@
         </a>
     </div>
 
+    <div class="disclaimer-section">
+        <button class="accordion-header" onclick="toggleAccordion()">
+            <span class="lang-it">Disclaimer e Diritto di Citazione</span>
+            <span class="lang-en">Disclaimer & Fair Use</span>
+            <span class="accordion-icon">▼</span>
+        </button>
+        
+        <div class="accordion-content">
+            <div class="accordion-inner">
+                <button class="lang-toggle-btn" id="lang-btn" onclick="toggleLanguage()">
+                    🇬🇧 Switch to English
+                </button>
+
+                <div class="wiki-content">
+                    <p class="lang-it">I contenuti multimediali presenti in questa pagina (immagini e video) sono utilizzati esclusivamente per finalità didattiche, critiche e di approfondimento culturale, in conformità con l'Art. 70 della Legge 633/41 (Diritto di citazione e riproduzione per uso didattico o scientifico). L'utilizzo non ha alcuno scopo di lucro e mira a valorizzare l'opera dell'artista e dei relativi autori, citati puntualmente tramite la funzione interattiva sulle singole immagini.<br><br>Qualora i detentori dei diritti d'autore ritenessero inappropriata la pubblicazione o desiderassero la rimozione di specifici contenuti, possono scrivere all'indirizzo: <strong>lorenzo.sciallato@gmail.com</strong>. Provvederò all'immediata rimozione del materiale segnalato.</p>
+                    
+                    <p class="lang-en">The multimedia contents on this page (images and videos) are used exclusively for educational, critical, and cultural purposes, in accordance with international Fair Use principles and national copyright laws. This project is strictly non-commercial and aims to provide historical and artistic context, with full credit given to authors and sources via the interactive photo-flip feature.<br><br>If you are a copyright holder and object to the use of any material, or would like to request its removal, please contact: <strong>lorenzo.sciallato@gmail.com</strong>. Any disputed content will be removed immediately upon request.</p>
+
+                    <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 25px 0;">
+
+                    <p class="lang-it" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Pagina creata con l'assistenza di software di intelligenza artificiale generativa, unendo cura umana e supporto tecnologico per l'apprendimento e la divulgazione culturale.</p>
+                    <p class="lang-en" style="font-style: italic; font-size: 0.9rem; text-align: center; color: #555;">Page created with the assistance of generative artificial intelligence software, combining human curation and technological support for educational and cultural dissemination.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gestione apertura e chiusura Accordion
+        function toggleAccordion() {
+            const content = document.querySelector('.accordion-content');
+            const icon = document.querySelector('.accordion-icon');
+            
+            content.classList.toggle('open');
+            
+            if (content.classList.contains('open')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Gestione Toggle Lingua
+        let currentLang = 'it';
+        function toggleLanguage() {
+            const itElements = document.querySelectorAll('.lang-it');
+            const enElements = document.querySelectorAll('.lang-en');
+            const langBtn = document.getElementById('lang-btn');
+
+            if (currentLang === 'it') {
+                itElements.forEach(el => el.style.display = 'none');
+                enElements.forEach(el => el.style.display = 'block');
+                langBtn.innerHTML = '🇮🇹 Passa all\'Italiano';
+                currentLang = 'en';
+            } else {
+                itElements.forEach(el => el.style.display = 'block');
+                enElements.forEach(el => el.style.display = 'none');
+                langBtn.innerHTML = '🇬🇧 Switch to English';
+                currentLang = 'it';
+            }
+        }
+    </script>
 </body>
 </html>
